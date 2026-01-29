@@ -1,8 +1,0 @@
-AHMED.dll
-d3dx9_43.dll
-VCOMP140.dll
-MSVCP140.dll
-VCRUNTIME140.dll
-VCRUNTIME140_1.dll
-metis.dll
-impi.dll

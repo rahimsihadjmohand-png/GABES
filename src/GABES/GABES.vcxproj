@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{E2AE54AF-4422-5AE9-E81E-E41B00893B35}</ProjectGuid>
+    <Keyword>MFCProj</Keyword>
+    <RootNamespace>BEM3D02</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseMpiLibrary1A>INTELMPI</UseMpiLibrary1A>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+    <UseMpiLibrary1A>INTELMPI</UseMpiLibrary1A>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\vcpkg\installed\x64-windows\include;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\include;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
+    <LibraryPath>D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Debug;C:\vcpkg\installed\x64-windows\lib;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\lib;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
+    <ExecutablePath>C:\vcpkg\installed\x64-windows\bin;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\bin;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\vcpkg\installed\x64-windows\include;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\include;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
+    <LibraryPath>C:\vcpkg\installed\x64-windows\lib;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\lib;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Release;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
+    <ExecutablePath>C:\vcpkg\installed\x64-windows\bin;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\bin;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;impi.lib;impicxx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;Ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;impi.lib;impicxx.lib;ahmed.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="DlgGenerateDomainResponseReport.h" />
+    <ClInclude Include="DlgDomainNodeResponse.h" />
+    <ClInclude Include="DlgReferenceFrame.h" />
+    <ClInclude Include="GABESDoc.h" />
+    <ClInclude Include="GABESView.h" />
+    <ClInclude Include="GABES.h" />
+    <ClInclude Include="DlgSetRamQuota.h" />
+    <ClInclude Include="DlgSolverParameters.h" />
+    <ClInclude Include="GizmoWnd.h" />
+    <ClInclude Include="InfoPanel.h" />
+    <ClInclude Include="ContElm.h" />
+    <ClInclude Include="DiscElm.h" />
+    <ClInclude Include="DlgPaletteSettings.h" />
+    <ClInclude Include="DlgNormalTraction.h" />
+    <ClInclude Include="DlgPressure.h" />
+    <ClInclude Include="DlgSetDeformationScale.h" />
+    <ClInclude Include="DlgSetIntegrationParameters.h" />
+    <ClInclude Include="DlgSetMaterialProperties.h" />
+    <ClInclude Include="DlgSetMeshType.h" />
+    <ClInclude Include="DlgTractionVector.h" />
+    <ClInclude Include="DlgDisplacementVector.h" />
+    <ClInclude Include="DlgNormalDisplacement.h" />
+    <ClInclude Include="DlgPartialEncaster.h" />
+    <ClInclude Include="DlgRangeSubSet.h" />
+    <ClInclude Include="DlgWaitLengthyOperation.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="ElementSubSet.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="InfoTab.h" />
+    <ClInclude Include="LD_Matrix.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="OOC_File.h" />
+    <ClInclude Include="Ahmed_Overrides.h" />
+    <ClInclude Include="PaletteCtrl.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="ReferenceFrame.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ModelTreePanel.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tensor.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DlgGenerateDomainResponseReport.cpp" />
+    <ClCompile Include="DlgDomainNodeResponse.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="DlgReferenceFrame.cpp" />
+    <ClCompile Include="GABESDoc.cpp" />
+    <ClCompile Include="GABESView.cpp" />
+    <ClCompile Include="GABES.cpp" />
+    <ClCompile Include="DlgSetRamQuota.cpp" />
+    <ClCompile Include="DlgSolverParameters.cpp" />
+    <ClCompile Include="GizmoWnd.cpp" />
+    <ClCompile Include="InfoPanel.cpp" />
+    <ClCompile Include="ContElm.cpp" />
+    <ClCompile Include="DiscElm.cpp" />
+    <ClCompile Include="DlgPaletteSettings.cpp" />
+    <ClCompile Include="DlgNormalTraction.cpp" />
+    <ClCompile Include="DlgPressure.cpp" />
+    <ClCompile Include="DlgSetDeformationScale.cpp" />
+    <ClCompile Include="DlgSetIntegrationParameters.cpp" />
+    <ClCompile Include="DlgSetMaterialProperties.cpp" />
+    <ClCompile Include="DlgSetMeshType.cpp" />
+    <ClCompile Include="DlgTractionVector.cpp" />
+    <ClCompile Include="DlgDisplacementVector.cpp" />
+    <ClCompile Include="DlgNormalDisplacement.cpp" />
+    <ClCompile Include="DlgPartialEncaster.cpp" />
+    <ClCompile Include="DlgRangeSubSet.cpp" />
+    <ClCompile Include="DlgWaitLengthyOperation.cpp" />
+    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="ElementSubSet.cpp" />
+    <ClCompile Include="InfoTab.cpp" />
+    <ClCompile Include="IntegrationNodes.cpp" />
+    <ClCompile Include="Ahmed_Overrids.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ReferenceFrame.cpp" />
+    <ClCompile Include="Solver.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="OOC_File.cpp" />
+    <ClCompile Include="PaletteCtrl.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ModelTreePanel.cpp" />
+    <ClCompile Include="Tensor.cpp" />
+    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BEM_3D_02.reg" />
+    <None Include="res\GABES.rc2" />
+    <None Include="res\Gismo\X_Axis.x" />
+    <None Include="res\Gismo\Y_Axis.x" />
+    <None Include="res\Gismo\Z_Axis.x" />
+    <None Include="res\Gizmo\Gizmo.x" />
+    <None Include="res\Gizmo\X_Axis.x" />
+    <None Include="res\Gizmo\Y_Axis.x" />
+    <None Include="res\Gizmo\Z_Axis.x" />
+    <None Include="res\mesh1.bin" />
+    <None Include="res\ribbon.mfcribbon-ms" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GABES.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\BCs.bmp" />
+    <Image Include="res\BEM_3D_02.ico" />
+    <Image Include="res\BEM_3D_02Doc.ico" />
+    <Image Include="res\BEM_Analysis.bmp" />
+    <Image Include="res\bitmap4.bmp" />
+    <Image Include="res\buttons.bmp" />
+    <Image Include="res\file.bmp" />
+    <Image Include="res\filelarge.bmp" />
+    <Image Include="res\filesmall.bmp" />
+    <Image Include="res\GABES.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon_frame.ico" />
+    <Image Include="res\icon_frames.ico" />
+    <Image Include="res\icon_model.ico" />
+    <Image Include="res\icon_subset.ico" />
+    <Image Include="res\integrul.bmp" />
+    <Image Include="res\main.bmp" />
+    <Image Include="res\model.bmp" />
+    <Image Include="res\modeling.bmp" />
+    <Image Include="res\Reference_frame.ico" />
+    <Image Include="res\RULE_001_PTS.bmp" />
+    <Image Include="res\RULE_003_PTS.bmp" />
+    <Image Include="res\RULE_004_PTS.bmp" />
+    <Image Include="res\RULE_007_PTS.bmp" />
+    <Image Include="res\RULE_013_PTS.bmp" />
+    <Image Include="res\RULE_028_PTS.bmp" />
+    <Image Include="res\RULE_052_PTS.bmp" />
+    <Image Include="res\RULE_056_PTS.bmp" />
+    <Image Include="res\RULE_104_PTS.bmp" />
+    <Image Include="res\RULE_112_PTS.bmp" />
+    <Image Include="res\RULE_208_PTS.bmp" />
+    <Image Include="res\subset.bmp" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\toolbar2.bmp" />
+    <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\ViewOptions_toolbar.bmp" />
+    <Image Include="res\writelarge.bmp" />
+    <Image Include="res\writesmall.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
