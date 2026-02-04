@@ -255,6 +255,11 @@ void CDlgReferenceFrame::OnBnClickedButtonApply()
 		*m_pCurrRefFrame = m_PrevStateRefFrame;
 		UpdateControlsFromCurrentRefFrame();
 	}
+
+
+	// Update the Tree Control
+	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+	pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
 }
 
 void CDlgReferenceFrame::OnOK()
@@ -268,7 +273,7 @@ void CDlgReferenceFrame::OnOK()
 	// If the frame is new add it
 	std::vector<BEM_3D::ReferenceFrame*>& rRefFrames = pDoc->m_ReferenceFrames;
 
-	if (std::find(rRefFrames.begin(), rRefFrames.end(), m_pCurrRefFrame) == rRefFrames.end())
+	if (std::find(rRefFrames.begin(), rRefFrames.end(), m_pCurrRefFrame) == rRefFrames.end())  // New frame
 	{
 		m_pCurrRefFrame->m_bSelected = false;
 
@@ -277,8 +282,15 @@ void CDlgReferenceFrame::OnOK()
 		rRefFrames.push_back(m_pCurrRefFrame);
 		m_pCurrRefFrame = nullptr;
 
+		// Update the Tree Control
 		CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
 		pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+	}
+	else // Modify existing frame
+	{
+		m_pCurrRefFrame->m_bSelected = false;
+		m_pCurrRefFrame->SetCoordinateRanges(pDoc->m_Model);
+		m_pCurrRefFrame = nullptr;
 	}
 
 

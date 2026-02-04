@@ -11,9 +11,9 @@ double Element::v = 0.3;
 double Element::G = E / (2.0 * (1.0 + v));
 
 
-INTEG_RULE Element::m_IntegrationRule = _056_PT;
-bool Element::m_bRigidBodyCPV = true; // We use the Rigid body motion By default!!! Because our numerical implementation of Direct CPV Evaluation is poor!!
-
+INTEG_RULE Element::m_FixedIntegRule = _056_PT;
+bool Element::m_bRigidBodyCPV = true;         // We use the Rigid body motion By default!!! Because our numerical implementation of Direct CPV Evaluation is not fully implemented!!
+bool Element::m_bUseAdaptiveCriterion = true; // The use of the adaptive scheme yields better results and performance
 
 Element::Element()
 	: m_pV1(nullptr)
@@ -2057,67 +2057,76 @@ Vertex* Element::Vgeo_Ptr(int l)
 
 INTEG_RULE Element::SelectIntegrationRule(const Vertex& SrcPt, int nKernelType) const
 {
-	double d1 = m_pV1->Distance(SrcPt);
-	double d2 = m_pV2->Distance(SrcPt);
-	double d3 = m_pV3->Distance(SrcPt);
-
-	double L1 = m_pV1->Distance(*m_pV2);
-	double L2 = m_pV2->Distance(*m_pV3);
-	double L3 = m_pV3->Distance(*m_pV1);
-
-	double dmin = min(d1, min(d2, d3));
-	double Lmin = min(L1, min(L2, L3));
-
-	double Lambda = dmin / Lmin;
-
-	switch (nKernelType)
+	if (!m_bUseAdaptiveCriterion)
 	{
-	case 0:
-	{
-		if (Lambda > 11.33)
-			return INTEG_RULE::_001_PT;
-		else if (Lambda > 7.0)
-			return INTEG_RULE::_003_PT;
-		else if (Lambda > 2.85)
-			return INTEG_RULE::_004_PT;
-		else if (Lambda > 1.83)
-			return INTEG_RULE::_007_PT;
-		else if (Lambda > 1.40)
-			return INTEG_RULE::_013_PT;
-		else if (Lambda > 1.20)
-			return INTEG_RULE::_028_PT;
-		else if (Lambda > 1.073)
-			return INTEG_RULE::_052_PT;
-		else if (Lambda > 1.062)
-			return INTEG_RULE::_104_PT;
-		else
-			return INTEG_RULE::_208_PT;
+		return m_FixedIntegRule;
 	}
-	break;
+	else
+	{
+		double d1 = m_pV1->Distance(SrcPt);
+		double d2 = m_pV2->Distance(SrcPt);
+		double d3 = m_pV3->Distance(SrcPt);
 
-	case 1:
-	{
-		if (Lambda > 20.67)
-			return INTEG_RULE::_001_PT;
-		else if (Lambda > 10.0)
-			return INTEG_RULE::_003_PT;
-		else if (Lambda > 3.60)
-			return INTEG_RULE::_004_PT;
-		else if (Lambda > 2.29)
-			return INTEG_RULE::_007_PT;
-		else if (Lambda > 1.71)
-			return INTEG_RULE::_013_PT;
-		else if (Lambda > 1.42)
-			return INTEG_RULE::_028_PT;
-		else if (Lambda > 1.21)
-			return INTEG_RULE::_052_PT;
-		else if (Lambda > 1.17)
-			return INTEG_RULE::_104_PT;
-		else
-			return INTEG_RULE::_208_PT;
+		double L1 = m_pV1->Distance(*m_pV2);
+		double L2 = m_pV2->Distance(*m_pV3);
+		double L3 = m_pV3->Distance(*m_pV1);
+
+		double dmin = min(d1, min(d2, d3));
+		double Lmin = min(L1, min(L2, L3));
+
+		double Lambda = dmin / Lmin;
+
+
+		switch (nKernelType)
+		{
+		case 0:
+		{
+			if (Lambda > 11.33)
+				return INTEG_RULE::_001_PT;
+			else if (Lambda > 7.0)
+				return INTEG_RULE::_003_PT;
+			else if (Lambda > 2.85)
+				return INTEG_RULE::_004_PT;
+			else if (Lambda > 1.83)
+				return INTEG_RULE::_007_PT;
+			else if (Lambda > 1.40)
+				return INTEG_RULE::_013_PT;
+			else if (Lambda > 1.20)
+				return INTEG_RULE::_028_PT;
+			else if (Lambda > 1.073)
+				return INTEG_RULE::_052_PT;
+			else if (Lambda > 1.062)
+				return INTEG_RULE::_104_PT;
+			else
+				return INTEG_RULE::_208_PT;
+		}
+		break;
+
+		case 1:
+		{
+			if (Lambda > 20.67)
+				return INTEG_RULE::_001_PT;
+			else if (Lambda > 10.0)
+				return INTEG_RULE::_003_PT;
+			else if (Lambda > 3.60)
+				return INTEG_RULE::_004_PT;
+			else if (Lambda > 2.29)
+				return INTEG_RULE::_007_PT;
+			else if (Lambda > 1.71)
+				return INTEG_RULE::_013_PT;
+			else if (Lambda > 1.42)
+				return INTEG_RULE::_028_PT;
+			else if (Lambda > 1.21)
+				return INTEG_RULE::_052_PT;
+			else if (Lambda > 1.17)
+				return INTEG_RULE::_104_PT;
+			else
+				return INTEG_RULE::_208_PT;
+		}
+		break;
+		}
 	}
-	break;
-	}
+	
 
 	return INTEG_RULE::_208_PT;  // Impossible value
 }

@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "GABES.h"
 #include "ModelTreePanel.h"
+#include "GABESView.h"
 
 
 // CModelTreePanel
@@ -11,6 +12,8 @@
 IMPLEMENT_DYNAMIC(CModelTreePanel, CDockablePane)
 
 CModelTreePanel::CModelTreePanel()
+	: m_hFramesItem(nullptr)
+	, m_hModelItem(nullptr)
 {
 
 }
@@ -96,7 +99,7 @@ void CModelTreePanel::UpdateTreeCtrl()
 	// Create the Frames Root Item
 	CString strText = _T("Reference frames");
 	TV_ITEM tvItem;
-	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_PARAM | TVIF_SELECTEDIMAGE;
 	tvItem.pszText = (LPWSTR)strText.GetString();
 	tvItem.cchTextMax = strText.GetLength();
 	tvItem.iImage = 0;
@@ -108,46 +111,45 @@ void CModelTreePanel::UpdateTreeCtrl()
 	tvInsert.hParent = TVI_ROOT;
 	tvInsert.hInsertAfter = TVI_LAST;
 	tvInsert.item = tvItem;
-	HTREEITEM hFramesItem = m_TreeCtrl.InsertItem(&tvInsert);
+	m_hFramesItem = m_TreeCtrl.InsertItem(&tvInsert);
 
 
-	// Create the Global Frame Item
+	// Create the Global Frame TvItem
 	strText = m_pDoc->m_GlobalFrame.m_strName;
-	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_PARAM | TVIF_SELECTEDIMAGE;
 	tvItem.pszText = (LPWSTR)strText.GetString();
 	tvItem.cchTextMax = strText.GetLength();
 	tvItem.iImage = 1;
 	tvItem.iSelectedImage = 1;
-	tvItem.lParam = (LPARAM)nullptr;
+	tvItem.lParam = (LPARAM)(& m_pDoc->m_GlobalFrame);  // The pointer to the global frame
 
-	// Insert the Root Item
-	tvInsert.hParent = hFramesItem;
+	// Insert the Global Frame TvItem
+	tvInsert.hParent = m_hFramesItem;
 	tvInsert.hInsertAfter = TVI_LAST;
 	tvInsert.item = tvItem;
 	HTREEITEM hGlobalFrameItem = m_TreeCtrl.InsertItem(&tvInsert);
 
 
+	// Create and insert the User frames TvItems
 	std::vector <BEM_3D::ReferenceFrame*>& rRefFrames = m_pDoc->m_ReferenceFrames;
 
 	for (BEM_3D::ReferenceFrame* pRefFrame : rRefFrames)
 	{
 		strText = pRefFrame->m_strName;
-		tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_PARAM | TVIF_SELECTEDIMAGE;
 		tvItem.pszText = (LPWSTR)strText.GetString();
 		tvItem.cchTextMax = strText.GetLength();
 		tvItem.iImage = 1;
 		tvItem.iSelectedImage = 1;
-		tvItem.lParam = (LPARAM)nullptr;
-
-		// Insert the Root Item
-		tvInsert.hParent = hFramesItem;
+		tvItem.lParam = (LPARAM)pRefFrame; // A pointer to the frame
+		tvInsert.hParent = m_hFramesItem;
 		tvInsert.hInsertAfter = TVI_LAST;
 		tvInsert.item = tvItem;
 		
 		m_TreeCtrl.InsertItem(&tvInsert);
 	}
 
-	m_TreeCtrl.Expand(hFramesItem, TVE_EXPAND);
+	m_TreeCtrl.Expand(m_hFramesItem, TVE_EXPAND);
 
 	//===================================================================================================
 
@@ -159,10 +161,31 @@ void CModelTreePanel::UpdateTreeCtrl()
 
 	//===================================== The Model Subsets ==============================================
 
+	CString strMeshName = m_pDoc->m_Model.GetFileName();
+    // Remove the extension from the file title
+	// Look for the last dot in the filename
+	int dotPos = strMeshName.ReverseFind('.');
+
+	if (dotPos != -1)
+	{
+		CString ext = strMeshName.Mid(dotPos);
+
+		if (ext.CompareNoCase(_T(".obj")) == 0)
+		{
+			strMeshName = strMeshName.Left(dotPos);
+		}
+
+		else if (ext.CompareNoCase(_T(".stl")) == 0)
+		{
+			strMeshName = strMeshName.Left(dotPos);
+		}
+	}
+
+
 	// Create the Model Item
-	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-	tvItem.pszText = (LPWSTR)m_pDoc->m_Model.GetFileName().GetString();
-	tvItem.cchTextMax = m_pDoc->m_Model.GetFileName().GetLength();
+	tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_PARAM | TVIF_SELECTEDIMAGE;
+	tvItem.pszText = (LPWSTR)strMeshName.GetString();
+	tvItem.cchTextMax = strMeshName.GetLength();
 	tvItem.iImage = 2;
 	tvItem.iSelectedImage = 2;
 	tvItem.lParam = (LPARAM)nullptr;
@@ -171,7 +194,7 @@ void CModelTreePanel::UpdateTreeCtrl()
 	tvInsert.hParent = TVI_ROOT;
 	tvInsert.hInsertAfter = TVI_LAST;
 	tvInsert.item = tvItem;
-	HTREEITEM hModelItem = m_TreeCtrl.InsertItem(&tvInsert);
+	m_hModelItem = m_TreeCtrl.InsertItem(&tvInsert);
 
 	
 
@@ -188,7 +211,7 @@ void CModelTreePanel::UpdateTreeCtrl()
 		BEM_3D::ElementSubSet* pSubSet = *iter;
 		// Create the Child item on the Tree corresponding to this Shape
 		TVITEM tvItem;
-		tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
+		tvItem.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_PARAM | TVIF_SELECTEDIMAGE;
 
 		TVINSERTSTRUCT tvInsert;
 
@@ -197,14 +220,14 @@ void CModelTreePanel::UpdateTreeCtrl()
 		tvItem.pszText = pSubSet->m_strName.GetBuffer();
 		tvItem.cchTextMax = pSubSet->m_strName.GetLength();
 		tvItem.lParam = (LPARAM)pSubSet;
-		tvInsert.hParent = hModelItem;
+		tvInsert.hParent = m_hModelItem;
 		tvInsert.hInsertAfter = TVI_LAST;
 		tvInsert.item = tvItem;
 		m_TreeCtrl.InsertItem(&tvInsert);
 	}
 
 	// Expand the Tree Control
-	m_TreeCtrl.Expand(hModelItem, TVE_EXPAND);
+	m_TreeCtrl.Expand(m_hModelItem, TVE_EXPAND);
 
 }
 
@@ -213,25 +236,46 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	// TODO: Add your specialized code here and/or call the base class
 	LPNMHDR pNmhdr = (LPNMHDR)lParam;
 
-	if (pNmhdr->hwndFrom == m_TreeCtrl.m_hWnd)
+	if (pNmhdr->hwndFrom == m_TreeCtrl.GetSafeHwnd())
 	{
 		// Verify the notification code
 		switch (pNmhdr->code)
 		{
-		case TVN_ENDLABELEDIT:
+		case TVN_ENDLABELEDIT:      // Renaming
 		{
 			// Transform the LPARAM Parameter to an LPNMTVDISPINFO structure
 			LPNMTVDISPINFO lpNmtvdi = (LPNMTVDISPINFO)pNmhdr;
+
 			// Get the Shape adress
 			HTREEITEM hItem = lpNmtvdi->item.hItem;
-			BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)(lpNmtvdi->item.lParam);
-			// Set the New name
 
-			if ((pSubSet != nullptr) && (hItem != TVI_ROOT))
+			if ((hItem != NULL) && (hItem != TVI_ROOT) && (hItem != m_hFramesItem) && (hItem != m_hModelItem))
 			{
-				m_TreeCtrl.SetItemText(lpNmtvdi->item.hItem, lpNmtvdi->item.pszText);
-				pSubSet->m_strName = lpNmtvdi->item.pszText;
-			}
+				HTREEITEM hParent = m_TreeCtrl.GetParentItem(hItem);
+
+				if (hParent == m_hFramesItem)
+				{
+					BEM_3D::ReferenceFrame* pRefFrame = (BEM_3D::ReferenceFrame*)(lpNmtvdi->item.lParam);
+					// Set the New name
+
+					if ((pRefFrame != nullptr) && (pRefFrame != &m_pDoc->m_GlobalFrame))
+					{
+						m_TreeCtrl.SetItemText(lpNmtvdi->item.hItem, lpNmtvdi->item.pszText);
+						pRefFrame->m_strName = lpNmtvdi->item.pszText;
+					}
+				}
+				else if (hParent == m_hModelItem)
+				{
+					BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)(lpNmtvdi->item.lParam);
+					// Set the New name
+
+					if ((pSubSet != nullptr))
+					{
+						m_TreeCtrl.SetItemText(lpNmtvdi->item.hItem, lpNmtvdi->item.pszText);
+						pSubSet->m_strName = lpNmtvdi->item.pszText;
+					}
+				}
+			}			
 		}
 		break;
 
@@ -249,11 +293,16 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			// Get the selected item
 			HTREEITEM hSelected = lpNmtv->itemNew.hItem;
 
-			if (hSelected != TVI_ROOT && hSelected != NULL)
+		    if ((hSelected != NULL) && (hSelected != TVI_ROOT) && (hSelected != m_hFramesItem) && (hSelected != m_hModelItem))
 			{
-				BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)lpNmtv->itemNew.lParam;
-				if (pSubSet)
-					m_pView->m_pSelectedSubSet = pSubSet;
+				HTREEITEM hParent = m_TreeCtrl.GetParentItem(hSelected);
+
+				if (hParent == m_hModelItem)
+				{
+					BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)lpNmtv->itemNew.lParam;
+					if (pSubSet)
+						m_pView->m_pSelectedSubSet = pSubSet;
+				}				
 			}				
 		}
 		break;
@@ -271,7 +320,7 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			UINT uFlags;
 			HTREEITEM hItem = m_TreeCtrl.HitTest(ptClient, &uFlags);
 
-			if (hItem != NULL && hItem != TVI_ROOT)
+			if ((hItem != NULL) && (hItem != TVI_ROOT) && (hItem != m_hFramesItem) && (hItem != m_hModelItem))
 			{
 				// Optional: Select the item under right-click
 				m_TreeCtrl.SelectItem(hItem);
@@ -298,6 +347,46 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 		}
 		break;
 
+
+		case NM_DBLCLK:
+		{
+			DWORD dwPos = GetMessagePos();
+			CPoint pt(GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos));
+			m_TreeCtrl.ScreenToClient(&pt);
+
+			UINT uFlags = 0;
+			HTREEITEM hItem = m_TreeCtrl.HitTest(pt, &uFlags);
+
+
+			if ((hItem != NULL) && (hItem != TVI_ROOT) && (hItem != m_hFramesItem) && (hItem != m_hModelItem) && (uFlags & TVHT_ONITEM))
+			{
+				// Optional: Select the item under right-click
+				m_TreeCtrl.SelectItem(hItem);
+
+				// Get the parent Item
+				HTREEITEM hParent = m_TreeCtrl.GetParentItem(hItem);
+
+				if (hParent == m_hFramesItem)
+				{
+					
+
+					BEM_3D::ReferenceFrame* pRefFrame = (BEM_3D::ReferenceFrame*)m_TreeCtrl.GetItemData(hItem);
+
+					// Invoke the Modify frame Dialog
+					if ((pRefFrame != nullptr) && (pRefFrame != &m_pDoc->m_GlobalFrame))
+					{
+
+						pRefFrame->m_bSelected = true;
+						m_pView->m_DlgReferenceFrame.m_pCurrRefFrame = pRefFrame;
+						m_pView->m_DlgReferenceFrame.UpdateControlsFromCurrentRefFrame();
+						m_pView->m_DlgReferenceFrame.ShowWindow(SW_SHOWNORMAL);
+					}
+				}
+			}
+
+			*pResult = 0;
+		}
+		break;
 
 		default:
 			break;
@@ -326,17 +415,45 @@ void CModelTreePanel::OnSubsetDelete()
 	// Get Selected Item 
 	HTREEITEM hItem = m_TreeCtrl.GetSelectedItem();
 
-	if (hItem != NULL && hItem != TVI_ROOT)
+	if ((hItem != NULL) && (hItem != TVI_ROOT) && (hItem != m_hFramesItem) && (hItem != m_hModelItem))
 	{
-		BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)m_TreeCtrl.GetItemData(hItem);
-		std::list<BEM_3D::ElementSubSet*>& rSubSets = m_pDoc->m_Model.GetSubSets();
+		// Get the parent Item
+		HTREEITEM hParentItem = m_TreeCtrl.GetParentItem(hItem);
 
-		if (pSubSet)
+		if (hParentItem == m_hFramesItem)
 		{
-			auto iter = std::find(rSubSets.begin(), rSubSets.end(), pSubSet);
-			rSubSets.erase(iter);
-			m_TreeCtrl.DeleteItem(hItem);
-			m_pView->ResetSelections();
+			BEM_3D::ReferenceFrame* pRefFrame = (BEM_3D::ReferenceFrame*)m_TreeCtrl.GetItemData(hItem);
+
+			if ((pRefFrame != nullptr) && (pRefFrame != &m_pDoc->m_GlobalFrame))
+			{
+				if (m_pView->m_DlgReferenceFrame.m_pCurrRefFrame == pRefFrame)
+				{
+					m_pView->m_DlgReferenceFrame.m_pCurrRefFrame = nullptr;
+					m_pView->m_DlgReferenceFrame.ShowWindow(SW_HIDE);
+				}
+
+
+				std::vector<BEM_3D::ReferenceFrame*>& rRefFrames = m_pDoc->m_ReferenceFrames;
+				
+				auto iter = std::find(rRefFrames.begin(), rRefFrames.end(), pRefFrame);
+				rRefFrames.erase(iter);
+				delete pRefFrame;
+				m_TreeCtrl.DeleteItem(hItem);				
+			}			
+		}
+		else if (hParentItem == m_hModelItem)
+		{
+			BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)m_TreeCtrl.GetItemData(hItem);
+			std::list<BEM_3D::ElementSubSet*>& rSubSets = m_pDoc->m_Model.GetSubSets();
+
+			if (pSubSet)
+			{
+				auto iter = std::find(rSubSets.begin(), rSubSets.end(), pSubSet);
+				rSubSets.erase(iter);
+				delete pSubSet;
+				m_TreeCtrl.DeleteItem(hItem);
+				m_pView->ResetSelections();
+			}
 		}	
 		
 	}
@@ -344,46 +461,6 @@ void CModelTreePanel::OnSubsetDelete()
 
 
 
-void CModelTreePanel::OnAfterFloat()
-{
-	CDockablePane::OnAfterFloat();
-
-	CPaneFrameWnd* pMiniFrame = GetParentMiniFrame();
-	if (!pMiniFrame)
-		return;
-
-	HWND hWnd = pMiniFrame->GetSafeHwnd();
-
-	// Remove the Close button
-	pMiniFrame->GetSystemMenu(FALSE);
-	HMENU hSysMenu = ::GetSystemMenu(hWnd, FALSE);
-	if (hSysMenu)
-	{
-		::DeleteMenu(hSysMenu, SC_CLOSE, MF_BYCOMMAND);
-		::DrawMenuBar(hWnd);
-	}
-}
-
-
-
-LRESULT CALLBACK CModelTreePanel::MiniFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if (msg == WM_CLOSE)
-	{
-		// Get the pane pointer
-		CModelTreePanel* pPane = (CModelTreePanel*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-		if (pPane)
-		{
-			pPane->ShowWindow(SW_HIDE); // hide the pane instead of closing
-			return 0; // block destruction
-		}
-	}
-
-	// Call the original window procedure for other messages
-	CModelTreePanel* pPane = (CModelTreePanel*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	WNDPROC oldProc = pPane ? pPane->m_pOldMiniFrameProc : nullptr;
-	return oldProc ? CallWindowProc(oldProc, hWnd, msg, wParam, lParam) : ::DefWindowProc(hWnd, msg, wParam, lParam);
-}
 
 BOOL CModelTreePanel::CanBeClosed() const
 {

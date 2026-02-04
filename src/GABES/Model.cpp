@@ -43,7 +43,16 @@ Model::Model()
 	, m_Nce(0)
 	, m_Nde(0)
 {
+	// This constructor is only called once so there is no problem to initialize all these static variables!!
+
 	ElementSubSet::m_pElements = &m_Elements;
+
+	
+	// The Memory Quota is set by default to 90% of the total available RAM
+	MEMORYSTATUSEX mem;
+	mem.dwLength = sizeof(mem);
+	GlobalMemoryStatusEx(&mem);
+	Model::m_RAM_Quota_Gb = (UINT)(((double)mem.ullTotalPhys * 0.9) / pow(1024.0 , 3.0));
 }
 
 Model::~Model()

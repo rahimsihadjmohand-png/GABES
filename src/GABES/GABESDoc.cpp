@@ -28,6 +28,8 @@
 #define new DEBUG_NEW
 #endif
 
+#include "MainFrm.h"
+
 // CGABESDoc
 
 IMPLEMENT_DYNCREATE(CGABESDoc, CDocument)
@@ -64,6 +66,22 @@ BOOL CGABESDoc::OnNewDocument()
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
+	m_Model.ClearAll();
+
+	m_Model.SetWorkingDirectory(_T(""));
+	m_Model.SetFileName(_T(""));
+	m_Model.SetFileType(_T(""));
+
+	// Reset the selections
+	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+	CGABESView* pView = (CGABESView*)pMainFrame->GetActiveView();
+
+	pView->ResetSelections();
+
+
+	// Update the ModelTree  and Info Panels
+	pMainFrame->m_ModelTreePanel.UpdateTreeCtrl();
+	pMainFrame->m_infoPanel.UpdateInfo();
 
 	return TRUE;
 }

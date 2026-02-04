@@ -166,6 +166,8 @@ void CDlgRangeSubSet::OnCbnSelchangeCmbCoorSysRangeSubset()
 
 	UpdateData(FALSE);
 
+	UpdateSliderBars();
+
 	UpdateElementSelection();
 }
 
@@ -240,6 +242,8 @@ void CDlgRangeSubSet::OnCbnSelchangeComboRefFrames()
 	pDoc->SelectRefFrame(m_pCurrentFrame);
 
 	UpdateData(FALSE);
+
+	UpdateSliderBars();
 
 	UpdateElementSelection();
 }
@@ -323,6 +327,8 @@ void CDlgRangeSubSet::InitModelessDialog()
 	pDoc->SelectGlobalFrame();
 
 	UpdateData(FALSE);
+
+	UpdateSliderBars();
 
 	UpdateElementSelection();
 }
@@ -793,9 +799,17 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CDlgRangeSubSet::OnBnClickedBtnApply()
 {
 	// TODO: Add your control notification handler code here
-
 	UpdateData();
 
+	UpdateSliderBars();	
+
+	UpdateElementSelection();
+}
+
+
+
+void CDlgRangeSubSet::UpdateSliderBars()
+{
 	double Range1 = 0.0, Range2 = 0.0, Range3 = 0.0;
 	double MIN1 = 0.0, MIN2 = 0.0, MIN3 = 0.0;
 	switch (nCoordSys)
@@ -835,6 +849,4 @@ void CDlgRangeSubSet::OnBnClickedBtnApply()
 	sliderMaxDim1.SetPos((Max1 - MIN1) / Range1 * 100);
 	sliderMaxDim2.SetPos((Max2 - MIN2) / Range2 * 100);
 	sliderMaxDim3.SetPos((Max3 - MIN3) / Range3 * 100);
-
-	UpdateElementSelection();
 }

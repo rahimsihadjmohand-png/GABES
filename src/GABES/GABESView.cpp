@@ -396,9 +396,7 @@ void CGABESView::RenderFrameD3D()
 			DrawHitTestedPoint();
 			break;
 
-		}
-
-			
+		}			
 
 		// Draw the Boundary conditions of the subsets 
 		for (BEM_3D::ElementSubSet* pSubSet : pModel->GetSubSets())
@@ -485,6 +483,8 @@ void CGABESView::OnFileLoadMeshFromFile()
 
 	pModel->SetWorkingDirectory(szFileName);
 	pModel->SetFileName(szFileTitle);
+
+	
 	
 
 	// ======================= Update the D3D buffer of the model ===============
@@ -493,9 +493,10 @@ void CGABESView::OnFileLoadMeshFromFile()
 	// Reset the Selections
 	ResetSelections();
 
-	// Update the ModelTree Panel
+	// Update the ModelTree  and Info Panels
 	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
-	pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+	pMainFrame->m_ModelTreePanel.UpdateTreeCtrl();
+	pMainFrame->m_infoPanel.UpdateInfo();
 }
 
 void CGABESView::OnSize(UINT nType, int cx, int cy)
@@ -1209,9 +1210,10 @@ void CGABESView::OnFileDeleteModel()
 	// Reset the Selections
 	ResetSelections();
 
-	// Update the ModelTree Panel
+	// Update the ModelTree  and Info Panels
 	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
-	pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+	pMainFrame->m_ModelTreePanel.UpdateTreeCtrl();
+	pMainFrame->m_infoPanel.UpdateInfo();
 }
 
 void CGABESView::OnUpdateFileDeleteModel(CCmdUI* pCmdUI)
@@ -1427,7 +1429,8 @@ void CGABESView::OnBemSolveBoundaryValueProblem()
 	// TODO: Add your command handler code here
 	// STEP 0 Set the solver parameters
 	CDlgSolverParameters dlgSolverProp(this);
-	dlgSolverProp.DoModal();
+	if(dlgSolverProp.DoModal() != IDOK)
+		return;
 
 	// STEP 1 Calculate the matrices!
 	CDlgWaitLengthyOperation dlg(pModel, 0, this);
@@ -1468,7 +1471,12 @@ void CGABESView::OnBemSetMaterialProperties()
 	// TODO: Add your command handler code here
 	CDlgSetMaterialProperties dlg(this);
 
-	dlg.DoModal();
+	if(dlg.DoModal() != IDOK)
+		return;
+
+	// Update the information panel
+	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+	pMainFrame->m_infoPanel.UpdateInfo();
 }
 
 
@@ -1478,7 +1486,12 @@ void CGABESView::OnBemSetIntegrationParameters()
 	// TODO: Add your command handler code here
 	CDlgSetIntegrationParameters dlg(this);
 
-	dlg.DoModal();
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	// Update the information panel
+	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+	pMainFrame->m_infoPanel.UpdateInfo();
 }
 
 void CGABESView::OnBemSetDeformationScale()
@@ -1618,6 +1631,10 @@ void CGABESView::OnBemSetMemoryQuota()
 		pModel->SetMatrixMemoryQuotas(dlg.Q_Quota, dlg.R_Quota, dlg.A_Quota);
 	else
 		pModel->AutoSetMatrixMemoryQuotas();
+
+	// Update the information panel
+	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+	pMainFrame->m_infoPanel.UpdateInfo();	
 }
 
 

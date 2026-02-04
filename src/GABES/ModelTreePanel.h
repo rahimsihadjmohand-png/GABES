@@ -30,13 +30,12 @@ public:
 
 protected:
 	DECLARE_MESSAGE_MAP()
-	virtual void OnAfterFloat();
-	static LRESULT CALLBACK MiniFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	virtual BOOL CanBeClosed() const override;
 
 private:
-	WNDPROC m_pOldMiniFrameProc = nullptr; // store old WNDPROC
+	HTREEITEM m_hModelItem;
+	HTREEITEM m_hFramesItem;
 
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

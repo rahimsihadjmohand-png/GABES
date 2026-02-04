@@ -318,7 +318,8 @@ namespace BEM_3D
 			
 
 		// Static integration data 
-		static INTEG_RULE m_IntegrationRule;
+		static INTEG_RULE m_FixedIntegRule;
+		static bool m_bUseAdaptiveCriterion;
 		static ITND ITNDs[17][208];
 		static bool bIntegNodesFilled;
 		static bool m_bRigidBodyCPV;  // Use the Rigid body method to recover the CPV integrals

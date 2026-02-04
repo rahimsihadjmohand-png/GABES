@@ -42,7 +42,8 @@ private:
 	double m_v;                     // The poissons ratio
 
 	// Analysis information
-	CString m_strIntegRule;         // the default integration rule
+	CString m_strCPVmthd;           // the method used to treat CPV integrals
+	CString m_strIntegScheme;       // the used integration Scheme (Fixed cubature or Adaptive scheme)
 	CString m_str_Q_Matrix;         // the dimension of Q matirx
 	CString m_str_RA_Matrix;        // the dimension of R and A matrix
 	CString m_str_bx_Vector;        // the dimension of b and x vectors

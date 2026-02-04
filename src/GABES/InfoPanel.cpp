@@ -64,3 +64,21 @@ BOOL CInfoPanel::CanBeClosed() const
 }
 
 
+
+BOOL CInfoPanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	LPNMHDR pNmhdr = (LPNMHDR)lParam;
+
+	if (pNmhdr->hwndFrom == m_InfoTab.GetSafeHwnd())
+	{
+		if (pNmhdr->code == TCN_SELCHANGE)
+		{
+			m_InfoTab.Invalidate();
+		}
+	}
+
+
+	return CDockablePane::OnNotify(wParam, lParam, pResult);
+}

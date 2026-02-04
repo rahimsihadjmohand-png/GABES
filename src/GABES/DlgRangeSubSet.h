@@ -30,6 +30,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	void UpdateSliderBars();
 	void UpdateElementSelection();
 
 public: 
@@ -80,5 +81,6 @@ public:
 	afx_msg void OnCbnSelchangeComboRefFrames();
 	virtual void OnCancel();
 	afx_msg void OnBnClickedBtnApply();
+
 	CString strName;
 };

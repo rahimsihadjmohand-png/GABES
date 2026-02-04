@@ -161,52 +161,64 @@ void CInfoTab::UpdateInfo()
 	//=======================================================================================
 
 	//4. Analysis information
-	switch (BEM_3D::Element::m_IntegrationRule)
+	m_strCPVmthd = (BEM_3D::Element::m_bRigidBodyCPV ? _T("Rigid Body Displacement") : _T("Direct Evaluation"));
+
+
+
+	if (BEM_3D::Element::m_bUseAdaptiveCriterion)
 	{
-	case BEM_3D::_001_PT:
-		m_strIntegRule.Format(_T("%d Point"), 1);
-		break;
-
-	case BEM_3D::_003_PT:
-		m_strIntegRule.Format(_T("%d Points"), 3);
-		break;
-
-	case BEM_3D::_004_PT:
-		m_strIntegRule.Format(_T("%d Point"), 4);
-		break;
-
-	case BEM_3D::_007_PT:
-		m_strIntegRule.Format(_T("%d Points"), 7);
-		break;
-
-	case BEM_3D::_013_PT:
-		m_strIntegRule.Format(_T("%d Points"), 13);
-		break;
-
-	case BEM_3D::_028_PT:
-		m_strIntegRule.Format(_T("%d Points"), 28);
-		break;
-
-	case BEM_3D::_052_PT:
-		m_strIntegRule.Format(_T("%d Points"), 52);
-		break;
-
-	case BEM_3D::_056_PT:
-		m_strIntegRule.Format(_T("%d Points"), 56);
-		break;
-
-	case BEM_3D::_104_PT:
-		m_strIntegRule.Format(_T("%d Points"), 104);
-		break;
-
-	case BEM_3D::_112_PT:
-		m_strIntegRule.Format(_T("%d Points"), 112);
-		break;
-
-	case BEM_3D::_208_PT:
-		m_strIntegRule.Format(_T("%d Points"), 208);
-		break;
+		m_strIntegScheme = _T("Adaptive Integration Criterion");
 	}
+	else
+	{
+		switch (BEM_3D::Element::m_FixedIntegRule)
+		{
+		case BEM_3D::_001_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Point"), 1);
+			break;
+
+		case BEM_3D::_003_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 3);
+			break;
+
+		case BEM_3D::_004_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Point"), 4);
+			break;
+
+		case BEM_3D::_007_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 7);
+			break;
+
+		case BEM_3D::_013_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 13);
+			break;
+
+		case BEM_3D::_028_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 28);
+			break;
+
+		case BEM_3D::_052_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 52);
+			break;
+
+		case BEM_3D::_056_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 56);
+			break;
+
+		case BEM_3D::_104_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 104);
+			break;
+
+		case BEM_3D::_112_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 112);
+			break;
+
+		case BEM_3D::_208_PT:
+			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), 208);
+			break;
+		}
+	}
+	
 
 	m_str_Q_Matrix.Format(_T("[%d x %d]"), m_N, m_M);
 	m_str_RA_Matrix.Format(_T("[%d x %d]"), m_N, m_N);
@@ -469,7 +481,8 @@ void CInfoTab::OutputMaterialInfo(CDC* pDC)
 void CInfoTab::OutputAnalysisInfo(CDC* pDC)
 {
 	CString strProperties[] = {
-		  _T("Integ. Rule:"),
+		  _T("CPV Evaluation:"),
+		  _T("Integ. Scheme:"),
 		  _T("[Q] matrix:"),
 		  _T("[R] & [A] matrices:"),
 		  _T("{b} & {x} vectors:")
@@ -478,13 +491,14 @@ void CInfoTab::OutputAnalysisInfo(CDC* pDC)
 
 
 	CString strValues[] = {
-		m_strIntegRule,
+		m_strCPVmthd,
+		m_strIntegScheme,
 		m_str_Q_Matrix,
 		m_str_RA_Matrix,
 		m_str_bx_Vector
 	};
 
-	OutputInfo(pDC, strProperties, strValues, 4);
+	OutputInfo(pDC, strProperties, strValues, 5);
 }
 
 

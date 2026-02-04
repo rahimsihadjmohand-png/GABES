@@ -128,7 +128,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_ViewOptionsBar);
 	DockPane(&m_ModelTreePanel);
-	DockPane(&m_infoPanel);
+	m_infoPanel.DockToWindow(&m_ModelTreePanel, CBRS_ALIGN_BOTTOM);
 
 
 	// enable Visual Studio 2005 style docking window behavior
@@ -839,7 +839,6 @@ void CMainFrame::OnIdleUpdateCmdUI()
 	if (pView)
 		pView->OnUpdateCmdUI(this, TRUE);
 
-	m_infoPanel.UpdateInfo();
 	
 	if (pDoc)
 	{

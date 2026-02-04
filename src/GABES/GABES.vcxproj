@@ -47,7 +47,6 @@
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
-    <UseMpiLibrary1A>INTELMPI</UseMpiLibrary1A>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -56,7 +55,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
-    <UseMpiLibrary1A>INTELMPI</UseMpiLibrary1A>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -78,9 +76,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\vcpkg\installed\x64-windows\include;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\include;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
-    <LibraryPath>D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Debug;C:\vcpkg\installed\x64-windows\lib;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\lib;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
-    <ExecutablePath>C:\vcpkg\installed\x64-windows\bin;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\bin;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
+    <LibraryPath>D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Debug;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib</LibraryPath>
+    <ExecutablePath>C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -90,9 +88,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\vcpkg\installed\x64-windows\include;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\include;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
-    <LibraryPath>C:\vcpkg\installed\x64-windows\lib;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\lib;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Release;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
-    <ExecutablePath>C:\vcpkg\installed\x64-windows\bin;C:\Program Files %28x86%29\Intel\oneAPI\mpi\2021.16\bin;C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\include;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\Include;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\lib;D:\DOCTORAT\Programs\3D\3rd Party Software for Our 3D App\AHMED\out\build\x64-build\Release;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
+    <ExecutablePath>C:\Program Files %28x86%29\Intel\oneAPI\mkl\2025.2\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -105,7 +103,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;impi.lib;impicxx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -181,7 +179,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;Ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;impi.lib;impicxx.lib;ahmed.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;ahmed.lib;mkl_core.lib;mkl_intel_lp64.lib;mkl_sequential.lib;mkl_intel_thread.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -300,10 +298,6 @@
   <ItemGroup>
     <None Include="BEM_3D_02.reg" />
     <None Include="res\GABES.rc2" />
-    <None Include="res\Gismo\X_Axis.x" />
-    <None Include="res\Gismo\Y_Axis.x" />
-    <None Include="res\Gismo\Z_Axis.x" />
-    <None Include="res\Gizmo\Gizmo.x" />
     <None Include="res\Gizmo\X_Axis.x" />
     <None Include="res\Gizmo\Y_Axis.x" />
     <None Include="res\Gizmo\Z_Axis.x" />
@@ -314,6 +308,7 @@
     <ResourceCompile Include="GABES.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\ADAPTIVE_CRITERION.bmp" />
     <Image Include="res\BCs.bmp" />
     <Image Include="res\BEM_3D_02.ico" />
     <Image Include="res\BEM_3D_02Doc.ico" />

@@ -22,13 +22,19 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CComboBox cmbIntegRule;
-	int nIntegrationRule;
+	CComboBox cmbFixedIntegRule;
+	int nFixedIntegRule;
 	CStatic statImage;
-	CBitmap m_Bitmaps[11];
-	int m_BmpIDs[11];
+	CBitmap m_Bitmaps[12];
+	int m_BmpIDs[12];
 	afx_msg void OnCbnSelchangeComboIntegrationRule();
 	virtual void OnOK();
 	BOOL bRigidBody;
 	BOOL bDirectCPV;
+	BOOL bAdaptiveCriterion;
+	BOOL bFixedCubature;
+
+	afx_msg void OnBnClickedRadioAdaptiveCriterion();
+	afx_msg void OnBnClickedRadioFixedCubatureRule();
+	virtual BOOL OnInitDialog();
 };

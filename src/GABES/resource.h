@@ -82,6 +82,8 @@
 #define IDI_ICON_REFFRAME               394
 #define IDI_ICON_REFFRAMES              395
 #define IDD_DLG_REFFRAME                396
+#define IDB_ADAPTIVE_CRITERION          400
+#define IDB_BITMAP4                     400
 #define IDC_CMB_COOR_SYS_RANGE_SUBSET   1000
 #define IDC_CMB_COORD_SYSTEM            1000
 #define IDC_STATIC_DIM1                 1001
@@ -250,6 +252,8 @@
 #define IDC_SLIDER_MAX_DIM3             1135
 #define IDC_BTN_APPLY                   1136
 #define IDC_EDIT_SUBSET_NAME            1138
+#define IDC_RADIO_ADAPTIVE_CRITERION    1140
+#define IDC_RADIO_FIXED_CUBATURE_RULE   1141
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_FILE_LOAD_OBJECT_FILE        32771
 #define ID_VIEW_DUMMY                   32777
@@ -313,16 +317,15 @@
 #define ID_MODELING_ADD_FRAME           32838
 #define ID_VIEW_MOUSEACTION_NODE_SELECTION 32842
 #define ID_VIEW_ISOMETRIC               32846
-#define ID_BUTTON2                      32847
 #define ID_BCS_TRACTION_FREE            32847
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        400
+#define _APS_NEXT_RESOURCE_VALUE        401
 #define _APS_NEXT_COMMAND_VALUE         32848
-#define _APS_NEXT_CONTROL_VALUE         1139
+#define _APS_NEXT_CONTROL_VALUE         1142
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

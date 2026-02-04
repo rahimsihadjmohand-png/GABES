@@ -17,7 +17,10 @@ public:
 
 
 
-	void UpdateInfo() { m_InfoTab.UpdateInfo(); }
+	void UpdateInfo() 
+	{ 
+		m_InfoTab.UpdateInfo(); 
+	}
 
 public:
 	CInfoTab m_InfoTab;
@@ -31,6 +34,7 @@ protected:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 };
 
 
