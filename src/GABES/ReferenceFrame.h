@@ -23,6 +23,7 @@ namespace BEM_3D
 
 		void SetCoordinateRanges(const Model& rModel);
 
+		void Serialize(CArchive& ar);
 
 	public:
 		Vertex m_Origin;  // The coordinate of the origine

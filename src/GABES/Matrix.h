@@ -41,6 +41,10 @@ namespace BEM_3D
 
 		double Frobenius()const;
 
+
+		// Storage 
+		void Serialize(CArchive& ar);
+
 	public:
 		double _11, _12, _13;
 		double _21, _22, _23;

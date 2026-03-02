@@ -315,3 +315,61 @@ void ElementSubSet::SetTractionVector(const Vector& Tv)
 	m_Un = 0.0;
 	m_Tn = 0.0;
 }
+
+
+
+
+
+
+void ElementSubSet::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		// Store the subset name
+		ar << m_strName;
+		// Store the size of the index container
+		ar << m_Indices.size();
+		// Store the index container
+		for (int idx : m_Indices)
+			ar << idx;
+		// store the fixed flag info
+		ar << m_bFixed_X;
+		ar << m_bFixed_Y;
+		ar << m_bFixed_Z;
+
+		// store the normal info
+		ar << m_Un; 
+		ar << m_bNormalDisplacement;
+		ar << m_Tn;
+		ar << m_bNormalTraction;
+	}
+	else
+	{
+		// Load the subset name
+		ar >> m_strName;
+		// Load the size of the index container
+		size_t N = 0;
+		ar >> N;
+		// Load the index container
+		for (size_t i = 0; i < N; i++)
+		{
+			int idx;
+			ar >> idx;
+			m_Indices.push_back(idx);
+		}
+		// load the fixed flag info
+		ar >> m_bFixed_X;
+		ar >> m_bFixed_Y;
+		ar >> m_bFixed_Z;
+
+		// load the normal info
+		ar >> m_Un;
+		ar >> m_bNormalDisplacement;
+		ar >> m_Tn;
+		ar >> m_bNormalTraction;
+	}
+
+	U.Serialize(ar);
+	T.Serialize(ar);
+
+}

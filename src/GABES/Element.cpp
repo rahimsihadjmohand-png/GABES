@@ -1528,13 +1528,6 @@ double Element::GetValue(int l, OUTPUT_MODE om)const
 		Val = pEps->_23;
 		break;
 
-	case BEM_3D::E_VON_MISES:
-		Val = pEps->VonMises();
-		break;
-
-	case BEM_3D::E_TRESCA:
-		break;
-
 	default:
 		break;
 	}
@@ -2129,4 +2122,37 @@ INTEG_RULE Element::SelectIntegrationRule(const Vertex& SrcPt, int nKernelType) 
 	
 
 	return INTEG_RULE::_208_PT;  // Impossible value
+}
+
+
+
+
+//===================================================================================================
+void Element::Serialize(CArchive& ar)
+{
+	m_n.Serialize(ar);
+	m_T1.Serialize(ar);
+	m_T2.Serialize(ar);
+	m_T3.Serialize(ar);
+	m_Sig1.Serialize(ar);
+	m_Sig2.Serialize(ar);
+	m_Sig3.Serialize(ar);
+	m_Eps1.Serialize(ar);
+	m_Eps2.Serialize(ar);
+	m_Eps3.Serialize(ar);
+
+
+	if (ar.IsStoring())
+	{
+		ar << m_I1;
+		ar << m_I2;
+		ar << m_I3;
+	}
+	else
+	{
+		// TODO: add loading code here
+		ar >> m_I1;
+		ar >> m_I2;
+		ar >> m_I3;
+	}
 }

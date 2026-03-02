@@ -4,7 +4,7 @@
 using namespace BEM_3D;
 
 
-double Vertex::m_DeformationScale = 100000.0;
+double Vertex::m_DeformationScale = 1.0;
 bool Vertex::m_bIncludeDisplacements = false;
 IDirect3DDevice9* Vertex::m_pD3ddev = nullptr; 
 LPD3DXMESH Vertex::m_pMesh = nullptr;          
@@ -176,4 +176,29 @@ void Vertex::Draw(bool bPostTreatment)const
 
 
 	m_pD3ddev->SetTransform(D3DTS_WORLD, &world);
+}
+
+
+
+
+void Vertex::Serialize(CArchive& ar)
+{
+	Vector::Serialize(ar);
+
+	U.Serialize(ar);
+
+	if (ar.IsStoring())
+	{
+		ar << m_bFixed_X;
+		ar << m_bFixed_Y;
+		ar << m_bFixed_Z;
+		ar << m_bGeometrical;
+	}
+	else
+	{
+		ar >> m_bFixed_X;
+		ar >> m_bFixed_Y;
+		ar >> m_bFixed_Z;
+		ar >> m_bGeometrical;
+	}
 }

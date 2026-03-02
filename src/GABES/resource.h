@@ -75,6 +75,7 @@
 #define IDR_MESH_Y_AXIS                 382
 #define IDR_MESH_X_AXIS                 383
 #define IDD_DLG_SET_RAM_BAIL            384
+#define IDD_DLG_SET_RAM_QUOTA           384
 #define IDD_DLG_SOLVER_PARAMETERS       386
 #define IDD_DLG_DOMAIN_NODE_RESPONSE    389
 #define IDD_DLG_GENERATE_DOMAIN_RESPONSE_REPORT 391
@@ -84,6 +85,8 @@
 #define IDD_DLG_REFFRAME                396
 #define IDB_ADAPTIVE_CRITERION          400
 #define IDB_BITMAP4                     400
+#define IDD_DLG_SUBSET_BCS              401
+#define IDD_DLG_GENERATE_POINT_GRID     404
 #define IDC_CMB_COOR_SYS_RANGE_SUBSET   1000
 #define IDC_CMB_COORD_SYSTEM            1000
 #define IDC_STATIC_DIM1                 1001
@@ -140,7 +143,9 @@
 #define IDC_COMBO_NUMBER_FORMAT         1030
 #define IDC_EDIT_NUM_DECIMALS           1031
 #define IDC_SPIN1                       1032
+#define IDC_SPIN2                       1033
 #define IDC_STATIC_TIME                 1034
+#define IDC_SPIN3                       1034
 #define IDC_STATIC_CURRENT_JOB          1035
 #define IDC_EDIT_RAM_BAIL               1036
 #define IDC_RADIO_DIRECT_EVALUATION     1037
@@ -165,9 +170,16 @@
 #define IDC_EDIT_STEPS                  1054
 #define IDC_SPIN_STEPS                  1055
 #define IDC_EDIT_X                      1056
+#define IDC_EDIT_DIM1                   1056
+#define IDC_EDIT_MIN_LEAF_SIZE          1056
 #define IDC_EDIT_Y                      1057
+#define IDC_EDIT_DIM2                   1057
+#define IDC_SPIN_MIN_LEAF_SIZE          1057
 #define IDC_EDIT_Z                      1058
+#define IDC_EDIT_DIM3                   1058
+#define IDC_EDIT_MAX_RANK               1058
 #define IDC_CHECK_U1                    1059
+#define IDC_SPIN_MAX_RANK               1059
 #define IDC_EDIT_U2                     1061
 #define IDC_CHECK_U2                    1062
 #define IDC_CHECK_U3                    1063
@@ -254,6 +266,27 @@
 #define IDC_EDIT_SUBSET_NAME            1138
 #define IDC_RADIO_ADAPTIVE_CRITERION    1140
 #define IDC_RADIO_FIXED_CUBATURE_RULE   1141
+#define IDC_EDIT_NAME                   1142
+#define IDC_CHECK_UN                    1146
+#define IDC_CHECK_TN                    1154
+#define IDC_EDIT_T1                     1155
+#define IDC_EDIT_T2                     1156
+#define IDC_EDIT_T3                     1157
+#define IDC_STATIC_NBR_PTS_DIM1         1158
+#define IDC_STATIC_NBR_PTS_DIM2         1159
+#define IDC_STATIC_NBR_PTS_DIM3         1160
+#define IDC_EDIT_N1                     1161
+#define IDC_EDIT_N2                     1162
+#define IDC_EDIT_N3                     1163
+#define IDC_EDIT_COORD_FRAME            1165
+#define IDC_EDIT_COORD_SYS              1166
+#define IDC_COMBO_REF_FRAME             1167
+#define IDC_COMBO_COORD_SYS             1168
+#define IDC_GABES_GITHUB_LINK           1170
+#define IDC_RAHIM_EMAIL_LINK            1172
+#define IDC_RAHIM_RESEARCH_GATE_LINK    1173
+#define IDC_BUTTON2                     1174
+#define IDC_BUTTON_COPY_EMAIL           1174
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_FILE_LOAD_OBJECT_FILE        32771
 #define ID_VIEW_DUMMY                   32777
@@ -323,9 +356,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        401
+#define _APS_NEXT_RESOURCE_VALUE        407
 #define _APS_NEXT_COMMAND_VALUE         32848
-#define _APS_NEXT_CONTROL_VALUE         1142
+#define _APS_NEXT_CONTROL_VALUE         1175
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

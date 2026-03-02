@@ -16,6 +16,8 @@
 #include "PaletteCtrl.h"
 #include "DlgReferenceFrame.h"
 #include "DlgRangeSubSet.h"
+#include "DlgGenerateDomainResponseReport.h"
+#include "DlgDomainNodeResponse.h"
 #include "GizmoWnd.h"
 
 
@@ -47,13 +49,13 @@ public:
 	float m_Height, m_H2;
 	const float m_fNear, m_fFar;
 	IDirect3DDevice9* GetD3dDevice() { return m_pD3ddev; }
+	BEM_3D::ReferenceFrame* m_pTempRefFrame; // This is used for visualization while we create a new frame
 
 
 //==========Direct3D Variables ===========
 private:
 	IDirect3DDevice9* m_pD3ddev;
 	CGizmoWnd m_GizmoWnd;
-	BEM_3D::ReferenceFrame* m_pTempRefFrame; // This is used for visualization while we create a new frame
 
 	float m_CameraDistance;  // The distance from origne to the camera
 	float m_Theta;           // The Longitude angle of the camera
@@ -77,11 +79,13 @@ public:
 	
 
 	BEM_3D::ElementSubSet* m_pSelectedSubSet;
-	bool m_bPostTreatment;
+	bool m_bPostProcessing;
 	CPaletteCtrl m_PaletteCtrl; 
 	CDlgReferenceFrame m_DlgReferenceFrame;
 	CDlgRangeSubSet* m_pDlgRangeSubSet;  // Created as pointer in order to instanciate it in the OnInitialUpdate() Messagehandler
 	                                     // Because some constructor arguments are not ready at the View Creation
+	CDlgGenerateDomainResponseReport* m_pDlgGenDomainResponseReport; // The same observation as m_pDlgRangeSubSet
+	CDlgDomainNodeResponse* m_pDlgDomainNodeResponse;
 //=================================================
 
 // Operations
@@ -219,6 +223,15 @@ public:
 	afx_msg void OnViewIsometric();
 	afx_msg void OnBcsTractionFree();
 	afx_msg void OnUpdateBcsTractionFree(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateFileLoadMeshFile(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateModelingAddFrame(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemSetMaterialProperties(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemSetMemoryBail(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemSetIntegrationParameters(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemSolveBoundaryValueProblem(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemPaletteSettings(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemGetDomainNodeResponse(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemGenerateReport(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GABESView.cpp

@@ -28,7 +28,7 @@ namespace BEM_3D
 		//double f(double Theta, int i, int j, int l)const;
 		//double F(double Ro, double Theta, int i, int j, int l)const;
 		//double H(double Theta, int i, int j, int l)const;
-		void ComputeReusableShapeFunctions();   // This function is called once !!!!!
+		virtual void ComputeReusableShapeFunctions();   // This function is called once !!!!!
 
 			
 

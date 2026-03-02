@@ -299,3 +299,23 @@ double Matrix::Get(int i, int j)const
 
 	return 0.0; // Impossible value
 }
+
+
+
+
+// Storage 
+void Matrix::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		ar << _11; ar << _12; ar << _13;
+		ar << _21; ar << _22; ar << _23;
+		ar << _31; ar << _32; ar << _33;
+	}
+	else
+	{
+		ar >> _11; ar >> _12; ar >> _13;
+		ar >> _21; ar >> _22; ar >> _23;
+		ar >> _31; ar >> _32; ar >> _33;
+	}
+}

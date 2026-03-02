@@ -489,7 +489,6 @@ void CMainFrame::OnCbnSelChangeOutputMode()
 		pCmbBtn->AddItem(_T("Sig_13"));
 		pCmbBtn->AddItem(_T("VonMises"));
 		pCmbBtn->SelectItem(6);
-		//pView->pModel->SetOutputMode(BEM_3D::S_VON_MISES);
 		break;
 
 	case 3: // Strain
@@ -499,9 +498,7 @@ void CMainFrame::OnCbnSelChangeOutputMode()
 		pCmbBtn->AddItem(_T("Eps_12"));
 		pCmbBtn->AddItem(_T("Eps_23"));
 		pCmbBtn->AddItem(_T("Eps_13"));
-		pCmbBtn->AddItem(_T("VonMises"));
-		pCmbBtn->SelectItem(6);
-		//pView->pModel->SetOutputMode(BEM_3D::S_VON_MISES);
+		pCmbBtn->SelectItem(0);
 		break;
 
 
@@ -514,7 +511,7 @@ void CMainFrame::OnCbnSelChangeOutputMode()
 		MAKEWPARAM(pComboBox->GetDlgCtrlID(), CBN_SELCHANGE),
 		(LPARAM)pComboBox->GetSafeHwnd());
 
-	pView->pModel->UpdateVertexBuffer(pView->GetD3dDevice(), pView->m_bPostTreatment);
+	pView->pModel->UpdateVertexBuffer(pView->GetD3dDevice(), pView->m_bPostProcessing);
 }
 
 
@@ -631,10 +628,7 @@ void CMainFrame::OnCbnSelChangeVariable()
 			pView->pModel->SetOutputMode(BEM_3D::E_13);
 			break;
 
-		case 6: // VonMises
-			pView->pModel->SetOutputMode(BEM_3D::E_VON_MISES);
-			break;
-
+		
 		default:
 			pView->pModel->SetOutputMode(BEM_3D::NONE);
 			break;
@@ -646,7 +640,7 @@ void CMainFrame::OnCbnSelChangeVariable()
 		break;
 	}
 
-	pView->pModel->UpdateVertexBuffer(pView->GetD3dDevice(), pView->m_bPostTreatment);
+	pView->pModel->UpdateVertexBuffer(pView->GetD3dDevice(), pView->m_bPostProcessing);
 }
 
 
@@ -715,8 +709,6 @@ LRESULT CMainFrame::OnInitializeViewOptionsToolbar(WPARAM, LPARAM)
 		case BEM_3D::E_12:
 		case BEM_3D::E_13:
 		case BEM_3D::E_23:
-		case BEM_3D::E_VON_MISES:
-		case BEM_3D::E_TRESCA:
 			nSel = 3;
 			break;
 
@@ -813,10 +805,6 @@ LRESULT CMainFrame::OnInitializeViewOptionsToolbar(WPARAM, LPARAM)
 			nSel = 5;
 			break;
 
-		case BEM_3D::E_VON_MISES:
-			nSel = 6;
-			break;
-
 		default:
 			break;
 		}
@@ -854,52 +842,92 @@ void CMainFrame::OnIdleUpdateCmdUI()
 		// Get a reference to the Model
 		const BEM_3D::Model& rModel = pDoc->m_Model;
 
+		//
 
-		// Get the index of the Hittested element
-		int nHTDElm = -1;
-
-		if (pView)
-			nHTDElm = pView->m_HitTestedElmIdx;
-
-		if (nHTDElm < 0)
+		// Check the mouse action
+		switch (pView->m_MouseAction)
 		{
-			Pane->SetText(_T(""));
+		case MOUSE_ACTION::ELEMENT_SELECTION:
+		{
+			// Get the index of the Hittested element
+			int nHTDElm = -1;
+
+			if (pView)
+				nHTDElm = pView->m_HitTestedElmIdx;
+
+			if (nHTDElm < 0)
+			{
+				Pane->SetText(_T(""));
+				Pane->SetRect(rcPane);
+				m_wndStatusBar.RecalcLayout();
+				m_wndStatusBar.RedrawWindow();
+				return;
+			}
+
+			// Get the Adress of the Hittested element
+			const BEM_3D::Element* pHTDElm = rModel.GetElements()[nHTDElm];
+
+			if (pHTDElm == nullptr)
+			{
+				Pane->SetText(_T(""));
+				Pane->SetRect(rcPane);
+				m_wndStatusBar.RecalcLayout();
+				m_wndStatusBar.RedrawWindow();
+				return;
+			}
+
+			// Get the 3 Vertices
+			BEM_3D::Vertex* pV1 = pHTDElm->m_pV1;
+			BEM_3D::Vertex* pV2 = pHTDElm->m_pV2;
+			BEM_3D::Vertex* pV3 = pHTDElm->m_pV3;
+
+
+			rcPane.SetRect(rcPane.left, rcPane.top, rcPane.left + 500, rcPane.bottom);
+
+			CString strHTDElm;
+			strHTDElm.Format(_T("Element of index [%d] ===> { V1(%.2f, %.2f, %.2f), V2(%.2f, %.2f, %.2f), V3(%.2f, %.2f, %.2f) }"),
+				nHTDElm, pV1->x, pV1->y, pV1->z, pV2->x, pV2->y, pV2->z, pV3->x, pV3->y, pV3->z);
+
+			Pane->SetText(strHTDElm);
 			Pane->SetRect(rcPane);
 			m_wndStatusBar.RecalcLayout();
 			m_wndStatusBar.RedrawWindow();
-			return;
 		}
+		break;
 
-		// Get the Adress of the Hittested element
-		const BEM_3D::Element* pHTDElm = rModel.GetElements()[nHTDElm];
-
-		if (pHTDElm == nullptr)
+		case MOUSE_ACTION::POINT_SELECTION:
 		{
-			Pane->SetText(_T(""));
+			// Get the the Hittested point
+			BEM_3D::Vertex* pHitTestedPt = nullptr;
+			if (pView)
+				pHitTestedPt = pView->m_pHitTestedPoint;
+
+			if (pHitTestedPt == nullptr)
+			{
+				Pane->SetText(_T(""));
+				Pane->SetRect(rcPane);
+				m_wndStatusBar.RecalcLayout();
+				m_wndStatusBar.RedrawWindow();
+				return;
+			}
+
+			
+			
+
+			rcPane.SetRect(rcPane.left, rcPane.top, rcPane.left + 500, rcPane.bottom);
+
+			CString strPoint;
+			strPoint.Format(_T("Point of coordinates ===> (%.2f, %.2f, %.2f)"), 
+				pHitTestedPt->x, pHitTestedPt->y, pHitTestedPt->z);
+
+			Pane->SetText(strPoint);
 			Pane->SetRect(rcPane);
 			m_wndStatusBar.RecalcLayout();
 			m_wndStatusBar.RedrawWindow();
-			return;
 		}
-
-		// Get the 3 Vertices
-		BEM_3D::Vertex* pV1 = pHTDElm->m_pV1;
-		BEM_3D::Vertex* pV2 = pHTDElm->m_pV2;
-		BEM_3D::Vertex* pV3 = pHTDElm->m_pV3;
-
-		
-		rcPane.SetRect(rcPane.left, rcPane.top, rcPane.left + 500, rcPane.bottom);
-
-		CString strHTDElm;
-		strHTDElm.Format(_T("Element of index [%d] ===> { V1(%.2f, %.2f, %.2f), V2(%.2f, %.2f, %.2f), V3(%.2f, %.2f, %.2f) }"),
-			nHTDElm, pV1->x, pV1->y, pV1->z, pV2->x, pV2->y, pV2->z, pV3->x, pV3->y, pV3->z);
-
-		Pane->SetText(strHTDElm);
-		Pane->SetRect(rcPane);
-		m_wndStatusBar.RecalcLayout();
-		m_wndStatusBar.RedrawWindow();
+		break;
+		}	
 	}
-	
 }
 
 

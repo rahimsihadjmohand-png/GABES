@@ -156,3 +156,20 @@ bool Vector::operator != (const Vector& rhs)const
 {
 	return x != rhs.x || y != rhs.y || z != rhs.z;
 }
+
+
+void Vector::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		ar << x;
+		ar << y;
+		ar << z;
+	}
+	else
+	{
+		ar >> x;
+		ar >> y;
+		ar >> z;
+	}
+}

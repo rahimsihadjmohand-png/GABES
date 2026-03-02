@@ -3,15 +3,14 @@
 #include "Model.h"
 // CDlgWaitLengthyOperation dialog
 
-#define UM_PRELAUNCH_TIMER (WM_USER + 500)
-#define UM_LAUNCH_TIMER (WM_USER + 600)
+
 
 class CDlgWaitLengthyOperation : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDlgWaitLengthyOperation)
 
 public:
-	CDlgWaitLengthyOperation(BEM_3D::Model* _pModel, int _nOperation, CWnd* pParent = nullptr);   // standard constructor
+	CDlgWaitLengthyOperation(BEM_3D::Model* _pModel, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDlgWaitLengthyOperation();
 
 // Dialog Data
@@ -28,7 +27,7 @@ protected:
 public:
 	CProgressCtrl PrgsAdvance;
 	BEM_3D::Model* pModel;
-	int nOperation;
+	bool m_bConstructionStage;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual BOOL OnInitDialog();
 	virtual void OnCancel();

@@ -44,19 +44,16 @@ private:
 	// Analysis information
 	CString m_strCPVmthd;           // the method used to treat CPV integrals
 	CString m_strIntegScheme;       // the used integration Scheme (Fixed cubature or Adaptive scheme)
-	CString m_str_Q_Matrix;         // the dimension of Q matirx
-	CString m_str_RA_Matrix;        // the dimension of R and A matrix
+	CString m_str_A_Matrix;         // the dimension of A matrix
 	CString m_str_bx_Vector;        // the dimension of b and x vectors
 
 	// Memory information
 	CString m_str_Total_Req;        // The total Required Memory 
 	CString m_str_Model_Req;        // The Memory Required for Model
-	CString m_str_Q_Req;            // the Q matirx Required Memory
-	CString m_str_RA_Req;           // the R and A matrix Required Memory
-	CString m_str_Quota_Mem;         // the RAM Quota
-	CString m_str_Q_Mem;            // the Q matrix Actual Quota
-	CString m_str_R_Mem;            // the R matrix Actual Quota
-	CString m_str_A_Mem;            // the A matrix Actual Quota
+	CString m_str_A_Req;            // the A matrix Required Memory
+	CString m_str_bx_Req;           // the b & x vector Required Memory
+	CString m_str_A_Quota;           // the RAM Quota
+	CString m_str_A_Storage;          // the A matrix Actual Storage
 
 private:
 

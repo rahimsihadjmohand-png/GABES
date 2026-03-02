@@ -117,7 +117,7 @@ void ReferenceFrame::Draw()const
 	m_pD3ddev->GetTransform(D3DTS_WORLD, &matWorld);
 
 
-	float Scale = m_bSelected ? 0.1f : 0.05f;
+	float Scale = m_bSelected ? 0.15f : 0.05f;
 
 	D3DXMatrixScaling(&matScale, Scale, Scale, Scale);
 	D3DXMatrixTranslation(&matTrans, (float)m_Origin.x, (float)m_Origin.y, (float)m_Origin.z);
@@ -335,3 +335,45 @@ void ReferenceFrame::SetCoordinateRanges(const BEM_3D::Model& rModel)
 			m_Rs_max = Rs;
 	}
 }
+
+
+
+void ReferenceFrame::Serialize(CArchive& ar)
+{
+	m_Origin.Serialize(ar);
+	m_Vx.Serialize(ar);
+	m_Vy.Serialize(ar);
+	m_Vz.Serialize(ar);
+
+
+	if (ar.IsStoring())
+	{
+		ar << m_X_min;
+		ar << m_X_max;
+		ar << m_Y_min;
+		ar << m_Y_max;
+		ar << m_Z_min;
+		ar << m_Z_max;
+		ar << m_Rc_min;
+		ar << m_Rc_max;
+		ar << m_Rs_min;
+		ar << m_Rs_max;
+		ar << m_strName;
+	}
+	else
+	{
+		ar >> m_X_min;
+		ar >> m_X_max;
+		ar >> m_Y_min;
+		ar >> m_Y_max;
+		ar >> m_Z_min;
+		ar >> m_Z_max;
+		ar >> m_Rc_min;
+		ar >> m_Rc_max;
+		ar >> m_Rs_min;
+		ar >> m_Rs_max;
+		ar >> m_strName;
+	}
+}
+
+		

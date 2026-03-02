@@ -260,6 +260,9 @@ void CDlgReferenceFrame::OnBnClickedButtonApply()
 	// Update the Tree Control
 	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
 	pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+
+	// Set the Modified Flag to true (default argument)
+	pDoc->SetModifiedFlag();
 }
 
 void CDlgReferenceFrame::OnOK()
@@ -270,29 +273,31 @@ void CDlgReferenceFrame::OnOK()
 	OnBnClickedButtonApply();
 
 
+	m_pCurrRefFrame->m_bSelected = false;
+	m_pCurrRefFrame->SetCoordinateRanges(pDoc->m_Model);
+
+
 	// If the frame is new add it
 	std::vector<BEM_3D::ReferenceFrame*>& rRefFrames = pDoc->m_ReferenceFrames;
 
 	if (std::find(rRefFrames.begin(), rRefFrames.end(), m_pCurrRefFrame) == rRefFrames.end())  // New frame
 	{
-		m_pCurrRefFrame->m_bSelected = false;
-
-		m_pCurrRefFrame->SetCoordinateRanges(pDoc->m_Model);
-
 		rRefFrames.push_back(m_pCurrRefFrame);
-		m_pCurrRefFrame = nullptr;
 
 		// Update the Tree Control
 		CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
 		pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+		
+		// Make the view Temporary frame nullptr to avoid stray references
+		CGABESView* pView = (CGABESView*)pMainFrame->GetActiveView();
+		pView->m_pTempRefFrame = nullptr;
 	}
-	else // Modify existing frame
-	{
-		m_pCurrRefFrame->m_bSelected = false;
-		m_pCurrRefFrame->SetCoordinateRanges(pDoc->m_Model);
-		m_pCurrRefFrame = nullptr;
-	}
+	
 
+	m_pCurrRefFrame = nullptr;
+
+	// Unselect all reference frames
+	pDoc->UnselectAllRefFrames();
 
 	CDialogEx::OnOK();
 }
@@ -310,6 +315,9 @@ void CDlgReferenceFrame::OnCancel()
 		m_pCurrRefFrame = nullptr;
 	}
 
+
+	// Unselect all reference frames
+	pDoc->UnselectAllRefFrames();
 
 	CDialogEx::OnCancel();
 }

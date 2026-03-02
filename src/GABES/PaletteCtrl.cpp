@@ -131,7 +131,6 @@ void CPaletteCtrl::OnPaint()
 		_T("Eps_12 Strain"),
 		_T("Eps_23 Strain"),
 		_T("Eps_13 Strain"),
-		_T("Von-Mises Strain"),
 	};
 	
 	int nMode = -1;
@@ -209,10 +208,6 @@ void CPaletteCtrl::OnPaint()
 
 	case BEM_3D::E_13:
 		nMode = 16;
-		break;
-
-	case BEM_3D::E_VON_MISES:
-		nMode = 17;
 		break;
 
 	default:

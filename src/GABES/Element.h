@@ -64,9 +64,6 @@ namespace BEM_3D
 		E_12, // Eps_12
 		E_13, // Eps_13
 		E_23, // Eps_23
-		E_VON_MISES, // Von Mises stress
-		E_TRESCA, // Tresca stress
-
 	};
 
 	enum ELEMENT_TYPE
@@ -232,8 +229,10 @@ namespace BEM_3D
 		virtual double Pr(int i, int j, int l) const { return 0.0; }
 
 		// Utilitary static functions
-		static int RuleToIndex(INTEG_RULE rule); // Gets the index of the rule Array from the identifiant of the Rule 
+		static int RuleToIndex(INTEG_RULE rule); // Gets the index of the rule Array from the identifiant of the Rule
 		static int RuleToSize(INTEG_RULE rule); // Gets the Size of the rule Array from the identifiant of the Rule
+		static INTEG_RULE IndexToRule(int idx); // Gets the identifiant of the rule from the index of the rule Array
+
 		static void Get1DGaussianRule(double Xi[], double W[], int N);
 		static void Construct2DGaussianRule(ITND _2D_Rule[], int N1, int N2);
 
@@ -249,6 +248,10 @@ namespace BEM_3D
 		virtual double N1s(int nRule, int nNode)const = 0;
 		virtual double N2s(int nRule, int nNode)const = 0;
 		virtual double N3s(int nRule, int nNode)const = 0;
+
+
+	private:
+		virtual void ComputeReusableShapeFunctions() = 0;
 
 
 	public:
@@ -276,6 +279,9 @@ namespace BEM_3D
 	//========================= Utility GUI Functions ===============================
 		bool GetIntersectingElm(const D3DXVECTOR3& P1, const D3DXVECTOR3& P2, float* pAlpha, const D3DXMATRIX& rWorld)const;
 	//=================================================================================
+
+	    // Storage
+	    virtual void Serialize(CArchive& ar);
 
 	public:
 		// Geometrical data

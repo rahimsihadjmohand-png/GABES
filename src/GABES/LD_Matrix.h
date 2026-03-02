@@ -124,6 +124,7 @@ namespace BEM_3D
 
 		// Clean helper routine
 		void CleanRamStorage();
+		void DeleteOOCFile() { m_File.Delete(); }
 
 		// Keep in Mind that m_File must be opened before any operations on Input/Output!!
 
@@ -250,7 +251,7 @@ namespace BEM_3D
 		m_M = M;
 
 		// Calculate the offset index in out of core storage
-		uint64_t tempOffset = (uint64_t)m_MaxRamAlloc * 1024 * 1024 / (m_N * sizeof(T));
+		uint64_t tempOffset = (uint64_t)m_MaxRamAlloc * 1024ull * 1024ull / ((uint64_t)m_N * sizeof(T));
 		m_Offset_OOC = (unsigned)(tempOffset);
 
 		// Allocate Memory for Inner core storage and preset its contents to 0
@@ -270,7 +271,7 @@ namespace BEM_3D
 		if (m_M > m_Offset_OOC)
 		{
 			unsigned nCols = m_M - m_Offset_OOC;
-			uint64_t dwSize = nCols * m_N * sizeof(T);
+			uint64_t dwSize = (uint64_t)nCols * (uint64_t)m_N * sizeof(T);
 			m_File.Init(dwSize);
 		}
 	}

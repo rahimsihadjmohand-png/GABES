@@ -9,7 +9,7 @@
 // Copyright (C) Microsoft Corporation
 // All rights reserved.
 
-// BEM_3D_02.h : main header file for the BEM_3D_02 application
+// GABES.h : main header file for the GABES application
 //
 #pragma once
 
@@ -20,14 +20,14 @@
 #include "resource.h"       // main symbols
 
 
-// CBEM3DApp:
-// See BEM_3D_02.cpp for the implementation of this class
+// CGABESApp:
+// See GABES.cpp for the implementation of this class
 //
 
-class CBEM3DApp : public CWinAppEx
+class CGABESApp : public CWinAppEx
 {
 public:
-	CBEM3DApp() noexcept;
+	CGABESApp() noexcept;
 
 
 // Overrides
@@ -47,4 +47,4 @@ public:
 	virtual BOOL OnIdle(LONG lCount);
 };
 
-extern CBEM3DApp theApp;
+extern CGABESApp theApp;

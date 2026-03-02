@@ -34,6 +34,10 @@ namespace BEM_3D
 		// Direct 3D Functions
 		void DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const;
 
+
+		// Storage
+		void Serialize(CArchive& ar);
+
 	public:
 		CString m_strName;
 		std::vector<int> m_Indices;
@@ -42,11 +46,15 @@ namespace BEM_3D
 		static bool m_bShowFixations;
 		static bool m_bShowDispVectors;
 		static bool m_bShowTracVectors;
+		
 		Vector U; // The displacement vector
+		
 		Vector T; // The traction vector
+		
 		bool m_bFixed_X;
 		bool m_bFixed_Y;
 		bool m_bFixed_Z;
+		
 		double m_Un; bool m_bNormalDisplacement;
 		double m_Tn; bool m_bNormalTraction;
 

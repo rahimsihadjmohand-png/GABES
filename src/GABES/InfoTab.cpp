@@ -220,8 +220,7 @@ void CInfoTab::UpdateInfo()
 	}
 	
 
-	m_str_Q_Matrix.Format(_T("[%d x %d]"), m_N, m_M);
-	m_str_RA_Matrix.Format(_T("[%d x %d]"), m_N, m_N);
+	m_str_A_Matrix.Format(_T("[%d x %d]"), m_N, m_N);
 	m_str_bx_Vector.Format(_T("[%d]"), m_N);
 	// ===================================================================================
 	
@@ -234,41 +233,28 @@ void CInfoTab::UpdateInfo()
 	double Model_Mem = Elems_Mem + Vertex_Mem + V_Dof_Mem;
 
 	// Mat-Vec Memory
-	double Q_Mem = (double)(m_N * m_M * sizeof(double));
-	double RA_Mem = (double)(m_N * m_N * sizeof(double));
-	double bx_Mem = (double)(m_N * sizeof(double));
+	double A_Mem = (double)m_N * (double)m_N * sizeof(double);
+	double bx_Mem = (double)m_N * sizeof(double);
 
 	// Total Memory
-	double Total_Mem = Model_Mem + Q_Mem + 2.0 * (RA_Mem + bx_Mem);
+	double Total_Mem = Model_Mem + A_Mem + 2.0 * bx_Mem;
 
-	// Remainig Matrix Memory
-	double Ram_Quota = (double)rModel.m_RAM_Quota_Gb * pow(1024.0, 3.0);
-	double Rem_Mat_Mem = max(0.0, Ram_Quota - Model_Mem - 2.0 * bx_Mem);
-	double Req_Mat_Mem = Q_Mem + 2.0 * RA_Mem;
-
-	// Calculate the Quotas for matrices Q, R and A
+	// Get the Quotas for matrices A
 	double Gb = 1024.0 * 1024.0 * 1024.0;
-	double Q_Quota = (double)rModel.GetQ_Quota() * Gb;
-	double R_Quota = (double)rModel.GetR_Quota() * Gb;
 	double A_Quota = (double)rModel.GetA_Quota() * Gb;
 
-	double Q_Ram = min(Q_Quota, Q_Mem);
-	double R_Ram = min(R_Quota, RA_Mem);
-	double A_Ram = min(A_Quota, RA_Mem);
+	
+	double A_Ram = min(A_Mem, A_Quota);
 
-	double Q_Ooc = max(Q_Mem - Q_Ram, 0);
-	double R_Ooc = max(RA_Mem - R_Ram, 0);
-	double A_Ooc = max(RA_Mem - A_Ram, 0);
+	double A_Ooc = max(A_Mem - A_Ram, 0);
 
 	// Set the memory strings 
 	MemoryToString(m_str_Total_Req, Total_Mem);
 	MemoryToString(m_str_Model_Req, Model_Mem);
-	MemoryToString(m_str_Q_Req, Q_Mem);
-	MemoryToString(m_str_RA_Req, RA_Mem);
-	MemoryToString(m_str_Quota_Mem, Ram_Quota);
-	RAM_OOC_ToString(m_str_Q_Mem, Q_Ram, Q_Ooc);
-	RAM_OOC_ToString(m_str_R_Mem, R_Ram, R_Ooc);
-	RAM_OOC_ToString(m_str_A_Mem, A_Ram, A_Ooc);
+	MemoryToString(m_str_A_Req, A_Mem);
+	MemoryToString(m_str_bx_Req, bx_Mem);
+	MemoryToString(m_str_A_Quota, A_Quota);
+	RAM_OOC_ToString(m_str_A_Storage, A_Ram, A_Ooc);
 
 	Invalidate();
 }
@@ -483,8 +469,7 @@ void CInfoTab::OutputAnalysisInfo(CDC* pDC)
 	CString strProperties[] = {
 		  _T("CPV Evaluation:"),
 		  _T("Integ. Scheme:"),
-		  _T("[Q] matrix:"),
-		  _T("[R] & [A] matrices:"),
+		  _T("[A] matrix:"),
 		  _T("{b} & {x} vectors:")
 	};
 
@@ -493,12 +478,11 @@ void CInfoTab::OutputAnalysisInfo(CDC* pDC)
 	CString strValues[] = {
 		m_strCPVmthd,
 		m_strIntegScheme,
-		m_str_Q_Matrix,
-		m_str_RA_Matrix,
+		m_str_A_Matrix,
 		m_str_bx_Vector
 	};
 
-	OutputInfo(pDC, strProperties, strValues, 5);
+	OutputInfo(pDC, strProperties, strValues, 4);
 }
 
 
@@ -507,11 +491,9 @@ void CInfoTab::OutputMemoryInfo(CDC* pDC)
 	CString strProperties[] = {
 		  _T("Total Requirement:"),
 		  _T("Model Requirement:"),
-		  _T("[Q] Requirement:"),
-		  _T("[R]/[A] Requirement:"),
-		  _T("Fixed RAM Quota :"),
-		  _T("[Q] Storage RAM/OOC:"),
-		  _T("[R] Storage RAM/OOC:"),
+		  _T("[A] Requirement:"),
+		  _T("{b} & {x} Requirement:"),
+		  _T("Fixed RAM Quota:"),
 		  _T("[A] Storage RAM/OOC:"),
 	};
 
@@ -520,13 +502,11 @@ void CInfoTab::OutputMemoryInfo(CDC* pDC)
 	CString strValues[] = {
 		m_str_Total_Req,
 		m_str_Model_Req,
-		m_str_Q_Req,
-		m_str_RA_Req,
-		m_str_Quota_Mem,
-		m_str_Q_Mem,
-		m_str_R_Mem,
-		m_str_A_Mem,
+		m_str_A_Req,
+		m_str_bx_Req,
+		m_str_A_Quota,
+		m_str_A_Storage,
 	};
 
-	OutputInfo(pDC, strProperties, strValues, 8);
+	OutputInfo(pDC, strProperties, strValues, 6);
 }

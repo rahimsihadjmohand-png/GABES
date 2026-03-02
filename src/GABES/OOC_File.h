@@ -17,6 +17,8 @@ namespace BEM_3D
         void WriteAt(uint64_t offset, const void* buffer, DWORD bytes);
         void ReadAt(uint64_t offset, void* buffer, DWORD bytes) const;
 
+        // Delete the File
+        void Delete() { DeleteFile(m_szFileName); }
 
 
     private:

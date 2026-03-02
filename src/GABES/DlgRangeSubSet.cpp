@@ -298,20 +298,6 @@ BOOL CDlgRangeSubSet::OnInitDialog()
 
 void CDlgRangeSubSet::InitModelessDialog()
 {
-	// TODO:  Add extra initialization here
-	lblDim1.SetWindowText(_T("X Range:"));
-	lblDim2.SetWindowText(_T("Y Range:"));
-	lblDim3.SetWindowText(_T("Z Range:"));
-
-	Min1 = m_pCurrentFrame->m_X_min;
-	Min2 = m_pCurrentFrame->m_Y_min;
-	Min3 = m_pCurrentFrame->m_Z_min;
-
-	Max1 = m_pCurrentFrame->m_X_max;
-	Max2 = m_pCurrentFrame->m_Y_max;
-	Max3 = m_pCurrentFrame->m_Z_max;
-
-
 	// Load the Reference frames
 	cmbRefFrames.ResetContent();
 	cmbRefFrames.AddString(m_rGlobalFrame.m_strName);
@@ -325,6 +311,25 @@ void CDlgRangeSubSet::InitModelessDialog()
 	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
 	CGABESDoc* pDoc = (CGABESDoc*)pMainFrame->GetActiveDocument();
 	pDoc->SelectGlobalFrame();
+
+
+
+	// TODO:  Add extra initialization here
+	m_pCurrentFrame = &pDoc->m_GlobalFrame;
+
+	lblDim1.SetWindowText(_T("X Range:"));
+	lblDim2.SetWindowText(_T("Y Range:"));
+	lblDim3.SetWindowText(_T("Z Range:"));
+
+	Min1 = m_pCurrentFrame->m_X_min;
+	Min2 = m_pCurrentFrame->m_Y_min;
+	Min3 = m_pCurrentFrame->m_Z_min;
+
+	Max1 = m_pCurrentFrame->m_X_max;
+	Max2 = m_pCurrentFrame->m_Y_max;
+	Max3 = m_pCurrentFrame->m_Z_max;
+
+
 
 	UpdateData(FALSE);
 
@@ -573,6 +578,30 @@ void CDlgRangeSubSet::UpdateElementSelection()
 		if (b1 && b2 && b3)
 			m_rSelectedElmsIndices.push_back(i);
 	}
+
+
+	// Reconverte angles to Degrees
+	switch (nCoordSys)
+	{
+	case 0:     // Cartezian (No angles to convert
+		break;
+
+	case 1:    // Cylindrical
+		Min2 = Min2 * 180.0 / M_PI;
+		Max2 = Max2 * 180.0 / M_PI;
+		break;
+
+	case 2:    // Sphirical
+		Min2 = Min2 * 180.0 / M_PI;
+		Max2 = Max2 * 180.0 / M_PI;
+
+		Min3 = Min3 * 180.0 / M_PI;
+		Max3 = Max3 * 180.0 / M_PI;
+		break;
+
+	default:
+		break;
+	}
 }
 
 
@@ -604,6 +633,10 @@ void CDlgRangeSubSet::OnOK()
 
 	// Update the SubSets Panel
 	pMainFrame->GetModelTreePanel().UpdateTreeCtrl();
+
+
+	// Set the Modified Flag to true (default argument)
+	pDoc->SetModifiedFlag();
 
 
 	CDialogEx::OnOK();

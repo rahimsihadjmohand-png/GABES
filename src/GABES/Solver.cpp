@@ -19,8 +19,10 @@ using BEM_3D::SOLVER;
 
 
 SOLVER Model::m_Solver = HLU;            // The solver type used
-unsigned Model::m_NumSteps = 50u;       // The number of steps if we are using krylov subspace solvers
-double Model::m_eps = 1.0E-9;           // The error threshold in the solver
+unsigned Model::m_NumSteps = 50u;        // The number of steps if we are using krylov subspace solvers
+double Model::m_eps = 1.0E-9;            // The error threshold in the solver
+unsigned Model::m_nMinLeafSize = 64;          // The minimum leaf size
+unsigned Model::m_nMaxRank = 50;              // The maximum rank 
 
 
 double AHMED_Vertex::getcenter(unsigned i) const
@@ -162,7 +164,7 @@ void DenseToCCS(_IN_ const T** D,
 }
 
 
-void Model::ConstructAndResolveLinearSystem()
+void Model::ResolveLinearSystem()
 {
 	// Verify the dimension of the system
 	if (m_Elements.empty())
@@ -171,34 +173,24 @@ void Model::ConstructAndResolveLinearSystem()
 
     m_CurrentAdvance = 0.0;
     m_bLengthyJob = true;
-	::AfxBeginThread(ConstructAndResolveLinearSystemThread, (LPVOID)this);
+	::AfxBeginThread(ResolveLinearSystemThread, (LPVOID)this);
 }
 
 
 
-
-UINT Model::ConstructAndResolveLinearSystemThread(LPVOID pParam)
+UINT Model::ResolveLinearSystemThread(LPVOID pParam)
 {
     Model* pObj = (Model*)pParam; 
     
     pObj->m_CurrentAdvance = 0.0;
-    pObj->m_strCurrentJob = _T("Construction of a linear system [A] . {x} = {b}...");
-    pObj->ConstructLinearSystem();
-
-
-    pObj->m_CurrentAdvance = 0.0;
-    pObj->m_strCurrentJob = _T("Transform the square matrix [A] into an H-Matrix...");
+    pObj->m_strCurrentJob = _T("Transform the dense matrix [A] into an H-Matrix...");
     unsigned Nv = pObj->m_DOF_Vertices.size(); // Number of vertices
     unsigned N = Nv * 3;                       // Dimension of the matrices
-
-    // Rank max
-    unsigned rankmax = 50;
 
     // Eta
     double Eta = 2.0;
 
-    // leaf size
-    unsigned leafsize = 36; 
+   
     
    
 
@@ -231,7 +223,7 @@ UINT Model::ConstructAndResolveLinearSystemThread(LPVOID pParam)
   
     // 3) Create 2 BEM clusters for Vertices and elements
     bemcluster<AHMED_Vertex> bemcl(V_dofs.data(), v_op_perm.data(), 0, N);
-    bemcl.createClusterTree(leafsize, v_op_perm.data(), v_po_perm.data());
+    bemcl.createClusterTree(m_nMinLeafSize, v_op_perm.data(), v_po_perm.data());
 
     /*bemcluster<AHMED_Element> colcl(E_dofs.data(), e_op_perm.data(), 0, N);
     colcl.createClusterTree(leafsize, e_op_perm.data(), e_po_perm.data());*/
@@ -249,11 +241,11 @@ UINT Model::ConstructAndResolveLinearSystemThread(LPVOID pParam)
 
     
     pObj->A.OpenFile(true);
-    matgenGeH_omp<double, AHMED_Vertex, AHMED_Vertex, LD_Matrix<double>>(pObj->A,
+    myMatgenGeH_omp<double, AHMED_Vertex, AHMED_Vertex, LD_Matrix<double>>(pObj->A,
         NBlocks, 
         &bct,
         m_eps,
-        rankmax,
+        m_nMaxRank,
         H.blcks);
     pObj->A.CloseFile();
     
@@ -271,7 +263,7 @@ UINT Model::ConstructAndResolveLinearSystemThread(LPVOID pParam)
         initLtH_0(L.blclTree, L.blcks);
         initUtH_0(U.blclTree, U.blcks);
 
-        myHLU(&bct, H.blcks, L.blcks, U.blcks, m_eps, rankmax, &pObj->m_CurrentAdvance, NBlocks);
+        myHLU(&bct, H.blcks, L.blcks, U.blcks, m_eps, m_nMaxRank, &pObj->m_CurrentAdvance, NBlocks);
         CopyMemory(pObj->x, pObj->b, sizeof(double) * N);
 
         pObj->m_strCurrentJob = _T("Solve the decomposed system [L][U] {x} = {b} using Forward-Backward substitution...");
@@ -288,7 +280,7 @@ UINT Model::ConstructAndResolveLinearSystemThread(LPVOID pParam)
         pObj->m_strCurrentJob = _T("Solve the decomposed system [A] {x} = {b} using GMRes iterative solver...");
         double eps = m_eps;
         unsigned nSteps = m_NumSteps;
-        myGMRes(H, pObj->b, pObj->x, eps, rankmax, nSteps, &pObj->m_CurrentAdvance);
+        myGMRes(H, pObj->b, pObj->x, eps, m_nMaxRank, nSteps, &pObj->m_CurrentAdvance);
     }
     break;
 

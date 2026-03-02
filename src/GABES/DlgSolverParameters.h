@@ -29,4 +29,6 @@ public:
 	virtual void OnOK();
 	afx_msg void OnCbnSelchangeComboSolver();
 	CComboBox m_ComboSolvers;
+	CSpinButtonCtrl spnLeaves;
+	CSpinButtonCtrl spnRank;
 };

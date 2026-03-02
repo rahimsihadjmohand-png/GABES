@@ -9,7 +9,7 @@
 // Copyright (C) Microsoft Corporation
 // All rights reserved.
 
-// BEM_3D_02.cpp : Defines the class behaviors for the application.
+// GABES.cpp : Defines the class behaviors for the application.
 //
 
 #include "pch.h"
@@ -27,10 +27,10 @@
 #endif
 
 
-// CBEM3DApp
+// CGABESApp
 
-BEGIN_MESSAGE_MAP(CBEM3DApp, CWinAppEx)
-	ON_COMMAND(ID_APP_ABOUT, &CBEM3DApp::OnAppAbout)
+BEGIN_MESSAGE_MAP(CGABESApp, CWinAppEx)
+	ON_COMMAND(ID_APP_ABOUT, &CGABESApp::OnAppAbout)
 	// Standard file based document commands
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
@@ -39,9 +39,9 @@ BEGIN_MESSAGE_MAP(CBEM3DApp, CWinAppEx)
 END_MESSAGE_MAP()
 
 
-// CBEM3DApp construction
+// CGABESApp construction
 
-CBEM3DApp::CBEM3DApp() noexcept
+CGABESApp::CGABESApp() noexcept
 {
 
 	m_nAppLook = 0;
@@ -56,20 +56,20 @@ CBEM3DApp::CBEM3DApp() noexcept
 
 	// TODO: replace application ID string below with unique ID string; recommended
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
-	SetAppID(_T("BEM3D02.AppID.NoVersion"));
+	SetAppID(_T("GABES.AppID.NoVersion"));
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
-// The one and only CBEM3DApp object
+// The one and only CGABESApp object
 
-CBEM3DApp theApp;
+CGABESApp theApp;
 
 
-// CBEM3DApp initialization
+// CGABESApp initialization
 
-BOOL CBEM3DApp::InitInstance()
+BOOL CGABESApp::InitInstance()
 {
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -156,7 +156,7 @@ BOOL CBEM3DApp::InitInstance()
 	return TRUE;
 }
 
-int CBEM3DApp::ExitInstance()
+int CGABESApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
@@ -164,7 +164,7 @@ int CBEM3DApp::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
-// CBEM3DApp message handlers
+// CGABESApp message handlers
 
 
 // CAboutDlg dialog used for App About
@@ -185,6 +185,11 @@ protected:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnNMClickGabesGithubLink(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickRahimEmailLink(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickRahimResearchGateLink(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonCopyEmail();
 };
 
 CAboutDlg::CAboutDlg() noexcept : CDialogEx(IDD_ABOUTBOX)
@@ -197,18 +202,22 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_NOTIFY(NM_CLICK, IDC_GABES_GITHUB_LINK, &CAboutDlg::OnNMClickGabesGithubLink)
+	ON_NOTIFY(NM_CLICK, IDC_RAHIM_EMAIL_LINK, &CAboutDlg::OnNMClickRahimEmailLink)
+	ON_NOTIFY(NM_CLICK, IDC_RAHIM_RESEARCH_GATE_LINK, &CAboutDlg::OnNMClickRahimResearchGateLink)
+	ON_BN_CLICKED(IDC_BUTTON_COPY_EMAIL, &CAboutDlg::OnBnClickedButtonCopyEmail)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
-void CBEM3DApp::OnAppAbout()
+void CGABESApp::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
 }
 
-// CBEM3DApp customization load/save methods
+// CGABESApp customization load/save methods
 
-void CBEM3DApp::PreLoadState()
+void CGABESApp::PreLoadState()
 {
 	BOOL bNameValid;
 	CString strName;
@@ -217,20 +226,20 @@ void CBEM3DApp::PreLoadState()
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
 }
 
-void CBEM3DApp::LoadCustomState()
+void CGABESApp::LoadCustomState()
 {
 }
 
-void CBEM3DApp::SaveCustomState()
+void CGABESApp::SaveCustomState()
 {
 }
 
-// CBEM3DApp message handlers
+// CGABESApp message handlers
 
 
 
 
-int CBEM3DApp::Run()
+int CGABESApp::Run()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
@@ -281,7 +290,7 @@ int CBEM3DApp::Run()
 
 }
 
-BOOL CBEM3DApp::OnIdle(LONG lCount)
+BOOL CGABESApp::OnIdle(LONG lCount)
 {
 	// TODO: Add your specialized code here and/or call the base class
 	
@@ -294,4 +303,76 @@ BOOL CBEM3DApp::OnIdle(LONG lCount)
 
 
 	return CWinAppEx::OnIdle(lCount);
+}
+
+void CAboutDlg::OnNMClickGabesGithubLink(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(
+		NULL,
+		_T("open"),
+		_T("https://github.com/rahimsihadjmohand-png/GABES.git"),
+		NULL,
+		NULL,
+		SW_SHOWNORMAL);
+
+	*pResult = 0;
+}
+
+void CAboutDlg::OnNMClickRahimEmailLink(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: Add your control notification handler code here
+
+	ShellExecute(
+		NULL,
+		_T("open"),
+		_T("mailto:rahim.si_hadj_mohand@g.enp.edu.dz?subject=GABES%20Support"),
+		NULL,
+		NULL,
+		SW_SHOWNORMAL);
+
+	*pResult = 0;
+}
+
+void CAboutDlg::OnNMClickRahimResearchGateLink(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(
+		NULL,
+		_T("open"),
+		_T("https://www.researchgate.net/profile/Rahim-Si-Hadj-Mohand"),
+		NULL,
+		NULL,
+		SW_SHOWNORMAL);
+	*pResult = 0;
+}
+
+void CAboutDlg::OnBnClickedButtonCopyEmail()
+{
+	// TODO: Add your control notification handler code here
+	CString strEmail = _T("rahim.si_hadj_mohand@g.enp.edu.dz");
+
+	if (OpenClipboard())
+	{
+		EmptyClipboard();
+
+		// Allocate global memory for the text
+		HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE,
+			(strEmail.GetLength() + 1) * sizeof(TCHAR));
+
+		if (hGlob)
+		{
+			LPTSTR pData = (LPTSTR)GlobalLock(hGlob);
+			_tcscpy_s(pData, strEmail.GetLength() + 1, strEmail);
+			GlobalUnlock(hGlob);
+
+#ifdef UNICODE
+			SetClipboardData(CF_UNICODETEXT, hGlob);
+#else
+			SetClipboardData(CF_TEXT, hGlob);
+#endif
+		}
+
+		CloseClipboard();
+	}
 }

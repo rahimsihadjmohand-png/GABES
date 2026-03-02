@@ -13,7 +13,7 @@ using BEM_3D::Model;
 
 IMPLEMENT_DYNAMIC(CDlgSolverParameters, CDialogEx)
 
-CDlgSolverParameters::CDlgSolverParameters(CWnd* pParent /*=nullptr*/)
+CDlgSolverParameters::CDlgSolverParameters(CWnd* pParent)
 	: CDialogEx(IDD_DLG_SOLVER_PARAMETERS, pParent)
 	, nSolver((int)Model::m_Solver)
 {
@@ -33,6 +33,10 @@ void CDlgSolverParameters::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPIN_STEPS, spnSteps);
 	DDX_Text(pDX, IDC_EDIT_STEPS, Model::m_NumSteps);
 	DDX_Control(pDX, IDC_COMBO_SOLVER, m_ComboSolvers);
+	DDX_Text(pDX, IDC_EDIT_MIN_LEAF_SIZE, Model::m_nMinLeafSize);
+	DDX_Text(pDX, IDC_EDIT_MAX_RANK, Model::m_nMaxRank);
+	DDX_Control(pDX, IDC_SPIN_MIN_LEAF_SIZE, spnLeaves);
+	DDX_Control(pDX, IDC_SPIN_MAX_RANK, spnRank);
 }
 
 
@@ -50,6 +54,17 @@ BOOL CDlgSolverParameters::OnInitDialog()
 	// TODO:  Add extra initialization here
 	edtSteps.EnableWindow(nSolver != 0);
 	spnSteps.EnableWindow(nSolver != 0);
+
+
+	spnSteps.SetRange(1, SHORT_MAX);
+	spnLeaves.SetRange(1, SHORT_MAX);
+	spnRank.SetRange(1, SHORT_MAX);
+
+
+	spnSteps.SetPos(Model::m_NumSteps);
+	spnLeaves.SetPos(Model::m_nMinLeafSize);
+	spnRank.SetPos(Model::m_nMaxRank);
+
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE

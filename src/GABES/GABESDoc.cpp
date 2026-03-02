@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 CGABESDoc::CGABESDoc() noexcept
 	: m_GlobalFrame(_T("Global Frame"))
-	, m_pCurrentFrame(nullptr)
+	//, m_pCurrentFrame(nullptr)
 {
 	// TODO: add one-time construction code here
 
@@ -108,6 +108,14 @@ void CGABESDoc::SelectRefFrame(BEM_3D::ReferenceFrame* pRefFrame)
 		pRefFrame->m_bSelected = true;
 }
 
+
+void CGABESDoc::SelectRefFrame(int nIdx)
+{
+	if(nIdx >= 0 && nIdx < m_ReferenceFrames.size())
+		SelectRefFrame(m_ReferenceFrames[nIdx]);
+}
+
+
 void CGABESDoc::SelectGlobalFrame()
 {
 	m_GlobalFrame.m_bSelected = true;
@@ -118,17 +126,47 @@ void CGABESDoc::SelectGlobalFrame()
 
 
 
+void CGABESDoc::SetCoordinateRanges()
+{
+	m_GlobalFrame.SetCoordinateRanges(m_Model);
+
+	for (BEM_3D::ReferenceFrame* pRefFrame : m_ReferenceFrames)
+		pRefFrame->SetCoordinateRanges(m_Model);
+}
+
+
+
+
 // CGABESDoc serialization
 
 void CGABESDoc::Serialize(CArchive& ar)
 {
+	m_Model.Serialize(ar);
+
 	if (ar.IsStoring())
 	{
-		// TODO: add storing code here
+		// Store the size of the RefFrames Container
+		ar << m_ReferenceFrames.size();
+		
+		// Store the reference frames
+		for (BEM_3D::ReferenceFrame* pRefFrame : m_ReferenceFrames)
+			pRefFrame->Serialize(ar);
+		
 	}
 	else
 	{
-		// TODO: add loading code here
+		// Load the size of the RefFrames Container
+		size_t Nrf = 0;
+		ar >> Nrf;
+
+		// Load the reference frames
+		for (size_t i = 0; i < Nrf; i++)
+		{
+			BEM_3D::ReferenceFrame* pRefFrame = new BEM_3D::ReferenceFrame();
+			pRefFrame->Serialize(ar);
+
+			m_ReferenceFrames.push_back(pRefFrame);
+		}	
 	}
 }
 
@@ -202,3 +240,42 @@ void CGABESDoc::Dump(CDumpContext& dc) const
 
 
 // CGABESDoc commands
+
+BOOL CGABESDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	m_Model.ClearAll();
+	
+	for (BEM_3D::ReferenceFrame* pRefFrame : m_ReferenceFrames)
+	{
+		if (pRefFrame)
+			delete pRefFrame;
+	}
+
+	m_ReferenceFrames.clear();
+
+
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
+
+	// Get the main frame and the view
+	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+	CGABESView* pView = (CGABESView*)pMainFrame->GetActiveView();
+
+	// Load the Vertex Node mesh which uses the Specific length
+	BEM_3D::Vertex::LoadMesh(pView->GetD3dDevice(), BEM_3D::ElementSubSet::SpecLength);
+
+
+	// ======================= Update the D3D buffer of the model ===============
+	m_Model.UpdateVertexBuffer(pView->GetD3dDevice(), pView->m_bPostProcessing);
+
+	// Reset the selections		
+	pView->ResetSelections();
+
+
+	// Update the ModelTree  and Info Panels
+	pMainFrame->m_ModelTreePanel.UpdateTreeCtrl();
+	pMainFrame->m_infoPanel.UpdateInfo();
+
+	return TRUE;
+
+}

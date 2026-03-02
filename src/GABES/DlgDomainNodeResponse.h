@@ -1,6 +1,6 @@
 #pragma once
 #include "afxdialogex.h"
-#include "Model.h"
+#include "GABESDoc.h"
 
 // CDlgDomainNodeResponse dialog
 
@@ -9,8 +9,11 @@ class CDlgDomainNodeResponse : public CDialogEx
 	DECLARE_DYNAMIC(CDlgDomainNodeResponse)
 
 public:
-	CDlgDomainNodeResponse(BEM_3D::Model* pModel, CWnd* pParent = nullptr);   // standard constructor
+	CDlgDomainNodeResponse(CGABESDoc* pDoc, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDlgDomainNodeResponse();
+
+	void UpdateTrackNode();
+	void InitModelessDialog();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -22,10 +25,18 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	BEM_3D::Model* m_pModel;
-	double x;
-	double y;
-	double z;
+	CGABESDoc* m_pDoc;
+	BEM_3D::Model& m_rModel;
+	BEM_3D::ReferenceFrame* m_pCurrFrame;
+	BEM_3D::Vertex* m_pTrackNode;
+
+	CString strDim1;
+	CString strDim2;
+	CString strDim3;
+
+	double Dim1;
+	double Dim2;
+	double Dim3;
 
 	double U1;
 	double U2;
@@ -119,5 +130,13 @@ public:
 	afx_msg void OnBnClickedCheckEps33();
 	afx_msg void OnBnClickedCheckEps12();
 	afx_msg void OnBnClickedCheckEps23();
-	afx_msg void OnBnClickedCheckEps31();
+	afx_msg void OnBnClickedCheckEps31();	
+	int nFrame;
+	int nCoordSys;
+	CComboBox cmbRefFrames;
+	CComboBox cmbCoordSys;
+	afx_msg void OnCbnSelchangeComboRefFrame();
+	afx_msg void OnCbnSelchangeComboCoordSys();
+	virtual void OnCancel();
+	afx_msg void OnBnClickedButtonApply();
 };

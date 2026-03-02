@@ -11,12 +11,15 @@
 
 IMPLEMENT_DYNAMIC(CDlgDomainNodeResponse, CDialogEx)
 
-CDlgDomainNodeResponse::CDlgDomainNodeResponse(BEM_3D::Model* pModel, CWnd* pParent /*=nullptr*/)
+CDlgDomainNodeResponse::CDlgDomainNodeResponse(CGABESDoc* pDoc, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DLG_DOMAIN_NODE_RESPONSE, pParent)
-	, m_pModel(pModel)
-	, x(0)
-	, y(0)
-	, z(0)
+	, m_pDoc(pDoc)
+	, m_rModel(pDoc->m_Model)
+	, m_pTrackNode(nullptr)
+
+	, Dim1(0)
+	, Dim2(0)
+	, Dim3(0)
 
 	, U1(0)
 	, U2(0)
@@ -57,6 +60,8 @@ CDlgDomainNodeResponse::CDlgDomainNodeResponse(BEM_3D::Model* pModel, CWnd* pPar
 	, bEps_23(FALSE)
 	, bEps_31(FALSE)
 	, bSig_VM(FALSE)
+	, nFrame(0)
+	, nCoordSys(0)
 {
 
 }
@@ -65,6 +70,56 @@ CDlgDomainNodeResponse::~CDlgDomainNodeResponse()
 {
 }
 
+
+void CDlgDomainNodeResponse::InitModelessDialog()
+{
+	m_pTrackNode = new BEM_3D::Vertex;
+
+	m_pDoc->UnselectAllRefFrames();
+
+	m_pCurrFrame = &m_pDoc->m_GlobalFrame;
+	m_pCurrFrame->m_bSelected = true;
+	bU1 = FALSE;
+	bU2 = FALSE;
+	bU3 = FALSE;
+	bU = FALSE;
+	
+	bSig_11 = FALSE;
+	bSig_22 = FALSE;
+	bSig_33 = FALSE;
+	bSig_12 = FALSE;
+	bSig_23 = FALSE;
+	bSig_31 = FALSE;
+	bSig_VM = FALSE;
+
+	bEps_11 = FALSE;
+	bEps_22 = FALSE;
+	bEps_33 = FALSE;
+	bEps_12 = FALSE;
+	bEps_23 = FALSE;
+	bEps_31 = FALSE;
+	
+	nFrame = 0;
+	nCoordSys = 0;
+
+	// Initialize the Frames ComboBox
+	cmbRefFrames.ResetContent();
+	cmbRefFrames.AddString(m_pDoc->m_GlobalFrame.m_strName);
+	for (BEM_3D::ReferenceFrame* pRefFrame : m_pDoc->m_ReferenceFrames)
+		cmbRefFrames.AddString(pRefFrame->m_strName);
+
+	// Select the Global Frame with Cartizian system
+	cmbRefFrames.SetCurSel(0);
+	cmbCoordSys.SetCurSel(0);
+
+	strDim1 = _T("X:");
+	strDim2 = _T("Y:");
+	strDim3 = _T("Z:");
+	
+	UpdateData(FALSE); // Variables to controls
+}
+
+
 void CDlgDomainNodeResponse::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -72,9 +127,9 @@ void CDlgDomainNodeResponse::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// ========= Edit → variables =========
-		DDX_Text(pDX, IDC_EDIT_X, x);
-		DDX_Text(pDX, IDC_EDIT_Y, y);
-		DDX_Text(pDX, IDC_EDIT_Z, z);
+		DDX_Text(pDX, IDC_EDIT_DIM1, Dim1);
+		DDX_Text(pDX, IDC_EDIT_DIM2, Dim2);
+		DDX_Text(pDX, IDC_EDIT_DIM3, Dim3);
 
 		DDX_Text(pDX, IDC_EDIT_U1, U1);
 		DDX_Text(pDX, IDC_EDIT_U2, U2);
@@ -107,9 +162,9 @@ void CDlgDomainNodeResponse::DoDataExchange(CDataExchange* pDX)
 				SetDlgItemText(id, s);
 			};
 
-		F(IDC_EDIT_X, x);
-		F(IDC_EDIT_Y, y);
-		F(IDC_EDIT_Z, z);
+		F(IDC_EDIT_DIM1, Dim1);
+		F(IDC_EDIT_DIM2, Dim2);
+		F(IDC_EDIT_DIM3, Dim3);
 
 		F(IDC_EDIT_U1, U1);
 		F(IDC_EDIT_U2, U2);
@@ -193,6 +248,13 @@ void CDlgDomainNodeResponse::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_EPS12, EditEps_12);
 	DDX_Control(pDX, IDC_EDIT_EPS23, EditEps_23);
 	DDX_Control(pDX, IDC_EDIT_EPS31, EditEps_31);
+	DDX_Text(pDX, IDC_STATIC_DIM1, strDim1);
+	DDX_Text(pDX, IDC_STATIC_DIM2, strDim2);
+	DDX_Text(pDX, IDC_STATIC_DIM3, strDim3);
+	DDX_CBIndex(pDX, IDC_COMBO_REF_FRAME, nFrame);
+	DDX_CBIndex(pDX, IDC_COMBO_COORD_SYS, nCoordSys);
+	DDX_Control(pDX, IDC_COMBO_REF_FRAME, cmbRefFrames);
+	DDX_Control(pDX, IDC_COMBO_COORD_SYS, cmbCoordSys);
 }
 
 
@@ -216,30 +278,80 @@ BEGIN_MESSAGE_MAP(CDlgDomainNodeResponse, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_EPS12, &CDlgDomainNodeResponse::OnBnClickedCheckEps12)
 	ON_BN_CLICKED(IDC_CHECK_EPS23, &CDlgDomainNodeResponse::OnBnClickedCheckEps23)
 	ON_BN_CLICKED(IDC_CHECK_EPS31, &CDlgDomainNodeResponse::OnBnClickedCheckEps31)
+	ON_CBN_SELCHANGE(IDC_COMBO_REF_FRAME, &CDlgDomainNodeResponse::OnCbnSelchangeComboRefFrame)
+	ON_CBN_SELCHANGE(IDC_COMBO_COORD_SYS, &CDlgDomainNodeResponse::OnCbnSelchangeComboCoordSys)
+	ON_BN_CLICKED(IDC_BUTTON_APPLY, &CDlgDomainNodeResponse::OnBnClickedButtonApply)
 END_MESSAGE_MAP()
 
 
 // CDlgDomainNodeResponse message handlers
 
+void CDlgDomainNodeResponse::UpdateTrackNode()
+{
+	double x = 0.0;
+	double y = 0.0;
+	double z = 0.0;
+
+
+	switch (nCoordSys)
+	{
+	case 0: // Cartezian
+	{
+		x = Dim1;
+		y = Dim2;
+		z = Dim3;
+	}
+	break;
+
+	case 1: // Cylindrical
+	{
+		double R = Dim1;
+		double Theta = Dim2 * M_PI / 180.0;
+		x = R * cos(Theta);
+		y = R * sin(Theta);
+		z = Dim3;
+	}
+	break;
+
+	case 2: // Spherical
+	{
+		double R = Dim1;
+		double Theta = Dim2 * M_PI / 180.0;
+		double Phi = Dim3 * M_PI / 180.0;
+		x = R * sin(Phi) * cos(Theta);
+		y = R * sin(Phi) * sin(Theta);
+		z = R * cos(Phi);
+	}
+	break;
+	}
+
+	m_pTrackNode->Set(x, y, z);
+
+	m_pCurrFrame->ToGlobalCoord(*m_pTrackNode);
+
+}
+
+
 void CDlgDomainNodeResponse::OnBnClickedCalculate()
 {
 	// TODO: Add your control notification handler code here
-	// get the Domain node
 	UpdateData();
 
 	U1 = U2 = U3 = U = Sig_11 = Sig_22 = Sig_33 = Sig_12 = Sig_23 = Sig_31 = Sig_VM = Eps_11 = Eps_22 = Eps_33 = Eps_12 = Eps_23 = Eps_31 = 0.0;
 
+	// Update the Track Node
+	UpdateTrackNode();
 
-	BEM_3D::Vertex DomainPt(x, y, z);
+	BEM_3D::Vertex& DomainPt = *m_pTrackNode;
 
 
 	// Displacements ===================================================
 	if (bU1)
-		U1 = m_pModel->GetDomainDisplacement(DomainPt, 0);
+		U1 = m_rModel.GetDomainDisplacement(DomainPt, 0);
 	if (bU2)
-		U2 = m_pModel->GetDomainDisplacement(DomainPt, 1);
+		U2 = m_rModel.GetDomainDisplacement(DomainPt, 1);
 	if (bU3)
-		U3 = m_pModel->GetDomainDisplacement(DomainPt, 2);
+		U3 = m_rModel.GetDomainDisplacement(DomainPt, 2);
 	if (bU)
 	{
 		double _U1 = 0.0;
@@ -249,17 +361,17 @@ void CDlgDomainNodeResponse::OnBnClickedCalculate()
 		if (bU1)
 			_U1 = U1;
 		else
-			_U1 = m_pModel->GetDomainDisplacement(DomainPt, 0);
+			_U1 = m_rModel.GetDomainDisplacement(DomainPt, 0);
 
 		if (bU2)
 			_U2 = U2;
 		else
-			_U2 = m_pModel->GetDomainDisplacement(DomainPt, 1);
+			_U2 = m_rModel.GetDomainDisplacement(DomainPt, 1);
 
 		if (bU3)
 			_U3 = U3;
 		else
-			_U3 = m_pModel->GetDomainDisplacement(DomainPt, 2);	
+			_U3 = m_rModel.GetDomainDisplacement(DomainPt, 2);	
 
 		BEM_3D::Vector _U(_U1, _U2, _U3);
 
@@ -269,17 +381,17 @@ void CDlgDomainNodeResponse::OnBnClickedCalculate()
 
 	// Stresses =================================================================
 	if (bSig_11)
-		Sig_11 = m_pModel->GetDomainStress(DomainPt, 0, 0);
+		Sig_11 = m_rModel.GetDomainStress(DomainPt, 0, 0);
 	if (bSig_22)
-		Sig_22 = m_pModel->GetDomainStress(DomainPt, 1, 1);
+		Sig_22 = m_rModel.GetDomainStress(DomainPt, 1, 1);
 	if (bSig_33)
-		Sig_33 = m_pModel->GetDomainStress(DomainPt, 2, 2);
+		Sig_33 = m_rModel.GetDomainStress(DomainPt, 2, 2);
 	if (bSig_12)
-		Sig_12 = m_pModel->GetDomainStress(DomainPt, 0, 1);
+		Sig_12 = m_rModel.GetDomainStress(DomainPt, 0, 1);
 	if (bSig_23)
-		Sig_23 = m_pModel->GetDomainStress(DomainPt, 1, 2);
+		Sig_23 = m_rModel.GetDomainStress(DomainPt, 1, 2);
 	if (bSig_31)
-		Sig_31 = m_pModel->GetDomainStress(DomainPt, 2, 0);
+		Sig_31 = m_rModel.GetDomainStress(DomainPt, 2, 0);
 	if (bSig_VM)
 	{
 		double _11 = 0.0;
@@ -292,32 +404,32 @@ void CDlgDomainNodeResponse::OnBnClickedCalculate()
 		if (bSig_11)
 			_11 = Sig_11;
 		else
-			_11 = m_pModel->GetDomainStress(DomainPt, 0, 0);
+			_11 = m_rModel.GetDomainStress(DomainPt, 0, 0);
 
 		if (bSig_22)
 			_22 = Sig_22;
 		else
-			_22 = m_pModel->GetDomainStress(DomainPt, 1, 1);
+			_22 = m_rModel.GetDomainStress(DomainPt, 1, 1);
 		
 		if (bSig_33)
 			_33 = Sig_33;
 		else
-			_33 = m_pModel->GetDomainStress(DomainPt, 2, 2);
+			_33 = m_rModel.GetDomainStress(DomainPt, 2, 2);
 		
 		if (bSig_12)
 			_12 = Sig_12;
 		else
-			_12 = m_pModel->GetDomainStress(DomainPt, 0, 1);
+			_12 = m_rModel.GetDomainStress(DomainPt, 0, 1);
 		
 		if (bSig_23)
 			_23 = Sig_23;
 		else
-			_23 = m_pModel->GetDomainStress(DomainPt, 1, 2);
+			_23 = m_rModel.GetDomainStress(DomainPt, 1, 2);
 		
 		if (bSig_31)
 			_31 = Sig_31;
 		else
-			_31 = m_pModel->GetDomainStress(DomainPt, 2, 0);
+			_31 = m_rModel.GetDomainStress(DomainPt, 2, 0);
 
 		BEM_3D::Tensor Sig(_11, _22, _33, _12, _31, _23);
 		Sig_VM = Sig.VonMises();
@@ -326,17 +438,17 @@ void CDlgDomainNodeResponse::OnBnClickedCalculate()
 	//===========================================================================
 	// Strains =================================================================
 	if (bEps_11)
-		Eps_11 = m_pModel->GetDomainStrain(DomainPt, 0, 0);
+		Eps_11 = m_rModel.GetDomainStrain(DomainPt, 0, 0);
 	if (bEps_22)
-		Eps_22 = m_pModel->GetDomainStrain(DomainPt, 1, 1);
+		Eps_22 = m_rModel.GetDomainStrain(DomainPt, 1, 1);
 	if (bEps_33)
-		Eps_33 = m_pModel->GetDomainStrain(DomainPt, 2, 2);
+		Eps_33 = m_rModel.GetDomainStrain(DomainPt, 2, 2);
 	if (bEps_12)
-		Eps_12 = m_pModel->GetDomainStrain(DomainPt, 0, 1);
+		Eps_12 = m_rModel.GetDomainStrain(DomainPt, 0, 1);
 	if (bEps_23)
-		Eps_23 = m_pModel->GetDomainStrain(DomainPt, 1, 2);
+		Eps_23 = m_rModel.GetDomainStrain(DomainPt, 1, 2);
 	if (bEps_31)
-		Eps_31 = m_pModel->GetDomainStrain(DomainPt, 2, 0);
+		Eps_31 = m_rModel.GetDomainStrain(DomainPt, 2, 0);
 	//===========================================================================
 
 
@@ -476,4 +588,71 @@ void CDlgDomainNodeResponse::OnBnClickedCheckEps31()
 {
 	// TODO: Add your control notification handler code here
 	EditEps_31.EnableWindow(CheckEps_31.GetCheck());
+}
+
+void CDlgDomainNodeResponse::OnCbnSelchangeComboRefFrame()
+{
+	// TODO: Add your control notification handler code here
+	int nSel = cmbRefFrames.GetCurSel();
+
+	if (nSel == 0)
+	{
+		m_pDoc->SelectGlobalFrame();
+		m_pCurrFrame = &m_pDoc->m_GlobalFrame;
+	}
+	else
+	{
+		m_pDoc->SelectRefFrame(nSel - 1);
+		m_pCurrFrame = m_pDoc->m_ReferenceFrames[nSel - 1];
+	}
+}
+
+void CDlgDomainNodeResponse::OnCbnSelchangeComboCoordSys()
+{
+	// TODO: Add your control notification handler code here
+
+	nCoordSys = cmbCoordSys.GetCurSel();
+
+	switch (nCoordSys)
+	{
+	case 0: // Cartezian
+		strDim1 = _T("X:");
+		strDim2 = _T("Y:");
+		strDim3 = _T("Z:");
+		break;
+
+	case 1: // Cylindrical
+		strDim1 = _T("R:");
+		strDim2 = _T("Theta:");
+		strDim3 = _T("Z:");
+		break;
+
+	case 2: // Spherical
+		strDim1 = _T("R:");
+		strDim2 = _T("Theta:");
+		strDim3 = _T("Phi:");
+		break;
+	}
+
+	UpdateData(FALSE);
+}
+
+void CDlgDomainNodeResponse::OnCancel()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	m_pDoc->UnselectAllRefFrames();
+	delete m_pTrackNode;
+	m_pTrackNode = nullptr;
+	CDialogEx::OnCancel();
+}
+
+void CDlgDomainNodeResponse::OnBnClickedButtonApply()
+{
+	// TODO: Add your control notification handler code here
+
+	// Update the Track Node
+	UpdateData();
+	UpdateTrackNode();
+
+	BEM_3D::Vertex& DomainPt = *m_pTrackNode;
 }

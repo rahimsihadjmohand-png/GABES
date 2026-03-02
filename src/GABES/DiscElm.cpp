@@ -18,8 +18,6 @@ DiscElm::DiscElm(Vertex* pV1, Vertex* pV2, Vertex* pV3, int I1, int I2, int I3)
 	: Element(pV1, pV2, pV3, I1, I2, I3) 
 {
 	CalculateControlNodes();
-	ComputeReusableShapeFunctions();
-	ComputeReusableIntegrationData();
 }
 
 
@@ -345,4 +343,15 @@ void DiscElm::ComputeReusableShapeFunctions()
 	}
 
 	m_bDERsblShpFctsComputed = true;
+}
+
+
+
+void DiscElm::Serialize(CArchive& ar)
+{
+	Element::Serialize(ar);
+
+	m_Node1.Serialize(ar);
+	m_Node2.Serialize(ar);
+	m_Node3.Serialize(ar);
 }

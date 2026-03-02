@@ -13,8 +13,6 @@ bool ContElm::m_bCERsblShpFctsComputed = false;
 ContElm::ContElm(Vertex* pV1, Vertex* pV2, Vertex* pV3, int I1, int I2, int I3)
 	: Element(pV1, pV2, pV3, I1, I2, I3)
 {
-	ComputeReusableShapeFunctions();
-	ComputeReusableIntegrationData();
 }
 
 
@@ -256,8 +254,6 @@ void ContElm::ComputeReusableShapeFunctions()
 		{
 			double Xi = ITNDs[nRule][nNode].Xi;
 			double Eta = ITNDs[nRule][nNode].Eta;
-
-
 
 			// The Shape Functions
 			N1s_CE[nRule][nNode] = N1(Xi, Eta);

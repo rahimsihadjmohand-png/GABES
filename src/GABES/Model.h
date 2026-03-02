@@ -95,8 +95,6 @@ namespace BEM_3D
 		unsigned GetNumContElms()const { return m_Nce; }
 		unsigned GetNumDiscElms()const { return m_Nde; }
 
-		unsigned GetQ_Quota()const { return Q.GetMaxRamAlloc() / 1024UL; }
-		unsigned GetR_Quota()const { return R.GetMaxRamAlloc() / 1024UL; }
 		unsigned GetA_Quota()const { return A.GetMaxRamAlloc() / 1024UL; }
 
 		// Setters
@@ -104,8 +102,8 @@ namespace BEM_3D
 		void SetWorkingDirectory(const CString& rhs) { m_strWorkingDirectory = rhs; }
 		void SetFileName(const CString& rhs) { m_strFileName = rhs; }
 		void SetFileType(const CString& rhs) { m_strFileType = rhs; }
-		void AutoSetMatrixMemoryQuotas(); // Sets the matrix memory bails depending on the total bail
-		void SetMatrixMemoryQuotas(int Q_Quota, int R_Quota, int A_Quota);
+		void AutoSetA_Quota(); // Sets the matrix memory bails depending on the total bail
+		void SetA_Quota(int A_Quota);
 
 		// Cleaning functions
 		void ClearAll();
@@ -113,13 +111,14 @@ namespace BEM_3D
 		void ClearGeometricData();
 
 		// Core BEM functions
-		void ConstructCoefficientMatrices();
 		void CopyBoundaryConditionsFromSubSets();
+		void ConstructRHSvector();
 		void ConstructLinearSystem();
-		void ConstructAndResolveLinearSystem();
-		static UINT ConstructAndResolveLinearSystemThread(LPVOID pParam);
+		static UINT ConstructLinearSystemThread(LPVOID pParam);
+
+		void ResolveLinearSystem();
+		static UINT ResolveLinearSystemThread(LPVOID pParam);
 		void UpdateBoundaryUnknowns(); // This method places the vector x components ito thier suitable places (Either tractions or displacements)
-		static UINT ConstructCoefficientMatricesThread(LPVOID pParam);
 
 		// Post-processing BEM recovry functions
 		// 1- Boundary strain and stress tensors
@@ -160,12 +159,18 @@ namespace BEM_3D
 	private:
 		// Helper method to compute influence coefficient between node <i> and element <j>  
 		
-		void ComputeInfluenceCoefficients(double** Q_Chunck,  // The Local Element Column Chunck 9xN of the Q Matrix 
-										  double** P_Chunck,  // The Local Element Column Chunck 9xN of the P Matrix
-										  Matrix* CPV,        // The Cauchy Principal value integrals 3x3 diagonal blocks 
-										  int j,              // j: the element column index
-										  int m,              // m: the local Element node index
-										  int i);             // i: the vertex DOF Row index
+		void ComputeTractionInfluenceCoefficients(double** P_Chunck,  // The Local Element Column Chunck 9xN of the P Matrix
+										          Matrix* CPV,        // The Cauchy Principal value integrals 3x3 diagonal blocks 
+										          int e_idx,          // e_idx: the element global index
+										          int l,              // l: the local Element node index
+										          int V_idx);         // V_idx: the vertex DOF global index
+
+
+		void GetQColumn(double* Q_Col,    // The column pointer
+			            Element* pElm,    // The Integration element
+			            int l,            // The local node index of pElm
+			            int j);           // The spacial direction index
+			
 
 		void UpdateVertices();
 		// Helper Method that calculates the Static variable (Specific length) of the Element Subset class: used to Draw Boundary Condtions 
@@ -173,6 +178,9 @@ namespace BEM_3D
 
 		void TranslateToCenterOfMass();
 		Vector GetCenterOfMass()const;
+
+
+		void ComputeReusableIntegrationData();
 
 		void ConstructVertexDOFContainer(); // Construncts the vertex DOF vector (shallow copies of Real DOF vertices)
 		                                    // Which are Geometric vertices in case of continuous elements
@@ -192,6 +200,9 @@ namespace BEM_3D
 		double GetMinValue()const;
 	    DWORD GetColorFromValue(const Element* pElm, int nVertex, double MinVal, double MaxVal)const;
 
+
+		// Storage
+		void Serialize(CArchive& ar);
 
 	private:
 		// Geometrical data 		
@@ -214,9 +225,10 @@ namespace BEM_3D
 		// The vertex pointers are sallow copies and are not owned by the vector 
 
 		// BEM Matrix data
-		LD_Matrix<double> Q;  // Displacement influence coefficients
-		LD_Matrix<double> R;  // The reduced traction matrix after injecting continuity condition (Reduced automatically during process)
-		LD_Matrix<double> A;  // The algebraic system matrix
+		LD_Matrix<double> A;  // The assembled system matrix 
+		                      // In First place it will hold the traction influence coefficients 
+							  // then it will be updated using the column switch algorithm based on the prescribed boundary conditions
+		                          
 		double* b;            // The Right Hand Side vector (RHS)
 		double* x;            // The vector of unknowns
 		
@@ -234,15 +246,15 @@ namespace BEM_3D
 		double m_CurrentAdvance; // Used to Get the Rate of Advancement of a Lengthy JOB
 		bool m_bLengthyJob;      // Used to control the Lengthy Job 
 		CString m_strCurrentJob; // The string indicating the current lengthy JOB
-		static unsigned m_RAM_Quota_Gb; // The Maximum Gigabytes allowed in RAM Storage
 		static MESH_TYPE m_MeshType; // The Model Mesh Discretization type
 		static double m_MaxSharpAngle; // The Limit angle to decide if the region is Sharp
-		static bool m_bAutoSetRamQuotas;
 
 		// ========== Solver static data ============================================================
 		static SOLVER m_Solver;        // The solver type used
 		static unsigned m_NumSteps;    // The number of steps if we are using krylov subspace solvers
 		static double m_eps;           // The error threshold in the solver
+		static unsigned m_nMinLeafSize;     // The minimum leaf size
+		static unsigned m_nMaxRank;         // The maximum rank
 	};
 };
 

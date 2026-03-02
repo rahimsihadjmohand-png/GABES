@@ -1463,6 +1463,73 @@ int Element::RuleToIndex(INTEG_RULE rule)
 	return Idx;
 }
 
+
+INTEG_RULE Element::IndexToRule(int idx)
+{
+
+	switch (idx)
+	{
+	case 0:
+		return _001_PT;
+
+	case 1:
+		return _003_PT;
+
+	case 2:
+		return _004_PT;
+
+	case 3:
+		return _007_PT;
+
+	case 4:
+		return _013_PT;
+
+	case 5:
+		return _028_PT;
+
+	case 6:
+		return _052_PT;
+
+	case 7:
+		return _056_PT;
+
+	case 8:
+		return _104_PT;
+
+	case 9:
+		return _112_PT;
+
+	case 10:
+		return _208_PT;
+
+	case 11:
+		return _WS_NODE1;
+
+	case 12:
+		return _WS_NODE2;
+
+	case 13:
+		return _WS_NODE3;
+
+	case 14:
+		return _WS_VERT1;
+
+	case 15:
+		return _WS_VERT2;
+
+	case 16:
+		return _WS_VERT3;
+
+	default:
+		break;
+	}
+
+	return _208_PT;  // Impossible value
+}
+
+
+
+
 int Element::RuleToSize(INTEG_RULE rule)
 {
 	int N = 0;
@@ -1541,6 +1608,8 @@ int Element::RuleToSize(INTEG_RULE rule)
 
 void Element::ComputeReusableIntegrationData()
 {
+	ComputeReusableShapeFunctions();
+
     #pragma omp parallel for
 	for (int nRule = 0; nRule < 17; nRule++)
 	{

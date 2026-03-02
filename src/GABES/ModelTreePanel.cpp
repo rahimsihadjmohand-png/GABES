@@ -5,6 +5,7 @@
 #include "GABES.h"
 #include "ModelTreePanel.h"
 #include "GABESView.h"
+#include "DlgSubsetBCs.h"
 
 
 // CModelTreePanel
@@ -262,6 +263,9 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					{
 						m_TreeCtrl.SetItemText(lpNmtvdi->item.hItem, lpNmtvdi->item.pszText);
 						pRefFrame->m_strName = lpNmtvdi->item.pszText;
+
+						// Set the Modified Flag to true (default argument)
+						m_pDoc->SetModifiedFlag();
 					}
 				}
 				else if (hParent == m_hModelItem)
@@ -273,6 +277,9 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					{
 						m_TreeCtrl.SetItemText(lpNmtvdi->item.hItem, lpNmtvdi->item.pszText);
 						pSubSet->m_strName = lpNmtvdi->item.pszText;
+
+						// Set the Modified Flag to true (default argument)
+						m_pDoc->SetModifiedFlag();
 					}
 				}
 			}			
@@ -360,7 +367,7 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 			if ((hItem != NULL) && (hItem != TVI_ROOT) && (hItem != m_hFramesItem) && (hItem != m_hModelItem) && (uFlags & TVHT_ONITEM))
 			{
-				// Optional: Select the item under right-click
+				// Optional: Select the item under double-click
 				m_TreeCtrl.SelectItem(hItem);
 
 				// Get the parent Item
@@ -368,8 +375,6 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 				if (hParent == m_hFramesItem)
 				{
-					
-
 					BEM_3D::ReferenceFrame* pRefFrame = (BEM_3D::ReferenceFrame*)m_TreeCtrl.GetItemData(hItem);
 
 					// Invoke the Modify frame Dialog
@@ -380,6 +385,25 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 						m_pView->m_DlgReferenceFrame.m_pCurrRefFrame = pRefFrame;
 						m_pView->m_DlgReferenceFrame.UpdateControlsFromCurrentRefFrame();
 						m_pView->m_DlgReferenceFrame.ShowWindow(SW_SHOWNORMAL);
+					}
+				}
+				else if (hParent == m_hModelItem)
+				{
+					BEM_3D::ElementSubSet* pSubSet = (BEM_3D::ElementSubSet*)m_TreeCtrl.GetItemData(hItem);
+
+					// Invoke the SubSetBCs Dialog
+					if (pSubSet != nullptr)
+					{
+						CDlgSubsetBCs dlg(*pSubSet, m_pView);
+
+						if (dlg.DoModal() == IDOK)
+						{
+							UpdateTreeCtrl();
+
+							// Set the Modified Flag to true (default argument)
+							m_pDoc->SetModifiedFlag();
+						}
+
 					}
 				}
 			}
@@ -438,7 +462,10 @@ void CModelTreePanel::OnSubsetDelete()
 				auto iter = std::find(rRefFrames.begin(), rRefFrames.end(), pRefFrame);
 				rRefFrames.erase(iter);
 				delete pRefFrame;
-				m_TreeCtrl.DeleteItem(hItem);				
+				m_TreeCtrl.DeleteItem(hItem);
+
+				// Set the Modified Flag to true (default argument)
+				m_pDoc->SetModifiedFlag();
 			}			
 		}
 		else if (hParentItem == m_hModelItem)
@@ -453,6 +480,9 @@ void CModelTreePanel::OnSubsetDelete()
 				delete pSubSet;
 				m_TreeCtrl.DeleteItem(hItem);
 				m_pView->ResetSelections();
+
+				// Set the Modified Flag to true (default argument)
+				m_pDoc->SetModifiedFlag();
 			}
 		}	
 		

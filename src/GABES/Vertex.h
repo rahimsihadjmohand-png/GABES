@@ -49,6 +49,10 @@ namespace BEM_3D
 		//============================================
 
 
+		// Storage 
+		void Serialize(CArchive& ar);
+
+
 	public:
 		// ======================================== BEM data ===================================================
 		Vector U; // The displacement vector

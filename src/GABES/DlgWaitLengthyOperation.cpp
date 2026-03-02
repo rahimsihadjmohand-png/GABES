@@ -12,11 +12,11 @@
 
 IMPLEMENT_DYNAMIC(CDlgWaitLengthyOperation, CDialogEx)
 
-CDlgWaitLengthyOperation::CDlgWaitLengthyOperation(BEM_3D::Model* _pModel, int _nOperation, CWnd* pParent /*=nullptr*/)
+CDlgWaitLengthyOperation::CDlgWaitLengthyOperation(BEM_3D::Model* _pModel, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DLG_WAIT_LENGTHY_OPERATION, pParent)
 	, pModel(_pModel)
-	, nOperation(_nOperation)
 	, strTime(_T(""))
+	, m_bConstructionStage(true)
 {
 
 }
@@ -77,21 +77,21 @@ void CDlgWaitLengthyOperation::OnTimer(UINT_PTR nIDEvent)
 
 	if (pModel->m_bLengthyJob)
 	{
-
 		FormatTime();
 		SetDlgItemText(IDC_STATIC_TIME, strTime);
 	}
+	else if (m_bConstructionStage)
+	{
+		// Enter the solve stage
+		m_bConstructionStage = false;
+		SetWindowText(_T("Solving Linear System"));
+		/*PrgsAdvance.ModifyStyle(0, PBS_MARQUEE);
+		PrgsAdvance.SetMarquee(true, 100);*/
+		pModel->ResolveLinearSystem();
+	}
 	else
 	{
-		if (nOperation == 0)
-			EndDialog(0);
-		else
-		{
-			PrgsAdvance.ModifyStyle(PBS_MARQUEE, 0);
-			PrgsAdvance.SetMarquee(false, 100);
-
-			btnOk.EnableWindow(TRUE);
-		}		
+		btnOk.EnableWindow(TRUE);
 	}
 }
 
@@ -102,26 +102,11 @@ BOOL CDlgWaitLengthyOperation::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+	SetWindowText(_T("Construct Linear Sytem"));
+	/*PrgsAdvance.ModifyStyle(PBS_MARQUEE, 0);
+	PrgsAdvance.SetMarquee(false, 100);*/
+	pModel->ConstructLinearSystem();	
 	
-	switch (nOperation)
-	{
-	case 0:
-		SetWindowText(_T("Calaculating Coefficient Matrices"));
-		/*PrgsAdvance.ModifyStyle(PBS_MARQUEE, 0);
-		PrgsAdvance.SetMarquee(false, 100);*/
-		pModel->ConstructCoefficientMatrices();
-		break;
-
-	case 1:
-		SetWindowText(_T("Solving Linear System"));
-		/*PrgsAdvance.ModifyStyle(0, PBS_MARQUEE);
-		PrgsAdvance.SetMarquee(true, 100);*/
-		pModel->ConstructAndResolveLinearSystem();
-		break;
-
-	default:
-		break;
-	}
 	
 	QueryPerformanceCounter(&ticksStart);
 	QueryPerformanceFrequency(&ticksFreq);

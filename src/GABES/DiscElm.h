@@ -27,14 +27,19 @@ namespace BEM_3D
 		virtual double Q(const Vertex& SrcPt, int i, int j, int l)const;
 		virtual double P(const Vertex& SrcPt, int i, int j, int l)const;
 
-		void ComputeReusableShapeFunctions();   // This function is called once !!!!!
+		virtual void ComputeReusableShapeFunctions();   // This function is called once !!!!!
 
 		void CalculateControlNodes(); // This method calculate the internal control nodes from the geometrical boundary nodes
+
+
+		// Storage
+		virtual void Serialize(CArchive& ar);
 
 	private:
 		virtual double N1s(int nRule, int nNode)const { return N1s_DE[nRule][nNode]; }
 		virtual double N2s(int nRule, int nNode)const { return N2s_DE[nRule][nNode]; }
 		virtual double N3s(int nRule, int nNode)const { return N3s_DE[nRule][nNode]; }
+
 
 
 	private:

@@ -21,17 +21,13 @@ using namespace BEM_3D;
 #define _L Element::Lambda
 
 
-unsigned Model::m_RAM_Quota_Gb = 28; // 28 Gb of memory
 MESH_TYPE Model::m_MeshType = DISCONTINUOUS_SHARP_EDGES;
 double Model::m_MaxSharpAngle = M_PI_4;
-bool Model::m_bAutoSetRamQuotas = false;
 
 
 Model::Model()
       // the extension .ldmat stands for: large and dense matrix
-	: Q(m_RAM_Quota_Gb / 2 * 1024, _T("Q.ldmat")) 
-	, R(m_RAM_Quota_Gb / 4 * 1024, _T("R.ldmat"))
-	, A(m_RAM_Quota_Gb / 4 * 1024, _T("A.ldmat"), &m_CurrentAdvance)
+	: A(28 * 1024, _T("A.ldmat"), &m_CurrentAdvance)
 	, b(nullptr)
 	, x(nullptr)
 	, m_pVertexBuffer(nullptr)
@@ -48,11 +44,11 @@ Model::Model()
 	ElementSubSet::m_pElements = &m_Elements;
 
 	
-	// The Memory Quota is set by default to 90% of the total available RAM
+	// The Memory Quota is set by default to 50% of the total available RAM
 	MEMORYSTATUSEX mem;
 	mem.dwLength = sizeof(mem);
 	GlobalMemoryStatusEx(&mem);
-	Model::m_RAM_Quota_Gb = (UINT)(((double)mem.ullTotalPhys * 0.9) / pow(1024.0 , 3.0));
+	SetA_Quota((UINT)(((double)mem.ullTotalPhys * 0.5) / pow(1024.0, 3.0)));
 }
 
 Model::~Model()
@@ -117,9 +113,8 @@ void Model::ClearBEMMatrixData()
 	int Nv = m_Vertices.size();
 	int N = Nv * 3;
 
-	Q.CleanRamStorage();
-	R.CleanRamStorage();
 	A.CleanRamStorage();
+	A.DeleteOOCFile();
 
 
 	// delete b vector
@@ -166,283 +161,6 @@ void Model::ConstructVertexDOFContainer()
 }
 
 
-void Model::ComputeInfluenceCoefficients(double** Q_Chunck, double** P_Chunck, Matrix* CPV, int j, int m, int i)
-{
-	// Element of index j
-	// Element Node of local index m
-	// Dof Vertex of index i 
-
-	if (!m_bLengthyJob)
-		return;
-
-	Element* pElm_j = m_Elements[j];
-	Vertex* pRowVertex = m_DOF_Vertices[i];
-	Vertex* pColVertex = pElm_j->Vdof_Ptr(m);
-
-
-
-	const Vertex& rSrcPt = *pRowVertex;
-
-	//============================== Q Matrix =======================================	
-	// column direction c = 0, 1, 2
-	for (int c = 0; c < 3; c++)
-	{
-		bool bDispBc = pColVertex->IsDispFixed(c);
-		const Vector& Tm = pElm_j->T(m);
-		bool bNotNull = (Tm[c] != 0.0);
-		bool bCountCoeff = (bDispBc || bNotNull);
-
-		
-		for (int r = 0; r < 3; r++)
-			if (bCountCoeff)
-				Q_Chunck[3 * m + c][3 * i + r] = -pElm_j->Q(rSrcPt, r, c, m);
-			else
-				Q_Chunck[3 * m + c][3 * i + r] = 0.0;
-	}
-				
-	//===============================================================================
-
-	
-
-	if (Element::m_bRigidBodyCPV && (pRowVertex == pColVertex))
-		return;
-	
-	//============================== P Matrix =======================================
-	// column direction c = 0, 1, 2
-	for (int c = 0; c < 3; c++)
-		for (int r = 0; r < 3; r++)
-			P_Chunck[3 * m + c][3 * i + r] = pElm_j->P(rSrcPt, r, c, m);
-	//===============================================================================
-
-
-	if (Element::m_bRigidBodyCPV)
-	{
-		// Each Row DOF Vertex has a 3*3 Matrix which is the Diagonal Blocks of CPV
-	    // integrals. which are computed using the rigid body condition (Row summation)
-	    //============================== Update the CPVs ======================================
-	    //	
-	    // ========================= Row N°1 ======================================
-		CPV[i]._11 -= P_Chunck[3 * m + 0][3 * i + 0];
-		CPV[i]._12 -= P_Chunck[3 * m + 1][3 * i + 0];
-		CPV[i]._13 -= P_Chunck[3 * m + 2][3 * i + 0];
-		// ========================= Row N°2 ======================================
-		CPV[i]._21 -= P_Chunck[3 * m + 0][3 * i + 1];
-		CPV[i]._22 -= P_Chunck[3 * m + 1][3 * i + 1];
-		CPV[i]._23 -= P_Chunck[3 * m + 2][3 * i + 1];
-		// ========================= Row N°3 ======================================
-		CPV[i]._31 -= P_Chunck[3 * m + 0][3 * i + 2];
-		CPV[i]._32 -= P_Chunck[3 * m + 1][3 * i + 2];
-		CPV[i]._33 -= P_Chunck[3 * m + 2][3 * i + 2];
-		//=====================================================================================
-	}		
-}
-
-
-void Model::ConstructCoefficientMatrices()
-{
-	//Clear the BEM Matrix data
-	ClearBEMMatrixData();
-
-	m_bLengthyJob = true;
-	m_CurrentAdvance = 0.0;
-	::AfxBeginThread(ConstructCoefficientMatricesThread, (LPVOID)this);
-}
-
-
-
-UINT Model::ConstructCoefficientMatricesThread(LPVOID pParam)
-{
-	
-	// Get the THIS pointer of the model object
-	Model* pObj = (Model*)pParam;
-
-	if (!pObj->m_bLengthyJob)
-		return 0;
-	
-	pObj->m_strCurrentJob = _T("Copying boundary conditions from subsets...");
-	pObj->CopyBoundaryConditionsFromSubSets();
-
-
-	pObj->m_strCurrentJob = _T("Obtain sytem dimensions...");
-
-
-
-	// Get the dimension of the system
-	int Ne = pObj->m_Elements.size();     // Number of elements
-	int Nv = pObj->m_DOF_Vertices.size(); // Number of vertices
-
-	int M = Ne * 9;                    // The column dimension of the matrices
-	int N = Nv * 3;                    // The row dimension of the matrices
-
-	
-	pObj->m_strCurrentJob = _T("Initialization of matrices Q and R...");
-	// Initialize matrices R and Q
-	pObj->Q.Initialize(N, M);
-	pObj->R.Initialize(N, N);
-
-
-	// Declare the variables for the progression tracking
-	double Ntot = (double)Nv * ((double)Ne * 3.0 + 1.0);
-	double Done = 0.0;
-
-
-	// Open the Q and R Files here!!
-	pObj->Q.OpenFile(true);
-	pObj->R.OpenFile(true); // No need to zero the file
-
-
-
-	pObj->m_strCurrentJob = _T("Allocate necessary resources...");
-	// Declare the CPV blocks 
-	Matrix* CPV = new Matrix[Nv];
-	
-
-	// Create a 9 x N arrays to avoid accessing OOC storage element by element and do entire column copy instead
-	
-	// Allocate the bi-dimensional Array chunks
-	double* Q_Chunck[9];
-	double* P_Chunck[9];
-
-	// Affect contiguous memory to them
-	for (unsigned t = 0; t < 9; t++)
-	{
-		Q_Chunck[t] = new double[N];
-		P_Chunck[t] = new double[N];
-	}
-
-    
-	pObj->m_strCurrentJob = _T("Calculate the coefficient matrices Q and R...");
-
-	for (int j = 0; j < Ne; j++)
-	{
-		// Enter the loop to calculate the influence coefficients 
-        #pragma omp parallel for
-		for (int i = 0; i < Nv; i++)
-		{
-			if (!pObj->m_bLengthyJob)
-				break;
-
-			for (int m = 0; m < 3; m++)
-				pObj->ComputeInfluenceCoefficients(Q_Chunck, P_Chunck, CPV, j, m, i);  // <===I still receive access violation here!!!			
-		}
-
-		if (!pObj->m_bLengthyJob)			
-			break;  // or continue; (cannot return from parallel block)
-		
-		
-		// Copy the Q Chunck array to the LD_Matrix Q
-		pObj->Q.SetChunck(9 * j, 9, Q_Chunck); //<==== PARALLEL 
-
-		// Copy the P Chunck columns to the LD_Matrix R
-		for (int l = 0; l < 3; l++)
-		{
-			int DofIdx = pObj->m_Elements[j]->DofIdx(l);
-
-
-			for (int k = 0; k < 3; k++)
-				pObj->R.IncrementColumn(3 * DofIdx + k, P_Chunck[3 * l + k]);		//<==== PARALLEL 	
-		}
-			
-
-		Done += ((double)Nv * 3.0);
-		pObj->m_CurrentAdvance = Done / Ntot;
-	}
-
-
-	// Free Chunks memory
-	for (int i = 0; i < 9; i++)
-	{
-		delete[] Q_Chunck[i];
-		delete[] P_Chunck[i];
-	}
-	
-
-
-	if (!pObj->m_bLengthyJob)
-	{
-		pObj->Q.CloseFile();
-		pObj->R.CloseFile();
-
-
-		if (CPV != nullptr)
-		{
-			delete[] CPV;
-			CPV = nullptr;
-		}
-
-		return 0;
-	}
-	
-
-	pObj->m_strCurrentJob = _T("Add the diagonal C.P.V blocs of matrix R...");
-
-	
-	// Set the C.P.V  integrals using rigid body Method or Add the free terms in case of Direct method
-    
-	#pragma omp parallel for
-	for (int i = 0; i < Nv; i++)
-	{
-		if (Element::m_bRigidBodyCPV)
-		{
-			pObj->R.Set(3 * i + 0, 3 * i + 0, CPV[i]._11);
-			pObj->R.Set(3 * i + 1, 3 * i + 0, CPV[i]._12);
-			pObj->R.Set(3 * i + 2, 3 * i + 0, CPV[i]._13);
-
-			pObj->R.Set(3 * i + 0, 3 * i + 1, CPV[i]._21);
-			pObj->R.Set(3 * i + 1, 3 * i + 1, CPV[i]._22);
-			pObj->R.Set(3 * i + 2, 3 * i + 1, CPV[i]._23);
-
-			pObj->R.Set(3 * i + 0, 3 * i + 2, CPV[i]._31);
-			pObj->R.Set(3 * i + 1, 3 * i + 2, CPV[i]._32);
-			pObj->R.Set(3 * i + 2, 3 * i + 2, CPV[i]._33);
-		}
-		else
-		{
-			Vertex* pVdof = pObj->m_DOF_Vertices[i];
-			const Matrix& C = pVdof->C;
-			
-			pObj->R.Add(3 * i + 0, 3 * i + 0, C._11);
-			pObj->R.Add(3 * i + 1, 3 * i + 0, C._12);
-			pObj->R.Add(3 * i + 2, 3 * i + 0, C._13);
-
-			pObj->R.Add(3 * i + 0, 3 * i + 1, C._21);
-			pObj->R.Add(3 * i + 1, 3 * i + 1, C._22);
-			pObj->R.Add(3 * i + 2, 3 * i + 1, C._23);
-
-			pObj->R.Add(3 * i + 0, 3 * i + 2, C._31);
-			pObj->R.Add(3 * i + 1, 3 * i + 2, C._32);
-			pObj->R.Add(3 * i + 2, 3 * i + 2, C._33);
-		}	  	
-	}	
-
-	
-
-	Done += (double)Nv;
-	pObj->m_CurrentAdvance = Done / Ntot;
-
-
-	if (CPV != nullptr)
-	{
-		delete[] CPV;
-		CPV = nullptr;
-	}
-
-
-
-	// Close the files
-	pObj->Q.CloseFile();
-	pObj->R.CloseFile();
-
-
-    // Set the progress advance to 100% and make the Lengthy Job flag to false
-	pObj->m_CurrentAdvance = 1.0;
-	pObj->m_bLengthyJob = false;
-	
-
-	pObj->m_strCurrentJob = _T("The computation of coefficient matrices completed successfully!");
-
-	return 0;
-}
 
 void Model::CopyBoundaryConditionsFromSubSets()
 {
@@ -455,11 +173,11 @@ void Model::CopyBoundaryConditionsFromSubSets()
 			Vector& T = pElm->T(l);
 
 			V.U.Set(0.0, 0.0, 0.0);
-			T.Set(0.0, 0.0, 0.0);  
+			T.Set(0.0, 0.0, 0.0);
 			V.m_bFixed_X = false;
 			V.m_bFixed_Y = false;
 			V.m_bFixed_Z = false;
-		}		
+		}
 	}
 
 	// Loop through the Subsets and Copy the Boundary Conditions One By One
@@ -485,7 +203,7 @@ void Model::CopyBoundaryConditionsFromSubSets()
 					V.m_bFixed_X = pSubSet->m_bFixed_X;
 					V.m_bFixed_Y = pSubSet->m_bFixed_Y;
 					V.m_bFixed_Z = pSubSet->m_bFixed_Z;
-				}				
+				}
 
 			}
 
@@ -539,13 +257,279 @@ void Model::CopyBoundaryConditionsFromSubSets()
 
 			}
 		}
-		
+
 	}
 }
 
 
+void Model::ComputeTractionInfluenceCoefficients(double** P_Chunck, Matrix* CPV, int e_idx, int l, int V_idx)
+{
+	// Element of index e_idx
+	// Element Node of local index l
+	// Dof Vertex of index V_idx 
+
+	if (!m_bLengthyJob)
+		return;
+
+	Element* pElm_j = m_Elements[e_idx];
+	Vertex* pRowVertex = m_DOF_Vertices[V_idx];
+	Vertex* pColVertex = pElm_j->Vdof_Ptr(l);
+	const Vertex& rSrcPt = *pRowVertex;	
+
+	if (Element::m_bRigidBodyCPV && (pRowVertex == pColVertex))
+		return;
+	
+	//============================== Calculate the coefficients =======================================
+	// column direction j = 0, 1, 2
+	for (int j = 0; j < 3; j++)
+		// row direction i = 0, 1, 2
+		for (int i = 0; i < 3; i++)
+			P_Chunck[3 * l + j][3 * V_idx + i] = pElm_j->P(rSrcPt, i, j, l);
+	//=================================================================================================
+
+
+	if (Element::m_bRigidBodyCPV)
+	{
+		// Each Row DOF Vertex has a 3*3 Matrix which is the Diagonal Blocks of CPV
+	    // integrals. which are computed using the rigid body condition (Row summation)
+	    //============================== Update the CPVs ======================================
+	    //	
+	    // ========================= Row N°1 ======================================
+		CPV[V_idx]._11 -= P_Chunck[3 * l + 0][3 * V_idx + 0];
+		CPV[V_idx]._12 -= P_Chunck[3 * l + 1][3 * V_idx + 0];
+		CPV[V_idx]._13 -= P_Chunck[3 * l + 2][3 * V_idx + 0];
+		// ========================= Row N°2 ======================================
+		CPV[V_idx]._21 -= P_Chunck[3 * l + 0][3 * V_idx + 1];
+		CPV[V_idx]._22 -= P_Chunck[3 * l + 1][3 * V_idx + 1];
+		CPV[V_idx]._23 -= P_Chunck[3 * l + 2][3 * V_idx + 1];
+		// ========================= Row N°3 ======================================
+		CPV[V_idx]._31 -= P_Chunck[3 * l + 0][3 * V_idx + 2];
+		CPV[V_idx]._32 -= P_Chunck[3 * l + 1][3 * V_idx + 2];
+		CPV[V_idx]._33 -= P_Chunck[3 * l + 2][3 * V_idx + 2];
+		//=====================================================================================
+	}		
+}
+
+
+
+void Model::GetQColumn(double* Q_Col, Element* pElm, int l, int j)
+{
+	int Nv = m_DOF_Vertices.size(); // Number of vertices
+	int N = Nv * 3;                 // The DOF of the system
+
+	
+	for (int V_idx = 0; V_idx < Nv; V_idx++)
+	{
+
+		const Vertex& rSrcPt = *m_DOF_Vertices[V_idx];
+
+        #pragma omp parallel for
+		for (int i = 0; i < 3; i++)
+			Q_Col[3 * V_idx + i] = -pElm->Q(rSrcPt, i, j, l);
+
+	}
+}
+
 
 void Model::ConstructLinearSystem()
+{
+	//Clear the BEM Matrix data
+	ClearBEMMatrixData();
+
+	m_bLengthyJob = true;
+	m_CurrentAdvance = 0.0;
+	::AfxBeginThread(ConstructLinearSystemThread, (LPVOID)this);
+}
+
+
+
+
+UINT Model::ConstructLinearSystemThread(LPVOID pParam)
+{
+
+	// Get the THIS pointer of the model object
+	Model* pObj = (Model*)pParam;
+
+	if (!pObj->m_bLengthyJob)
+		return 0;
+
+	pObj->m_strCurrentJob = _T("Copying boundary conditions from subsets...");
+	pObj->CopyBoundaryConditionsFromSubSets();
+
+
+	pObj->m_strCurrentJob = _T("Obtain sytem dimensions...");
+
+	// Get the dimension of the system
+	int Ne = pObj->m_Elements.size();     // Number of elements
+	int Nv = pObj->m_DOF_Vertices.size(); // Number of vertices
+
+	int M = Ne * 9;                    // The column dimension of the matrices
+	int N = Nv * 3;                    // The row dimension of the matrices
+
+
+	pObj->m_strCurrentJob = _T("Initialization of the system matrix [A]...");
+	// Initialize matrices A 
+	pObj->A.Initialize(N, N);
+
+
+	// Declare the variables for the progression tracking
+	double Ntot = (double)Nv * ((double)Ne * 3.0 + 1.0);
+	double Done = 0.0;
+
+
+	// Open the A matrix File here!!
+	pObj->A.OpenFile(true); // No need to zero the file
+
+
+
+	pObj->m_strCurrentJob = _T("Allocate necessary resources...");
+	// Declare the CPV blocks 
+	Matrix* CPV = new Matrix[Nv];
+
+
+	// Create a 9 x N arrays to avoid accessing OOC storage element by element and do entire column copy instead
+
+	// Allocate the (9 x N) chunck Array 
+	double* P_Chunck[9];
+
+	// Affect contiguous memory to them
+	for (unsigned t = 0; t < 9; t++)
+	{
+		P_Chunck[t] = new double[N];
+	}
+
+
+	pObj->m_strCurrentJob = _T("Calculate the matrix [A] using the traction kernel (First Phase)...");
+
+	for (int e_idx = 0; e_idx < Ne; e_idx++)
+	{
+		// Enter the loop to calculate the influence coefficients 
+        #pragma omp parallel for
+		for (int V_idx = 0; V_idx < Nv; V_idx++)
+		{
+			if (!pObj->m_bLengthyJob)
+				break;
+
+			for (int l = 0; l < 3; l++)
+				pObj->ComputeTractionInfluenceCoefficients(P_Chunck, CPV, e_idx, l, V_idx);
+		}
+
+		if (!pObj->m_bLengthyJob)
+			break;  // or continue; (cannot return from parallel block)
+
+
+		// Copy the P Chunck columns to the LD_Matrix A
+		for (int l = 0; l < 3; l++)
+		{
+			int DofIdx = pObj->m_Elements[e_idx]->DofIdx(l);
+
+
+			for (int k = 0; k < 3; k++)
+				pObj->A.IncrementColumn(3 * DofIdx + k, P_Chunck[3 * l + k]);		//<==== PARALLEL 	
+		}
+
+
+		Done += ((double)Nv * 3.0);
+		pObj->m_CurrentAdvance = Done / Ntot;
+	}
+
+
+	// Free The P_Chunks 
+	for (int i = 0; i < 9; i++)
+		delete[] P_Chunck[i];
+	
+
+
+
+	if (!pObj->m_bLengthyJob)
+	{
+		pObj->A.CloseFile();
+
+
+		if (CPV != nullptr)
+		{
+			delete[] CPV;
+			CPV = nullptr;
+		}
+
+		return 0;
+	}
+
+
+	pObj->m_strCurrentJob = _T("Add the diagonal C.P.V blocs to the matrix [A]...");
+
+
+	// Evaluate the C.P.V  integrals using rigid body Method or Add the free terms in case of Direct method
+    #pragma omp parallel for
+	for (int i = 0; i < Nv; i++)
+	{
+		if (Element::m_bRigidBodyCPV)
+		{
+			pObj->A.Set(3 * i + 0, 3 * i + 0, CPV[i]._11);
+			pObj->A.Set(3 * i + 1, 3 * i + 0, CPV[i]._12);
+			pObj->A.Set(3 * i + 2, 3 * i + 0, CPV[i]._13);
+
+			pObj->A.Set(3 * i + 0, 3 * i + 1, CPV[i]._21);
+			pObj->A.Set(3 * i + 1, 3 * i + 1, CPV[i]._22);
+			pObj->A.Set(3 * i + 2, 3 * i + 1, CPV[i]._23);
+
+			pObj->A.Set(3 * i + 0, 3 * i + 2, CPV[i]._31);
+			pObj->A.Set(3 * i + 1, 3 * i + 2, CPV[i]._32);
+			pObj->A.Set(3 * i + 2, 3 * i + 2, CPV[i]._33);
+		}
+		else
+		{
+			Vertex* pVdof = pObj->m_DOF_Vertices[i];
+			const Matrix& C = pVdof->C;
+
+			pObj->A.Add(3 * i + 0, 3 * i + 0, C._11);
+			pObj->A.Add(3 * i + 1, 3 * i + 0, C._12);
+			pObj->A.Add(3 * i + 2, 3 * i + 0, C._13);
+
+			pObj->A.Add(3 * i + 0, 3 * i + 1, C._21);
+			pObj->A.Add(3 * i + 1, 3 * i + 1, C._22);
+			pObj->A.Add(3 * i + 2, 3 * i + 1, C._23);
+
+			pObj->A.Add(3 * i + 0, 3 * i + 2, C._31);
+			pObj->A.Add(3 * i + 1, 3 * i + 2, C._32);
+			pObj->A.Add(3 * i + 2, 3 * i + 2, C._33);
+		}
+	}
+
+
+
+	Done += (double)Nv;
+	pObj->m_CurrentAdvance = Done / Ntot;
+
+
+	if (CPV != nullptr)
+	{
+		delete[] CPV;
+		CPV = nullptr;
+	}
+
+	// Close the files
+	pObj->A.CloseFile();
+
+
+	// Update the A matrix and construct the RHS vector using prescribed boundary conditions
+	pObj->ConstructRHSvector();
+
+
+	// Set the progress advance to 100% and make the Lengthy Job flag to false
+	pObj->m_CurrentAdvance = 1.0;
+	pObj->m_bLengthyJob = false;
+
+
+
+	return 0;
+}
+
+
+
+
+
+void Model::ConstructRHSvector()
 {
 	// Get the dimension of the system
 	int Ne = m_Elements.size();     // Number of elements
@@ -553,42 +537,35 @@ void Model::ConstructLinearSystem()
 	int M = Ne * 9;                 // The column dimension of the matrices
 	int N = Nv * 3;                 // The row dimension of the matrices
 
-	// Allocate memory 
-	// Delete Ram Storage in A MatriX 
-	A.CleanRamStorage();
-
-	// delete b vector
+	
+	
+	// Free the RHS (b) vector
 	if (b)
 	{
 		delete[] b;
 		b = nullptr;
 	}
 
-	// delete x vector
+	// Free x vector
 	if (x)
 	{
 		delete[] x;
 		x = nullptr;
 	}
 
-	// Allocate memory for b  and x Vectors and Initialize A Matrix
-	A.Initialize(N, N);
-
+	// Allocate memory for b  and x Vectors 
 	b = new double[N];
 	x = new double[N];
 
 	//=====================================================================
-	// Fill the vectors b and x by default by zeros
+	// Fill the vectors b and x by default with zeros
 	ZeroMemory(b, sizeof(double) * N);
 	ZeroMemory(x, sizeof(double) * N);
 
-	// Open Q and R Matrices files for Read
-	Q.OpenFile(true);
-	R.OpenFile(true);
-	// Open A matrix file for Write
+	// Open  A LD_Matrix file for Read and write
 	A.OpenFile(true);
 
-	// Construct a map which has the indices owning elements for each Dof vertex!!
+	// Construct a map which stores for each DOF vertex the indices of owning elements!!
 	std::vector<std::vector<int>> VertElmMap(Nv);
 
 	for (int j = 0; j < Ne; j++)
@@ -600,63 +577,101 @@ void Model::ConstructLinearSystem()
 		VertElmMap[pElm->m_J3].push_back(j);
 	}
 
+
+	m_strCurrentJob = _T("Update the [A] matrix using the prescribed boundary conditions...");
 	// Declare the variables for the progression tracking
 	double Ntot = (double)Nv;
 	double Done = 0.0;
 	m_CurrentAdvance = 0.0;
 
+	// Create a Q_Col Buffer
+	double* Q_Col = new double[N];
+
+
 	// Fill the A Matrix based  on the Fixed Disp flag of the nodes	
-	for (int i = 0; i < Nv; i++, Done += 1.0)
+	for (int V_idx = 0; V_idx < Nv; V_idx++, Done += 1.0)
 	{
-		Vertex* pVi = m_DOF_Vertices[i];
+		Vertex* pVi = m_DOF_Vertices[V_idx];
+		int e_idx = VertElmMap[V_idx][0];
+		Element* pElm = m_Elements[e_idx];
+		int l = pElm->GetVertexLocalIndex(pVi);
 
-		for (int e_idx : VertElmMap[i])
+		for (int k = 0; k < 3; k++)
 		{
-			Element* pElm = m_Elements[e_idx];
-			int e_node_idx = pElm->GetVertexLocalIndex(pVi);
-			const Vector& T = pElm->T(e_node_idx);
+			int idx_Col_A = 3 * V_idx + k;						
+			LD_Column<double> A_Col = A[idx_Col_A];
 
-
-			for (int k = 0; k < 3; k++)
+			if (pVi->IsDispFixed(k))
 			{
-				int idx_Col_Q = 9 * e_idx + 3 * e_node_idx + k;
-				int idx_Col_R = 3 * i + k;
-				int idx_Col_A = idx_Col_R;
 
-
-				LD_Column<double> Q_Col = Q[idx_Col_Q];
-				LD_Column<double> R_Col = R[idx_Col_R];
-
-				if (pVi->IsDispFixed(k))
+				if (pVi->U[k] != 0.0)
 				{
-					A.SetColumn(idx_Col_A, Q_Col);
-					//CopyMemory(A[col], Q[col], N * sizeof(double));
-
                     #pragma omp parallel for
 					for (int row = 0; row < N; row++)
-						b[row] -= (R_Col[row] * pVi->U[k]);
+						b[row] -= (A_Col[row] * pVi->U[k]);
 				}
-				else
-				{
-					A.SetColumn(idx_Col_A, R_Col);
-					//CopyMemory(A[col], P[col], N * sizeof(double));
+               
 
-                    #pragma omp parallel for
-					for (int row = 0; row < N; row++)
-						b[row] -= (Q_Col[row] * T[k]);
-				}
-			}
-		}	
+				GetQColumn(Q_Col, pElm, l, k);
+				A.SetColumn(idx_Col_A, Q_Col);
+			}				
+		}
 
 		m_CurrentAdvance = Done / Ntot;
 	}
 
 
-	// close the matrix files
-	Q.CloseFile();
-	R.CloseFile();
+	m_strCurrentJob = _T("Compute the {b} right-hand side vector...");
+	// Declare the variables for the progression tracking
+	Ntot = (double)(3 * Ne);
+	Done = 0.0;
+	m_CurrentAdvance = 0.0;
+	// Complete the Construction of the right-hand-side vector
+	for (int e_idx = 0; e_idx < Ne; e_idx++)
+	{
+		Element* pElm = m_Elements[e_idx];
+
+		for (int l = 0; l < 3; l++, Done += 1.0)
+		{
+			const Vertex& V = pElm->Vdof(l);   // The reference to the DOF vertex
+			int V_idx = pElm->DofIdx(l);       // The Global index of the DOF vertex
+			const Vector& T = pElm->T(l);
+
+			for (int k = 0; k < 3; k++)
+			{
+				// This boolean tells us if to place the R column as a contribution to the RHS vector or not
+				bool bRcol = (V.IsDispFixed(k) && (e_idx == VertElmMap[V_idx][0])); // To switch a column the displacement of the node must be Fixed and
+				                                                                    // the element must be the first in the Vertex-Element-map
+
+				if (!bRcol && (T[k] != 0.0))
+				{
+					//GetQColumn(Q_Col, pElm, l, k);
+
+                    #pragma omp parallel for
+					for (int row = 0; row < N; row++)
+					{
+						int rowIdx = row / 3;
+						const Vertex& rSrcPt = *m_DOF_Vertices[rowIdx];
+						int i = row % 3;
+						b[row] += (pElm->Q(rSrcPt, i, k, l) * T[k]);
+					}
+				}
+				
+
+			}
+
+			m_CurrentAdvance = Done / Ntot;
+		}
+	}
+
+	delete[] Q_Col;
+
+
+
+	// close the matrix file
 	A.CloseFile();
 }
+
 
 
 
@@ -699,6 +714,8 @@ void Model::UpdateBoundaryUnknowns()
 		}
 	}
 
+	// Clear the BEM Matrix data
+	ClearBEMMatrixData();
 
 	// Calculate the boundary stress and strain tensors
 	CalculateTensors();
@@ -1068,7 +1085,7 @@ void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatm
 
 
 			NodeMaterial.Ambient = D3DXCOLOR(0.0f, 0.5f, 0.0f, 1.0f);
-			NodeMaterial.Diffuse = D3DXCOLOR(0.0f, 8.0f, 0.0f, 1.0f);
+			NodeMaterial.Diffuse = D3DXCOLOR(0.0f, 0.8f, 0.0f, 1.0f);
 
 
 			pD3ddev->SetMaterial(&NodeMaterial);
@@ -1112,7 +1129,7 @@ void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatm
 }
 
 
-void Model::AutoSetMatrixMemoryQuotas()
+void Model::AutoSetA_Quota()
 {
 	unsigned Ne = m_Elements.size();
 	unsigned Nv = m_Vertices.size();
@@ -1129,38 +1146,30 @@ void Model::AutoSetMatrixMemoryQuotas()
 	double Model_Mem = Elems_Mem + Vertex_Mem + V_Dof_Mem;
 
 	// Mat-Vec Memory
-	double Q_Mem = (double)(N * M * sizeof(double));
-	double RA_Mem = (double)(N * N * sizeof(double));
+	double A_Mem = (double)(N * N * sizeof(double));
 	double bx_Mem = (double)(N * sizeof(double));
 
 	// Total Memory
-	double Total_Mem = Model_Mem + Q_Mem + 2.0 * (RA_Mem + bx_Mem);
+	double Total_Mem = Model_Mem + A_Mem + 2.0 * bx_Mem;
 
 	// Remainig Matrix Memory
-	double Ram_Quota = (double)m_RAM_Quota_Gb * pow(1024.0, 3.0);
-	double Rem_Mat_Mem = max(0.0, Ram_Quota - Model_Mem - 2.0 * bx_Mem);
-	double Req_Mat_Mem = Q_Mem + 2.0 * RA_Mem;
+	MEMORYSTATUSEX mem;
+	mem.dwLength = sizeof(mem);
+	GlobalMemoryStatusEx(&mem);
+	double SysRam = (double)mem.ullTotalPhys;
+	double Rem_RAM = max(0.0, SysRam - Model_Mem - 2.0 * bx_Mem);
 
 	// Calculate the Quotas for matrices Q, R and A
-	double Q_fact = Q_Mem / Req_Mat_Mem;
-	double RA_fact = RA_Mem / Req_Mat_Mem;
-	double fQ_Quota = Rem_Mat_Mem * Q_fact;
-	double fRA_Quota = Rem_Mat_Mem * RA_fact;
-	unsigned Q_quota = (unsigned) (fQ_Quota / pow(1024.0, 2.0));
-	unsigned RA_quota = (unsigned)(fRA_Quota / pow(1024.0, 2.0));
+	unsigned A_Quota = (unsigned)(0.5 * Rem_RAM / pow(1024.0, 2.0)); 
 
-	Q.SetRamQuota(Q_quota);
-	R.SetRamQuota(RA_quota);
-	A.SetRamQuota(RA_quota);
+	A.SetRamQuota(A_Quota);  // A_Quota in Mb (Mega Bytes)
 }
 
 
 
-void Model::SetMatrixMemoryQuotas(int Q_Quota, int R_Quota, int A_Quota)
+void Model::SetA_Quota(int A_Quota)
 {
-	Q.SetRamQuota(Q_Quota * 1024ul);
-	R.SetRamQuota(R_Quota * 1024ul);
-	A.SetRamQuota(R_Quota * 1024ul);
+	A.SetRamQuota(A_Quota * 1024ul);
 }
 
 
@@ -1618,10 +1627,11 @@ void Model::LoadMeshFromFile(LPTSTR szFileName)
 	// We set the specific Radius R0 every DOF Vertex
 	SetSpecificRadii();
 
+	// Set the Matrix Ram Quota by default
+	AutoSetA_Quota();
 
-	// Set the Matrix Ram bails
-	if(m_bAutoSetRamQuotas)
-		AutoSetMatrixMemoryQuotas();
+	// Compute the Reusable integration data
+	ComputeReusableIntegrationData();
 }
 
 
@@ -1816,10 +1826,7 @@ void Model::TranslateToCenterOfMass()
 			DiscElm* pDiscElm = (DiscElm*)pElm;
 			pDiscElm->CalculateControlNodes();
 		}
-
-		pElm->ComputeReusableIntegrationData();
 	}
-		
 }
 
 
@@ -2536,4 +2543,175 @@ Tensor Model::GetDomainStrainTensor(const Vertex& DomainPt)const
 	double Eps_31 = GetDomainStrain(DomainPt, 2, 0);
 
 	return Tensor(Eps_11, Eps_22, Eps_33, Eps_12, Eps_31, Eps_23);
+}
+
+
+void Model::ComputeReusableIntegrationData()
+{
+	for (Element* pElm : m_Elements)
+		pElm->ComputeReusableIntegrationData();
+}
+
+		
+void Model::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		// Store the material properties
+		ar << Element::E;  // Young modulus
+		ar << Element::v;  // Poisson's ratio
+		ar << Element::G;  // Shear modulus
+
+		// Store the size of the geometrical vertex container  <==
+		ar << m_Vertices.size();
+
+		// Store the geometrical vertex container <==
+		for (Vertex* pV : m_Vertices)
+			pV->Serialize(ar);	
+		
+		// Store the size of the element container <==
+		ar << m_Elements.size();
+		
+		// Store the element container <==
+		for (Element* pElm : m_Elements)
+		{
+			// Store element Type <==
+			ar << (int)(pElm->Type());
+
+			pElm->Serialize(ar);
+		}
+		
+		// Store the number of continuous and discontinuous elements <==
+		ar << m_Nce;
+		ar << m_Nde;
+		
+		// Store the size of the subsets container <==
+		ar << m_SubSets.size();
+		
+		// Store the subsets container <==
+		for (ElementSubSet* pSubSet : m_SubSets)
+			pSubSet->Serialize(ar);
+		
+	
+		// Store the working directory name <==
+		ar << m_strWorkingDirectory;
+
+		// Store the file name <==
+		ar << m_strFileName;
+
+		// Store the file type <==
+		ar << m_strFileType;
+	}
+	else
+	{
+		// Load the material properties
+		ar >> Element::E;  // Young modulus
+		ar >> Element::v;  // Poisson's ratio
+		ar >> Element::G;  // Shear modulus
+
+		// Load the size of the geometrical vertex container <==
+		size_t Nv_geo = 0;
+		ar >> Nv_geo;
+		
+		// Load the geometrical vertex container <==
+		for (size_t i = 0; i < Nv_geo; i++)
+		{
+			Vertex* pV = new Vertex;
+			pV->Serialize(ar);
+
+			m_Vertices.push_back(pV);
+		}
+		
+		// Load the size of the element container <==
+		size_t Ne = 0;
+		ar >> Ne;
+		
+		// Load the element container <==
+		for (size_t i = 0; i < Ne; i++)
+		{
+			// Load the element type
+			int nElmType = -1;
+			ar >> nElmType;
+			ELEMENT_TYPE elmType = (ELEMENT_TYPE)nElmType;
+
+			// Create a new Element depending on its type 
+			Element* pElm = nullptr;
+
+
+			if(elmType == CONTINUOUS)
+				pElm = new ContElm();
+			else
+				pElm = new DiscElm();
+				
+
+			// Serialize the newely created element <==
+			pElm->Serialize(ar);
+
+
+			// Recover the vertex pointers
+			pElm->m_pV1 = m_Vertices[pElm->m_I1];
+			pElm->m_pV2 = m_Vertices[pElm->m_I2];
+			pElm->m_pV3 = m_Vertices[pElm->m_I3];
+
+			m_Elements.push_back(pElm);
+		}
+		
+		// Store the number of continuous and discontinuous elements <==
+		ar >> m_Nce;
+		ar >> m_Nde;
+
+		// Load the size of the subsets container <==
+		size_t Nss = 0;
+		ar >> Nss;
+		
+		// Load the subsets container <==
+		for (size_t i = 0; i < Nss; i++)
+		{
+			ElementSubSet* pSubSet = new ElementSubSet;
+			pSubSet->Serialize(ar);
+
+			m_SubSets.push_back(pSubSet);
+		}
+
+		// Load the working directory name <==
+		ar >> m_strWorkingDirectory;
+
+		// Load the file name <==
+		ar >> m_strFileName;
+
+		// Load the file type <==
+		ar >> m_strFileType;
+
+
+		// Calculate the Specific Length for the Element Subset Class
+		CalculateSpecificLength();
+
+		// After the mesh loading, we construct the the Vertex DOF Container
+		ConstructVertexDOFContainer();
+
+		// We Compute the free term matrix for every DOF Vertex
+		CalculateFreeTermMatrices();
+
+		// We set the specific Radius R0 every DOF Vertex
+		SetSpecificRadii();
+
+		// Set the Matrix Ram Quota by default
+		AutoSetA_Quota();
+
+		// Calculate the scale By default to make the Maximum Displacement = 10
+		double U = 0.0;
+		for (Vertex* pV : m_Vertices)
+		{
+			if (U < pV->U.Magnitude())
+				U = pV->U.Magnitude();
+		}
+
+		Vertex::m_DeformationScale = 10.0 / U;
+
+		// Compute the Reusable integration data
+		ComputeReusableIntegrationData();
+	}
+
+	// Serialize the previous center of mass
+	m_prevCOM.Serialize(ar);
 }

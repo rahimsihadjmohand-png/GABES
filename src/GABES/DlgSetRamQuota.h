@@ -1,5 +1,6 @@
 #pragma once
 #include "afxdialogex.h"
+#include "Model.h"
 
 
 // CDlgSetRamQuota dialog
@@ -9,12 +10,12 @@ class CDlgSetRamQuota : public CDialogEx
 	DECLARE_DYNAMIC(CDlgSetRamQuota)
 
 public:
-	CDlgSetRamQuota(CWnd* pParent = nullptr);   // standard constructor
+	CDlgSetRamQuota(BEM_3D::Model& rModel, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDlgSetRamQuota();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DLG_SET_RAM_BAIL };
+	enum { IDD = IDD_DLG_SET_RAM_QUOTA };
 #endif
 
 protected:
@@ -22,17 +23,13 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	unsigned RAM_Quota;
+	BEM_3D::Model& m_rModel;
 	virtual BOOL OnInitDialog();
 	int nTotalRam;
-	CSliderCtrl sldrRamQuota;
+
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	BOOL bAutoQuotas;
-	int Q_Quota;
-	int R_Quota;
+	BOOL bAutoQuota;
 	int A_Quota;
-	CSliderCtrl sldrQQuota;
-	CSliderCtrl sldrRQuota;
 	CSliderCtrl sldrAQuota;
 	afx_msg void OnBnClickedCheckAutoMatrixQuotas();
 };

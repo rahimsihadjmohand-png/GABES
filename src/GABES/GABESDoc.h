@@ -29,14 +29,18 @@ public:
 	BEM_3D::Model m_Model;
 	BEM_3D::ReferenceFrame m_GlobalFrame;
 	std::vector<BEM_3D::ReferenceFrame*> m_ReferenceFrames;
-	BEM_3D::ReferenceFrame* m_pCurrentFrame;
+	//BEM_3D::ReferenceFrame* m_pCurrentFrame;
 
 // Operations
 public:
 	void UnselectAllRefFrames();
 	void SelectRefFrame(BEM_3D::ReferenceFrame* pRefFrame); // Select the reference frame and unselect all the others
-	                                                        // Selecting the frame makes it more appearent in the 3D Scene 
+	                                                     // Selecting the frame makes it more appearent in the 3D Scene 
+	void SelectRefFrame(int nIdx);
+
 	void SelectGlobalFrame();
+	void SetCoordinateRanges();                         // Recalculates the coordinate ranges for all frames
+
 
 // Overrides
 public:
@@ -65,4 +69,6 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 };

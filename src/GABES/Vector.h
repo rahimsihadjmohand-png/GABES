@@ -38,7 +38,8 @@ namespace BEM_3D
 		bool operator != (const Vector& rhs)const; // Check if V1 != V2
 
 
-
+		// Storage 
+		void Serialize(CArchive& ar);
 
 	public:
 		double x;

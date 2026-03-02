@@ -1,42 +1,74 @@
-GABES ACADEMIC-ONLY LICENSE
-
+GABES ACADEMIC-ONLY LICENSE v1.0
 Copyright (c) 2026 Rahim SI HADJ MOHAND
 All rights reserved.
 
 --------------------------------------------------------------------------------------------------------
-This software is part of the PhD thesis work of the author at the National Polytechnic School of Algiers. 
-The development of this work has been conducted under the guidance and support of the thesis supervisors 
-Dr. Yacine BELKACEMI and Pr. Said RECHAK, within the Laboratory of Green and Mechanical Development-LGMD 
-https://lgmd.enp.edu.dz/ of the National Polytechnic School https://www.enp.edu.dz/en/.
+**Description of the Application**
+GABES is a software application developed as part of the PhD thesis work of the
+author at the National Polytechnic School of Algiers (ENP). The development of this
+work has been conducted under the PhD framework and for academic research purposes.
+GABES implements the Boundary Element Method (BEM) for homogeneous elastostatic problems
+and includes a graphical interface for visualization and post-processing.
+
 --------------------------------------------------------------------------------------------------------
+**License Terms**
+By using, modifying, or redistributing this software, you agree to comply with the
+following terms:
 
-GABES is distributed under an academic-only license. This restriction is necessary because GABES depends 
-on the AHMED library, which is exclusively non-commercial (see AHMED Non-Commercial Educational License 
-by M. Bebendorf, 2012).
+1. **Permitted Use**
+   You may use and modify GABES for academic and educational purposes only. Examples
+   include research, experimentation, or personal study within educational
+   institutions.
 
-1. You may use and modify GABES for academic and educational purposes only. Examples include teaching, 
-research, and personal experimentation within educational institutions.
+2. **Redistribution**
+   You may redistribute GABES or modified versions **freely**, provided that:
+     a) All redistributed copies retain this license and all copyright notices.
+     b) Redistribution is only for **academic, educational, or research purposes**.
+     c) Commercial use is strictly prohibited without prior written permission
+        (see clause 4).
 
-2. You may redistribute GABES and modifications of GABES for academic purposes, but only to other eligible 
-academic users (e.g., students, faculty, researchers).
+3. **Prohibited Use**
+   Commercial use, including any activity for monetary gain, licensing, leasing, or
+   integrating GABES into commercial products, is prohibited.
 
-3. Commercial use, including any activity for monetary gain, licensing, leasing, or integrating GABES into 
-commercial products, is prohibited. 
+4. **Commercial Permission**
+   Any effort to use or develop GABES for commercial purposes requires prior written
+   permission from:
+     - Rahim SI HADJ MOHAND, author of GABES (Email:
+       rahim.si_hadj_mohand@g.enp.edu.dz)
+     - Mario Bebendorf, author of AHMED, if AHMED routines are used and not replaced
+       with another library (Email: mario.bebendorf@uni-bayreuth.de)
 
-4. Any effort to use or develop GABES for commercial purposes requires prior written permission from:
-   - Rahim SI HADJ MOHAND, author of GABES (Email: rahim.si_hadj_mohand@g.enp.edu.dz)
-   - Mario Bebendorf, author of AHMED, if AHMED is used and not replaced with another library 
-     (Email: mario.bebendorf@uni-bayreuth.de)
+5. **AHMED Modifications**
+   AHMED source modifications in GABES are limited solely to adapting the MFC GUI for
+   progress bar updating instead of the console-based progress reporting originally
+   provided in AHMED. All modified AHMED routine prototypes are declared in
+   "Ahmed_Overrides.h", and their implementations are in "Ahmed_Overrides.cpp".
 
-5. AHMED source modifications in GABES are limited solely to adapting the MFC GUI for progress bar updating 
-instead of the console-based progress reporting originally provided in AHMED. All modified AHMED routine 
-prototypes are declared in "Ahmed_Overrides.h", and their implementations are in "Ahmed_Overrides.cpp".
+6. **Copyright Notices**
+   You must not remove or alter copyright notices in the source code or
+   documentation.
 
-6. You must not remove or alter copyright notices in the source code or documentation.
+7. **Derivative Works**
+   If you modify GABES or create derivative works, you must include prominent
+   notices describing your changes and the date of those changes.
 
-7. If you modify GABES or create derivative works, you must include prominent notices describing your changes 
-and the date of those changes.
+8. **Disclaimer**
+   GABES is provided "as is" with no warranties of any kind, express or implied. The
+   author is not liable for any damages arising from the use of this software.
 
-8. GABES is provided "as is" with no warranties of any kind, express or implied. The author is not liable for 
-any damages arising from the use of this software.
+--------------------------------------------------------------------------------------------------------
+**Acknowledgments**
+The support from the Directorate-General for Scientific Research and Technological
+Development (DG-RSDT) of the Algerian government in the form of a research grant is
+gratefully acknowledged. The Laboratory of Green and Mechanical Development (LGMD)
+of the National Polytechnic School (ENP) is also gratefully acknowledged for the
+resources and support. The author gratefully acknowledges the guidance and support of
+his thesis supervisors: Dr. Yacine BELKACEMI and Pr. Said RECHAK.
 
+--------------------------------------------------------------------------------------------------------
+**Notes for Users**
+- The license file must always accompany GABES when redistributed.
+- Any distribution using the AHMED library must include a verbatim copy of its license.
+- Redistribution is allowed under these academic-only terms.
+- Any commercial use requires explicit written permission.

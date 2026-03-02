@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectGuid>{E2AE54AF-4422-5AE9-E81E-E41B00893B35}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>BEM3D02</RootNamespace>
+    <RootNamespace>GABES</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -195,7 +195,9 @@
   <ItemGroup>
     <ClInclude Include="DlgGenerateDomainResponseReport.h" />
     <ClInclude Include="DlgDomainNodeResponse.h" />
+    <ClInclude Include="DlgGeneratePointGrid.h" />
     <ClInclude Include="DlgReferenceFrame.h" />
+    <ClInclude Include="DlgSubsetBCs.h" />
     <ClInclude Include="GABESDoc.h" />
     <ClInclude Include="GABESView.h" />
     <ClInclude Include="GABES.h" />
@@ -243,7 +245,9 @@
     <ClCompile Include="DlgDomainNodeResponse.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DlgGeneratePointGrid.cpp" />
     <ClCompile Include="DlgReferenceFrame.cpp" />
+    <ClCompile Include="DlgSubsetBCs.cpp" />
     <ClCompile Include="GABESDoc.cpp" />
     <ClCompile Include="GABESView.cpp" />
     <ClCompile Include="GABES.cpp" />
@@ -296,7 +300,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BEM_3D_02.reg" />
+    <None Include="GABES.reg" />
     <None Include="res\GABES.rc2" />
     <None Include="res\Gizmo\X_Axis.x" />
     <None Include="res\Gizmo\Y_Axis.x" />
