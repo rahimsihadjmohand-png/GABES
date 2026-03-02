@@ -86,7 +86,7 @@ his thesis supervisors: **Dr. Yacine BELKACEMI** and **Pr. Said RECHAK**.
 
 ## Contact
 
-- **Author:** Rahim SI HADJ MOHAND  
-  Email: rahim.si_hadj_mohand@g.enp.edu.dz
-  Research Gate Account: https://www.researchgate.net/profile/Rahim-Si-Hadj-Mohand
+**Author:** Rahim SI HADJ MOHAND  
+  - Email: rahim.si_hadj_mohand@g.enp.edu.dz
+  - Research Gate Account: https://www.researchgate.net/profile/Rahim-Si-Hadj-Mohand
   
