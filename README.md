@@ -49,9 +49,9 @@ To build and run GABES, the following dependencies are required:
 > Precompiled binaries are provided in this GitHub repository.  
 
 > Pre-releases: Functional and testable but not fully optimized and partially implemented (~95%).  
-> - Version 0.9.0  
-> - Version 0.9.1  
-> - Version 0.9.2  
+> - Version 0.9.0-beta  
+> - Version 0.9.1-beta  
+> - Version 0.9.2-beta  
 
 > Latest release: Functional and fully implemented (100%)  
 > - Version 1.0.0  
@@ -86,7 +86,7 @@ his thesis supervisors: **Dr. Yacine BELKACEMI** and **Pr. Said RECHAK**.
 
 ## Contact
 
-- **Author:** Rahim SI HADJ MOHAND  
-  Email: rahim.si_hadj_mohand@g.enp.edu.dz
-  Research Gate Account: https://www.researchgate.net/profile/Rahim-Si-Hadj-Mohand
+**Author:** Rahim SI HADJ MOHAND  
+  - Email: rahim.si_hadj_mohand@g.enp.edu.dz
+  - Research Gate Account: https://www.researchgate.net/profile/Rahim-Si-Hadj-Mohand
   
