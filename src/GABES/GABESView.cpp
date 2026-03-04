@@ -100,8 +100,8 @@ BEGIN_MESSAGE_MAP(CGABESView, CView)
 	ON_COMMAND(ID_BEM_SET_MATERIAL_PROPERTIES, &CGABESView::OnBemSetMaterialProperties)
 	ON_COMMAND(ID_BEM_SET_INTEGRATION_PARAMETERS, &CGABESView::OnBemSetIntegrationParameters)
 	ON_COMMAND(ID_BEM_SET_DEFORMATION_SCALE, &CGABESView::OnBemSetDeformationScale)
-	ON_COMMAND(ID_BEM_POSTTREATMENT_MODE, &CGABESView::OnBemPosttreatmentMode)
-	ON_UPDATE_COMMAND_UI(ID_BEM_POSTTREATMENT_MODE, &CGABESView::OnUpdateBemPosttreatmentMode)
+	ON_COMMAND(ID_BEM_POSTPROCESSING_MODE, &CGABESView::OnBemPostProcessingMode)
+	ON_UPDATE_COMMAND_UI(ID_BEM_POSTPROCESSING_MODE, &CGABESView::OnUpdateBemPostProcessingMode)
 	ON_UPDATE_COMMAND_UI(ID_BEM_SET_DEFORMATION_SCALE, &CGABESView::OnUpdateBemSetDeformationScale)
 	ON_COMMAND(ID_BCS_CHECK_SHOW_FIXATIONS, &CGABESView::OnBcsCheckShowFixations)
 	ON_COMMAND(ID_BCS_CHECK_SHOW_DISPLACEMENT_VECTORS, &CGABESView::OnBcsCheckShowDisplacementVectors)
@@ -129,6 +129,10 @@ BEGIN_MESSAGE_MAP(CGABESView, CView)
 	ON_UPDATE_COMMAND_UI(ID_BEM_PALETTE_SETTINGS, &CGABESView::OnUpdateBemPaletteSettings)
 	ON_UPDATE_COMMAND_UI(ID_BEM_GET_DOMAIN_NODE_RESPONSE, &CGABESView::OnUpdateBemGetDomainNodeResponse)
 	ON_UPDATE_COMMAND_UI(ID_BEM_GENERATE_REPORT, &CGABESView::OnUpdateBemGenerateReport)
+	ON_COMMAND(ID_BEM_CHECK_SHOW_MIN_LOCATION, &CGABESView::OnBemCheckShowMinLocation)
+	ON_COMMAND(ID_BEM_CHECK_SHOW_MAX_LOCATION, &CGABESView::OnBemCheckShowMaxLocation)
+	ON_UPDATE_COMMAND_UI(ID_BEM_CHECK_SHOW_MIN_LOCATION, &CGABESView::OnUpdateBemCheckShowMinLocation)
+	ON_UPDATE_COMMAND_UI(ID_BEM_CHECK_SHOW_MAX_LOCATION, &CGABESView::OnUpdateBemCheckShowMaxLocation)
 END_MESSAGE_MAP()
 
 // CGABESView construction/destruction
@@ -1714,7 +1718,7 @@ void CGABESView::OnBemSetDeformationScale()
 	pModel->UpdateVertexBuffer(m_pD3ddev, m_bPostProcessing);
 }
 
-void CGABESView::OnBemPosttreatmentMode()
+void CGABESView::OnBemPostProcessingMode()
 {
 	// TODO: Add your command handler code here
 	m_bPostProcessing = !m_bPostProcessing;
@@ -1722,7 +1726,7 @@ void CGABESView::OnBemPosttreatmentMode()
 	pModel->UpdateVertexBuffer(m_pD3ddev, m_bPostProcessing);
 }
 
-void CGABESView::OnUpdateBemPosttreatmentMode(CCmdUI* pCmdUI)
+void CGABESView::OnUpdateBemPostProcessingMode(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(m_bPostProcessing);
@@ -1882,6 +1886,7 @@ void CGABESView::OnBemGenerateReport()
 void CGABESView::OnModelingAddFrame()
 {
 	// TODO: Add your command handler code here
+	GetDocument()->UnselectAllRefFrames();
 	m_pTempRefFrame = new BEM_3D::ReferenceFrame();
 	m_pTempRefFrame->m_bSelected = true;
 	m_DlgReferenceFrame.m_pCurrRefFrame = m_pTempRefFrame;
@@ -1997,5 +2002,41 @@ void CGABESView::OnUpdateBemGenerateReport(CCmdUI* pCmdUI)
 		return;
 
 	bool bEnable = !pModel->IsModelEmpty() && m_bPostProcessing && !BEM_3D::Vertex::m_bIncludeDisplacements;
+	pCmdUI->Enable(bEnable);
+}
+
+void CGABESView::OnBemCheckShowMinLocation()
+{
+	// TODO: Add your command handler code here
+	pModel->m_bShowMinValLocation = !pModel->m_bShowMinValLocation;
+}
+
+void CGABESView::OnBemCheckShowMaxLocation()
+{
+	// TODO: Add your command handler code here
+	pModel->m_bShowMaxValLocation = !pModel->m_bShowMaxValLocation;
+}
+
+void CGABESView::OnUpdateBemCheckShowMinLocation(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	if (pModel == nullptr)
+		return;
+
+	pCmdUI->SetCheck(pModel->m_bShowMinValLocation);
+
+	bool bEnable = !pModel->IsModelEmpty() && m_bPostProcessing;
+	pCmdUI->Enable(bEnable);
+}
+
+void CGABESView::OnUpdateBemCheckShowMaxLocation(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	if (pModel == nullptr)
+		return;
+
+	pCmdUI->SetCheck(pModel->m_bShowMaxValLocation);
+
+	bool bEnable = !pModel->IsModelEmpty() && m_bPostProcessing;
 	pCmdUI->Enable(bEnable);
 }

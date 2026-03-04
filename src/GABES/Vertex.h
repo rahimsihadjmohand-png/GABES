@@ -43,9 +43,9 @@ namespace BEM_3D
 
 		//======== D3D functions =====================
 		static void LoadMesh(IDirect3DDevice9* pD3ddev, double SpecLength);
-		void SetD3dVertexPosition(D3DVertex& rD3dVert, bool bPostTreatment)const;
-		void SetD3dRGBVertexPosition(D3D_RGB_Vertex& rD3dVert, bool bPostTreatment)const;
-		void Draw(bool bPostTreatment)const;
+		void SetD3dVertexPosition(D3DVertex& rD3dVert, bool bPostProcessing)const;
+		void SetD3dRGBVertexPosition(D3D_RGB_Vertex& rD3dVert, bool bPostProcessing)const;
+		void Draw(bool bPostProcessing)const;
 		//============================================
 
 

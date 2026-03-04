@@ -286,7 +286,7 @@ void CDlgGenerateDomainResponseReport::GetTrackPointsFromInputFile()
 
 		switch (nCoordSys)
 		{
-		case 0: // Cartezian
+		case 0: // Cartesian
 			x = Var1;
 			y = Var2;
 			z = Var3;
@@ -399,7 +399,7 @@ void CDlgGenerateDomainResponseReport::OnOK()
 	// ================= HEADER =================
 	switch (nCoordSys)
 	{
-	case 0: // Cartezian
+	case 0: // Cartesian
 		OutputFile << "N;X;Y;Z";
 		break;
 

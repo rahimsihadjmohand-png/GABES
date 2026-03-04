@@ -31,7 +31,7 @@ namespace BEM_3D
 		Vector m_Vy;      // The unitary vector of the Y axis
 		Vector m_Vz;      // The unitary vector of the Z axis
 
-		// Cartezian Range
+		// Cartesian Range
 		double m_X_min;
 		double m_X_max;
 		double m_Y_min;

@@ -295,7 +295,7 @@ void CDlgDomainNodeResponse::UpdateTrackNode()
 
 	switch (nCoordSys)
 	{
-	case 0: // Cartezian
+	case 0: // Cartesian
 	{
 		x = Dim1;
 		y = Dim2;
@@ -615,7 +615,7 @@ void CDlgDomainNodeResponse::OnCbnSelchangeComboCoordSys()
 
 	switch (nCoordSys)
 	{
-	case 0: // Cartezian
+	case 0: // Cartesian
 		strDim1 = _T("X:");
 		strDim2 = _T("Y:");
 		strDim3 = _T("Z:");

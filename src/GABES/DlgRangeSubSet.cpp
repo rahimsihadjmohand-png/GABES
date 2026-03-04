@@ -1,4 +1,4 @@
-// DlgRangeSubSet.cpp : implementation file
+﻿// DlgRangeSubSet.cpp : implementation file
 //
 
 #include "pch.h"
@@ -49,13 +49,35 @@ void CDlgRangeSubSet::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_DIM1, lblDim1);
 	DDX_Control(pDX, IDC_STATIC_DIM2, lblDim2);
 	DDX_Control(pDX, IDC_STATIC_DIM3, lblDim3);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM1, Min1);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM2, Min2);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM3, Min3);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM1, Max1);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM2, Max2);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM3, Max3);
 
+	if (pDX->m_bSaveAndValidate)
+	{
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM1, Min1);
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM2, Min2);
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM3, Min3);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM1, Max1);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM2, Max2);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM3, Max3);
+	}
+	else
+	{
+		// ========= Variables → edit (FORMATTED) =========
+		CString s;
+
+		auto F = [&](int id, double v)
+			{
+				s.Format(_T("%.6f"), v);   // <-- choose your format here
+				SetDlgItemText(id, s);
+			};
+
+		F(IDC_EDIT_MIN_DIM1, Min1);
+		F(IDC_EDIT_MAX_DIM1, Max1);
+		F(IDC_EDIT_MIN_DIM2, Min2);
+		F(IDC_EDIT_MAX_DIM2, Max2);
+		F(IDC_EDIT_MIN_DIM3, Min3);
+		F(IDC_EDIT_MAX_DIM3, Max3);
+	}
+	
 	DDX_Control(pDX, IDC_SLIDER_MIN_DIM1, sliderMinDim1);
 	DDX_Control(pDX, IDC_SLIDER_MAX_DIM1, sliderMaxDim1);
 	DDX_Control(pDX, IDC_SLIDER_MIN_DIM2, sliderMinDim2);
@@ -378,7 +400,7 @@ void CDlgRangeSubSet::UpdateElementSelection()
 	// Converte angles to Radians
 	switch (nCoordSys)
 	{
-	case 0:     // Cartezian (No angles to convert
+	case 0:     // Cartesian (No angles to convert
 		break;
 
 	case 1:    // Cylindrical
@@ -446,7 +468,7 @@ void CDlgRangeSubSet::UpdateElementSelection()
 
 		switch (nCoordSys)
 		{
-		case 0: // Cartezian
+		case 0: // Cartesian
 		{
 			Dim11 = x1;
 			Dim12 = y1;
@@ -583,7 +605,7 @@ void CDlgRangeSubSet::UpdateElementSelection()
 	// Reconverte angles to Degrees
 	switch (nCoordSys)
 	{
-	case 0:     // Cartezian (No angles to convert
+	case 0:     // Cartesian (No angles to convert
 		break;
 
 	case 1:    // Cylindrical
@@ -683,7 +705,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_X_max - m_pCurrentFrame->m_X_min;
 				MIN = m_pCurrentFrame->m_X_min;
 				break;
@@ -706,7 +728,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_X_max - m_pCurrentFrame->m_X_min;
 				MIN = m_pCurrentFrame->m_X_min;
 				break;
@@ -729,7 +751,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Y_max - m_pCurrentFrame->m_Y_min;
 				MIN = m_pCurrentFrame->m_Y_min;
 				break;
@@ -752,7 +774,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Y_max - m_pCurrentFrame->m_Y_min;
 				MIN = m_pCurrentFrame->m_Y_min;
 				break;
@@ -775,7 +797,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Z_max - m_pCurrentFrame->m_Z_min;
 				MIN = m_pCurrentFrame->m_Z_min;
 				break;
@@ -798,7 +820,7 @@ void CDlgRangeSubSet::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			//Check the Coordinate System Type
 			switch (nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Z_max - m_pCurrentFrame->m_Z_min;
 				MIN = m_pCurrentFrame->m_Z_min;
 				break;

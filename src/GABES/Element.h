@@ -165,12 +165,12 @@ namespace BEM_3D
 	// ==================================== D3D Functions ======================================
     // These functions don't need to be overriden
 	public:
-		void DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const;
-		void DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const;
-		void DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U, double Length, bool bPostTreatment)const;
-		void DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, double Length, bool bPostTreatment)const;
-		void DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un, double Length, bool bPostTreatment)const;
-		void DrawNormalTractionVector(IDirect3DDevice9* pD3ddev, double Tn, double Length, bool bPostTreatment)const;
+		void DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const;
+		void DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const;
+		void DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U, double Length, bool bPostProcessing)const;
+		void DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, double Length, bool bPostProcessing)const;
+		void DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un, double Length, bool bPostProcessing)const;
+		void DrawNormalTractionVector(IDirect3DDevice9* pD3ddev, double Tn, double Length, bool bPostProcessing)const;
 	// =========================================================================================
 	
 

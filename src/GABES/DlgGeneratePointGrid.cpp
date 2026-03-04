@@ -1,4 +1,4 @@
-// DlgGeneratePointGrid.cpp : implementation file
+﻿// DlgGeneratePointGrid.cpp : implementation file
 //
 
 #include "pch.h"
@@ -51,12 +51,37 @@ void CDlgGeneratePointGrid::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_NBR_PTS_DIM1, strDim1Nbr);
 	DDX_Text(pDX, IDC_STATIC_NBR_PTS_DIM2, strDim2Nbr);
 	DDX_Text(pDX, IDC_STATIC_NBR_PTS_DIM3, strDim3Nbr);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM1, Min1);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM1, Max1);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM2, Min2);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM2, Max2);
-	DDX_Text(pDX, IDC_EDIT_MIN_DIM3, Min3);
-	DDX_Text(pDX, IDC_EDIT_MAX_DIM3, Max3);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM1, Min1);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM1, Max1);
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM2, Min2);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM2, Max2);
+		DDX_Text(pDX, IDC_EDIT_MIN_DIM3, Min3);
+		DDX_Text(pDX, IDC_EDIT_MAX_DIM3, Max3);
+	}
+	else
+	{
+		// ========= Variables → edit (FORMATTED) =========
+		CString s;
+
+		auto F = [&](int id, double v)
+			{
+				s.Format(_T("%.6f"), v);   // <-- choose your format here
+				SetDlgItemText(id, s);
+			};
+
+		F(IDC_EDIT_MIN_DIM1, Min1);
+		F(IDC_EDIT_MAX_DIM1, Max1);
+		F(IDC_EDIT_MIN_DIM2, Min2);
+		F(IDC_EDIT_MAX_DIM2, Max2);
+		F(IDC_EDIT_MIN_DIM3, Min3);
+		F(IDC_EDIT_MAX_DIM3, Max3);
+	}
+	
+	
+	
 	DDX_Text(pDX, IDC_EDIT_N1, N1);
 	DDX_Text(pDX, IDC_EDIT_N2, N2);
 	DDX_Text(pDX, IDC_EDIT_N3, N3);
@@ -87,7 +112,7 @@ void CDlgGeneratePointGrid::InitModlessDialog(BEM_3D::ReferenceFrame* pCurrentFr
 	switch (nCoordSys)
 	{
 	case 0:
-		strCoordSys = _T("Cartezian");
+		strCoordSys = _T("Cartesian");
 
 		strDim1Range = _T("X Range:");
 		strDim2Range = _T("Y Range:");
@@ -228,7 +253,7 @@ void CDlgGeneratePointGrid::UpdateTrackNodes()
 	// Converte angles to Radians
 	switch (m_nCoordSys)
 	{
-	case 0:     // Cartezian (No angles to convert
+	case 0:     // Cartesian (No angles to convert
 		break;
 
 	case 1:    // Cylindrical
@@ -252,7 +277,7 @@ void CDlgGeneratePointGrid::UpdateTrackNodes()
 	// Start to construct the Grid
 	switch (m_nCoordSys)
 	{
-	case 0: // Cartezian
+	case 0: // Cartesian
 	{
 		double x = 0.0;
 		double y = 0.0;
@@ -369,7 +394,7 @@ void CDlgGeneratePointGrid::UpdateTrackNodes()
 	// Reconverte angles to Degrees
 	switch (m_nCoordSys)
 	{
-	case 0:     // Cartezian (No angles to convert
+	case 0:     // Cartesian (No angles to convert
 		break;
 
 	case 1:    // Cylindrical
@@ -416,7 +441,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_X_max - m_pCurrentFrame->m_X_min;
 				MIN = m_pCurrentFrame->m_X_min;
 				break;
@@ -439,7 +464,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_X_max - m_pCurrentFrame->m_X_min;
 				MIN = m_pCurrentFrame->m_X_min;
 				break;
@@ -462,7 +487,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Y_max - m_pCurrentFrame->m_Y_min;
 				MIN = m_pCurrentFrame->m_Y_min;
 				break;
@@ -485,7 +510,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Y_max - m_pCurrentFrame->m_Y_min;
 				MIN = m_pCurrentFrame->m_Y_min;
 				break;
@@ -508,7 +533,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Z_max - m_pCurrentFrame->m_Z_min;
 				MIN = m_pCurrentFrame->m_Z_min;
 				break;
@@ -531,7 +556,7 @@ void CDlgGeneratePointGrid::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScro
 			//Check the Coordinate System Type
 			switch (m_nCoordSys)
 			{
-			case 0:    // Cartezian
+			case 0:    // Cartesian
 				Range = m_pCurrentFrame->m_Z_max - m_pCurrentFrame->m_Z_min;
 				MIN = m_pCurrentFrame->m_Z_min;
 				break;

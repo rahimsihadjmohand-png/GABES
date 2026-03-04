@@ -32,7 +32,7 @@ namespace BEM_3D
 
 
 		// Direct 3D Functions
-		void DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const;
+		void DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const;
 
 
 		// Storage

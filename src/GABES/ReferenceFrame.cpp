@@ -250,13 +250,13 @@ void ReferenceFrame::LoadGizmo(IDirect3DDevice9* pD3ddev)
 
 bool ReferenceFrame::IsValid() const
 {
-	if (m_Vx * m_Vy > 1.0E-9)
+	if (m_Vx * m_Vy > 1.0E-4)
 		return false;
 
-	if (m_Vy * m_Vz > 1.0E-9)
+	if (m_Vy * m_Vz > 1.0E-4)
 		return false;
 
-	if (m_Vz * m_Vx > 1.0E-9)
+	if (m_Vz * m_Vx > 1.0E-4)
 		return false;
 
 	return true;
@@ -292,7 +292,7 @@ void ReferenceFrame::SetCoordinateRanges(const BEM_3D::Model& rModel)
 
 		ToLocalCoord(V);
 
-		// The Cartezian part
+		// The Cartesian part
 		// X
 		if (V.x < m_X_min)
 			m_X_min = V.x;

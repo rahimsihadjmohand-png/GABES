@@ -373,14 +373,17 @@ BOOL CModelTreePanel::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				// Get the parent Item
 				HTREEITEM hParent = m_TreeCtrl.GetParentItem(hItem);
 
-				if (hParent == m_hFramesItem)
+				// Check for current frame creation
+				bool bFrameCreation = (m_pView->m_pTempRefFrame != nullptr) && m_pView->m_DlgReferenceFrame.IsWindowVisible();
+
+				if ((hParent == m_hFramesItem) && !bFrameCreation) // Do not modify an existing frame while a frame is being created
 				{
 					BEM_3D::ReferenceFrame* pRefFrame = (BEM_3D::ReferenceFrame*)m_TreeCtrl.GetItemData(hItem);
 
 					// Invoke the Modify frame Dialog
 					if ((pRefFrame != nullptr) && (pRefFrame != &m_pDoc->m_GlobalFrame))
 					{
-
+						m_pDoc->UnselectAllRefFrames();
 						pRefFrame->m_bSelected = true;
 						m_pView->m_DlgReferenceFrame.m_pCurrRefFrame = pRefFrame;
 						m_pView->m_DlgReferenceFrame.UpdateControlsFromCurrentRefFrame();

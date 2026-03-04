@@ -38,6 +38,10 @@ Model::Model()
 	, m_strCurrentJob(_T(""))
 	, m_Nce(0)
 	, m_Nde(0)
+	, m_bShowMinValLocation(false)
+	, m_bShowMaxValLocation(false)
+	, m_pMinLocation(nullptr)
+	, m_pMaxLocation(nullptr)
 {
 	// This constructor is only called once so there is no problem to initialize all these static variables!!
 
@@ -104,6 +108,12 @@ void Model::ClearGeometricData()
 	{
 		m_pWireVertexBuffer->Release();
 		m_pWireVertexBuffer = nullptr;
+	}
+
+	if (m_pMinMaxLocationMesh)
+	{
+		m_pMinMaxLocationMesh->Release();
+		m_pMinMaxLocationMesh = nullptr;
 	}
 }
 
@@ -236,7 +246,7 @@ void Model::CopyBoundaryConditionsFromSubSets()
 			continue;
 		}
 
-		// Apply the Cartezian Boundary condition
+		// Apply the Cartesian Boundary condition
 		else
 		{
 			for (int Idx : pSubSet->m_Indices)
@@ -761,6 +771,7 @@ double Model::GetMinValue()const
 			val = Val3;
 	}
 
+
 	return val;
 }
 
@@ -788,6 +799,71 @@ double Model::GetMaxValue()const
 
 	return val;
 }
+
+
+void Model::UpdateMinLocation()
+{
+	double val = DBL_MAX;
+
+	for (const Element* pElm : m_Elements)
+	{
+		double Val1 = pElm->GetValue(0, m_OutputMode);
+		double Val2 = pElm->GetValue(1, m_OutputMode);
+		double Val3 = pElm->GetValue(2, m_OutputMode);
+
+		if (val > Val1)
+		{
+			val = Val1;
+			m_pMinLocation = pElm->m_pV1;
+		}
+
+		if (val > Val2)
+		{
+			val = Val2;
+			m_pMinLocation = pElm->m_pV2;
+		}
+
+		if (val > Val3)
+		{
+			val = Val3;
+			m_pMinLocation = pElm->m_pV3;
+		}
+	}
+
+}
+
+
+void Model::UpdateMaxLocation()
+{
+	double val = -DBL_MAX;
+
+	for (const Element* pElm : m_Elements)
+	{
+		double Val1 = pElm->GetValue(0, m_OutputMode);
+		double Val2 = pElm->GetValue(1, m_OutputMode);
+		double Val3 = pElm->GetValue(2, m_OutputMode);
+
+		if (val < Val1)
+		{
+			val = Val1;
+			m_pMaxLocation = pElm->m_pV1;
+		}
+
+		if (val < Val2)
+		{
+			val = Val2;
+			m_pMaxLocation = pElm->m_pV2;
+		}
+
+		if (val < Val3)
+		{
+			val = Val3;
+			m_pMaxLocation = pElm->m_pV3;
+		}
+	}
+}
+
+
 
 
 DWORD Model::GetColorFromValue(const Element* pElm0, int nVertex, double MinVal, double MaxVal)const
@@ -849,7 +925,7 @@ DWORD Model::GetColorFromValue(const Element* pElm0, int nVertex, double MinVal,
 }
 
 
-void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
+void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostProcessing)
 {
 	// Clean up the D3D data
 	if (m_pVertexBuffer)
@@ -864,6 +940,19 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 		m_pWireVertexBuffer = nullptr;
 	}
 
+	if (m_pMinMaxLocationMesh)
+	{
+		m_pMinMaxLocationMesh->Release();
+		m_pWireVertexBuffer = nullptr;
+	}
+
+	// Create the MinMaxLocationMesh as a Sphere
+	float R = (float)ElementSubSet::SpecLength / 4.0;
+	D3DXCreateSphere(pD3ddev, R, 8, 8, &m_pMinMaxLocationMesh, NULL);
+
+	
+
+
 	// Create the dimension variables for future use
 	size_t Nv = m_Elements.size() * 3; // The number of vertices
 	size_t Ne = m_Elements.size(); // the number of triangles
@@ -871,7 +960,7 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 		return;
 	size_t nBytes = 0;
 
-	if (!bPostTreatment || m_OutputMode == NONE)
+	if (!bPostProcessing || m_OutputMode == NONE)
 	{
 		nBytes = m_Elements.size() * 3 * sizeof(D3DVertex); // the total memory size of the vertex buffer
 
@@ -882,9 +971,9 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 		{
 			Element* pElm = m_Elements[i];
 			D3DXVECTOR3 n((float)pElm->m_n.x, (float)pElm->m_n.y, (float)pElm->m_n.z);
-			pElm->m_pV1->SetD3dVertexPosition(vertices[3 * i + 0], bPostTreatment);
-			pElm->m_pV2->SetD3dVertexPosition(vertices[3 * i + 1], bPostTreatment);
-			pElm->m_pV3->SetD3dVertexPosition(vertices[3 * i + 2], bPostTreatment);
+			pElm->m_pV1->SetD3dVertexPosition(vertices[3 * i + 0], bPostProcessing);
+			pElm->m_pV2->SetD3dVertexPosition(vertices[3 * i + 1], bPostProcessing);
+			pElm->m_pV3->SetD3dVertexPosition(vertices[3 * i + 2], bPostProcessing);
 			vertices[3 * i + 0].n = n;
 			vertices[3 * i + 1].n = n;
 			vertices[3 * i + 2].n = n;
@@ -910,6 +999,11 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 		double MinVal = GetMinValue();
 		double MaxVal = GetMaxValue();
 
+		// Update the min and max value locations
+		UpdateMinLocation();
+		UpdateMaxLocation();
+
+
 		// Create a temporary buffer containing the D3D_RGB_Vertices and fill it
 		D3D_RGB_Vertex* vertices = new D3D_RGB_Vertex[Nv];
 
@@ -917,9 +1011,9 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 		for (size_t i = 0; i < m_Elements.size(); i++)
 		{
 			Element* pElm = m_Elements[i];
-			pElm->m_pV1->SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostTreatment);
-			pElm->m_pV2->SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostTreatment);
-			pElm->m_pV3->SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostTreatment);
+			pElm->m_pV1->SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostProcessing);
+			pElm->m_pV2->SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostProcessing);
+			pElm->m_pV3->SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostProcessing);
 			vertices[3 * i + 0].Color = GetColorFromValue(pElm, 0, MinVal, MaxVal);
 			vertices[3 * i + 1].Color = GetColorFromValue(pElm, 1, MinVal, MaxVal);
 			vertices[3 * i + 2].Color = GetColorFromValue(pElm, 2, MinVal, MaxVal);
@@ -953,14 +1047,14 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 	for (size_t i = 0; i < m_Elements.size(); i++)
 	{
 		Element* pElm = m_Elements[i];
-		pElm->m_pV1->SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostTreatment);
-		pElm->m_pV2->SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostTreatment);
-		pElm->m_pV3->SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostTreatment);
+		pElm->m_pV1->SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostProcessing);
+		pElm->m_pV2->SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostProcessing);
+		pElm->m_pV3->SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostProcessing);
 
 		//// Temp Code
-		//pElm->Vdof(0).SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostTreatment);
-		//pElm->Vdof(1).SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostTreatment);
-		//pElm->Vdof(2).SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostTreatment);
+		//pElm->Vdof(0).SetD3dRGBVertexPosition(vertices[3 * i + 0], bPostProcessing);
+		//pElm->Vdof(1).SetD3dRGBVertexPosition(vertices[3 * i + 1], bPostProcessing);
+		//pElm->Vdof(2).SetD3dRGBVertexPosition(vertices[3 * i + 2], bPostProcessing);
 
 		vertices[3 * i + 0].Color = D3DCOLOR_XRGB(150, 0, 0);
 		vertices[3 * i + 1].Color = D3DCOLOR_XRGB(150, 0, 0);
@@ -983,13 +1077,13 @@ void Model::UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment)
 }
 
 
-void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatment, SHOW_POINTS_MODE ShowPointsMode) const
+void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostProcessing, SHOW_POINTS_MODE ShowPointsMode) const
 {
 	if (!m_pVertexBuffer)
 		return;
 
 
-	if (!bPostTreatment || m_OutputMode == NONE)
+	if (!bPostProcessing || m_OutputMode == NONE)
 	{
 		pD3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
 		pD3ddev->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(D3DVertex));
@@ -1056,6 +1150,15 @@ void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatm
 		}
 		else
 			pD3ddev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_Elements.size());
+
+		// Draw the Minimum value location if toggled on
+		if (m_bShowMinValLocation)
+			DrawMinValueLocation(pD3ddev);
+
+		// Draw the Maximum value location if toggled on
+		if (m_bShowMaxValLocation)
+			DrawMaxValueLocation(pD3ddev);
+
 	}   
 
 
@@ -1091,7 +1194,7 @@ void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatm
 			pD3ddev->SetMaterial(&NodeMaterial);
 
 			for (Vertex* pV : m_Vertices)
-				pV->Draw(bPostTreatment);
+				pV->Draw(bPostProcessing);
 			
 		}
 		break;
@@ -1112,7 +1215,7 @@ void Model::Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatm
 			pD3ddev->SetMaterial(&NodeMaterial);
 
 			for (Vertex* pV : m_DOF_Vertices)
-				pV->Draw(bPostTreatment);
+				pV->Draw(bPostProcessing);
 
 		}
 		break;
@@ -1159,7 +1262,7 @@ void Model::AutoSetA_Quota()
 	double SysRam = (double)mem.ullTotalPhys;
 	double Rem_RAM = max(0.0, SysRam - Model_Mem - 2.0 * bx_Mem);
 
-	// Calculate the Quotas for matrices Q, R and A
+	// Calculate the Quotas for matrix A
 	unsigned A_Quota = (unsigned)(0.5 * Rem_RAM / pow(1024.0, 2.0)); 
 
 	A.SetRamQuota(A_Quota);  // A_Quota in Mb (Mega Bytes)
@@ -2714,4 +2817,122 @@ void Model::Serialize(CArchive& ar)
 
 	// Serialize the previous center of mass
 	m_prevCOM.Serialize(ar);
+}
+
+
+
+void Model::DrawMinValueLocation(IDirect3DDevice9* pD3ddev)const
+{
+
+	// Set the Fill Mode To WireFrame
+	DWORD dwPrevFillMode;
+	pD3ddev->GetRenderState(D3DRS_FILLMODE, &dwPrevFillMode);
+	pD3ddev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+
+	// Set Lighting to True
+	DWORD dwPrevLighting;
+	pD3ddev->GetRenderState(D3DRS_LIGHTING, &dwPrevLighting);
+	pD3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+	// Set a BRIGHT MAGENTA material
+	D3DMATERIAL9 Material;
+	ZeroMemory(&Material, sizeof(Material));
+
+
+	Material.Ambient = D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f);
+	Material.Diffuse = D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f);
+
+
+	pD3ddev->SetMaterial(&Material);
+
+
+	// Set up  the 3D pipeline
+	D3DXMATRIX translation;
+	D3DXMATRIX world;
+	D3DXMATRIX newWorld;
+
+	pD3ddev->GetTransform(D3DTS_WORLD, &world);
+
+
+	D3DVertex d3d_V;
+	m_pMinLocation->SetD3dVertexPosition(d3d_V, true);
+
+	D3DXMatrixTranslation(&translation, d3d_V.x, d3d_V.y, d3d_V.z);
+
+
+	newWorld = translation * world;
+
+	pD3ddev->SetTransform(D3DTS_WORLD, &newWorld);
+
+
+
+	// Draw the sphere
+	m_pMinMaxLocationMesh->DrawSubset(0);
+
+
+	pD3ddev->SetTransform(D3DTS_WORLD, &world);
+
+
+	// Restore Fill Mode
+	pD3ddev->SetRenderState(D3DRS_FILLMODE, dwPrevFillMode);
+	// Restore Lighting
+	pD3ddev->SetRenderState(D3DRS_LIGHTING, dwPrevLighting);
+}
+
+
+void Model::DrawMaxValueLocation(IDirect3DDevice9* pD3ddev)const
+{
+	// Set the Fill Mode To WireFrame
+	DWORD dwPrevFillMode;
+	pD3ddev->GetRenderState(D3DRS_FILLMODE, &dwPrevFillMode);
+	pD3ddev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+
+	// Set Lighting to True
+	DWORD dwPrevLighting;
+	pD3ddev->GetRenderState(D3DRS_LIGHTING, &dwPrevLighting);
+	pD3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+	// Set a BRIGHT YELLOW material
+	D3DMATERIAL9 Material;
+	ZeroMemory(&Material, sizeof(Material));
+
+
+	Material.Ambient = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+	Material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+
+
+	pD3ddev->SetMaterial(&Material);
+
+
+	// Set up  the 3D pipeline
+	D3DXMATRIX translation;
+	D3DXMATRIX world;
+	D3DXMATRIX newWorld;
+
+	pD3ddev->GetTransform(D3DTS_WORLD, &world);
+
+
+	D3DVertex d3d_V;
+	m_pMaxLocation->SetD3dVertexPosition(d3d_V, true);
+
+	D3DXMatrixTranslation(&translation, d3d_V.x, d3d_V.y, d3d_V.z);
+
+
+	newWorld = translation * world;
+
+	pD3ddev->SetTransform(D3DTS_WORLD, &newWorld);
+
+
+
+	// Draw the sphere
+	m_pMinMaxLocationMesh->DrawSubset(0);
+
+
+	pD3ddev->SetTransform(D3DTS_WORLD, &world);
+
+
+	// Restore Fill Mode
+	pD3ddev->SetRenderState(D3DRS_FILLMODE, dwPrevFillMode);
+	// Restore Lighting
+	pD3ddev->SetRenderState(D3DRS_LIGHTING, dwPrevLighting);
 }

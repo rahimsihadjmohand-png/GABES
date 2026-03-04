@@ -146,8 +146,8 @@ namespace BEM_3D
 
 
 		// Direct 3D functions
-		void UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostTreatment);
-		void Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostTreatment, SHOW_POINTS_MODE ShowPointsMode) const;
+		void UpdateVertexBuffer(IDirect3DDevice9* pD3ddev, bool bPostProcessing);
+		void Draw(IDirect3DDevice9* pD3ddev, FILL_MODE fillMode, bool bPostProcessing, SHOW_POINTS_MODE ShowPointsMode) const;
 		void GetHitTestedElement(const D3DXVECTOR3& P1, const D3DXVECTOR3& P2, int* pHitTestedElmIdx, const D3DXMATRIX& rWorld)const;
 		void GetHitTestedPoint(const D3DXVECTOR3& P1, const D3DXVECTOR3& P2, Vertex** ppHitTestedNode, const D3DXMATRIX& rWorld)const;
 		IDirect3DVertexBuffer9* GetVertexBuffer() { return m_pVertexBuffer; }
@@ -195,9 +195,14 @@ namespace BEM_3D
 		void CalculateFreeTermMatrices(); // Calculates the free term coefficients Cij
 		void SetSpecificRadii(); // For each geometrical Dof vertex it computes the Specific Radius R0 Which is the smallest R(theta)
 
+		void DrawMinValueLocation(IDirect3DDevice9* pD3ddev)const;
+		void DrawMaxValueLocation(IDirect3DDevice9* pD3ddev)const;
+
 	public:
 		double GetMaxValue()const;
 		double GetMinValue()const;
+		void UpdateMaxLocation();
+		void UpdateMinLocation();
 	    DWORD GetColorFromValue(const Element* pElm, int nVertex, double MinVal, double MaxVal)const;
 
 
@@ -236,13 +241,19 @@ namespace BEM_3D
 		// D3D data
 		IDirect3DVertexBuffer9* m_pVertexBuffer;
 		IDirect3DVertexBuffer9* m_pWireVertexBuffer; // Used for Edged Surfaces
+		LPD3DXMESH m_pMinMaxLocationMesh;            // A mesh for Min/Max Location  drawing
 		OUTPUT_MODE m_OutputMode;
+		Vertex* m_pMinLocation;
+		Vertex* m_pMaxLocation;
 
 		CString m_strWorkingDirectory;
 		CString m_strFileName;
 		CString m_strFileType;
 
 	public:
+		bool m_bShowMinValLocation;  // This boolean flag controls if the minimum color mapped value location is shown or not
+		bool m_bShowMaxValLocation;  // This boolean flag controls if the maximum color mapped value location is shown or not
+
 		double m_CurrentAdvance; // Used to Get the Rate of Advancement of a Lengthy JOB
 		bool m_bLengthyJob;      // Used to control the Lengthy Job 
 		CString m_strCurrentJob; // The string indicating the current lengthy JOB

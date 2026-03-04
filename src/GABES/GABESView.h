@@ -198,8 +198,8 @@ public:
 	afx_msg void OnBemSetMaterialProperties();
 	afx_msg void OnBemSetIntegrationParameters();
 	afx_msg void OnBemSetDeformationScale();
-	afx_msg void OnBemPosttreatmentMode();
-	afx_msg void OnUpdateBemPosttreatmentMode(CCmdUI* pCmdUI);
+	afx_msg void OnBemPostProcessingMode();
+	afx_msg void OnUpdateBemPostProcessingMode(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateBemSetDeformationScale(CCmdUI* pCmdUI);
 	afx_msg void OnBemPaletteSettings();
 	afx_msg void OnBemSetMemoryQuota();
@@ -232,6 +232,10 @@ public:
 	afx_msg void OnUpdateBemPaletteSettings(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateBemGetDomainNodeResponse(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateBemGenerateReport(CCmdUI* pCmdUI);
+	afx_msg void OnBemCheckShowMinLocation();
+	afx_msg void OnBemCheckShowMaxLocation();
+	afx_msg void OnUpdateBemCheckShowMinLocation(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateBemCheckShowMaxLocation(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GABESView.cpp

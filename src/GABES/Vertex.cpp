@@ -61,9 +61,9 @@ double Vertex::Distance(const Vertex& rhs)const
 }
 
 
-void Vertex::SetD3dVertexPosition(D3DVertex& rD3dVert, bool bPostTreatment)const
+void Vertex::SetD3dVertexPosition(D3DVertex& rD3dVert, bool bPostProcessing)const
 {
-	if (m_bIncludeDisplacements && bPostTreatment)
+	if (m_bIncludeDisplacements && bPostProcessing)
 	{
 		rD3dVert.x = x + m_DeformationScale * U.x;
 		rD3dVert.y = y + m_DeformationScale * U.y;
@@ -77,9 +77,9 @@ void Vertex::SetD3dVertexPosition(D3DVertex& rD3dVert, bool bPostTreatment)const
 	}	
 }
 
-void Vertex::SetD3dRGBVertexPosition(D3D_RGB_Vertex& rD3dVert, bool bPostTreatment)const
+void Vertex::SetD3dRGBVertexPosition(D3D_RGB_Vertex& rD3dVert, bool bPostProcessing)const
 {
-	if (m_bIncludeDisplacements && bPostTreatment)
+	if (m_bIncludeDisplacements && bPostProcessing)
 	{
 		rD3dVert.x = x + m_DeformationScale * U.x;
 		rD3dVert.y = y + m_DeformationScale * U.y;
@@ -151,7 +151,7 @@ void Vertex::LoadMesh(IDirect3DDevice9* pD3ddev, double SpecLength)
 
 
 
-void Vertex::Draw(bool bPostTreatment)const
+void Vertex::Draw(bool bPostProcessing)const
 {
 	D3DXMATRIX translation;
 	D3DXMATRIX world;
@@ -161,7 +161,7 @@ void Vertex::Draw(bool bPostTreatment)const
 
 
 	D3DVertex d3d_V;
-	SetD3dVertexPosition(d3d_V, bPostTreatment);	
+	SetD3dVertexPosition(d3d_V, bPostProcessing);	
 	
 	D3DXMatrixTranslation(&translation, d3d_V.x, d3d_V.y, d3d_V.z);
 

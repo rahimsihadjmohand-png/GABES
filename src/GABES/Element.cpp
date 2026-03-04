@@ -850,7 +850,7 @@ bool Element::GetIntersectingElm(const D3DXVECTOR3& P1, const D3DXVECTOR3& P2, f
 }
 
 
-void Element::DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const
+void Element::DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the fixation
 	Vector p1(0.0, 0.0, 0.0);
@@ -864,7 +864,7 @@ void Element::DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatme
 	// Calculate the three Distances to converte intrinsic coordinate to Real Ones
 
 	
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) + 
@@ -933,7 +933,7 @@ void Element::DrawTotalEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatme
 	tempVertexBuffer->Release();
 }
 
-void Element::DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const
+void Element::DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the fixation
 	Vector p1(0.0, 0.0, 0.0);
@@ -945,7 +945,7 @@ void Element::DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreat
 
 
 	// Calculate the three Distances to converte intrinsic coordinate to Real Ones
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) +
@@ -1013,7 +1013,7 @@ void Element::DrawPartialEncastrement(IDirect3DDevice9* pD3ddev, bool bPostTreat
 	tempVertexBuffer->Release();
 }
 
-void Element::DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U, double L, bool bPostTreatment)const
+void Element::DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U, double L, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the vector
 	Vector p1( 0.0, 0.0, 0.0);
@@ -1023,7 +1023,7 @@ void Element::DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U,
 
 	Vertex C = GetFieldPoint(1.0 / 3.0, 1.0 / 3.0);
 
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) +
@@ -1114,7 +1114,7 @@ void Element::DrawDisplacementVector(IDirect3DDevice9* pD3ddev, const Vector& U,
 	tempVertexBuffer->Release();
 }
 
-void Element::DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, double L, bool bPostTreatment)const
+void Element::DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, double L, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the vector
 	Vector p1( 0.0, 0.0, 0.0 );
@@ -1124,7 +1124,7 @@ void Element::DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, dou
 
 	Vertex C = GetFieldPoint(1.0 / 3.0, 1.0 / 3.0);
 
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) +
@@ -1215,7 +1215,7 @@ void Element::DrawTractionVector(IDirect3DDevice9* pD3ddev, const Vector& T, dou
 }
 
 
-void Element::DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un, double L, bool bPostTreatment)const
+void Element::DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un, double L, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the vector
 	Vector p1{ 0.0, 0.0, 0.0 };
@@ -1224,7 +1224,7 @@ void Element::DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un,
 	Vector p4{ 0.9 * L, 0.0, -0.05 * L };
 
 	Vertex C = GetFieldPoint(1.0 / 3.0, 1.0 / 3.0);
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) +
@@ -1314,7 +1314,7 @@ void Element::DrawNormalDisplacementVector(IDirect3DDevice9* pD3ddev, double Un,
 	tempVertexBuffer->Release();
 }
 
-void Element::DrawNormalTractionVector(IDirect3DDevice9* pD3ddev, double Tn, double L, bool bPostTreatment)const
+void Element::DrawNormalTractionVector(IDirect3DDevice9* pD3ddev, double Tn, double L, bool bPostProcessing)const
 {
 	// Create the intrinsic vertices of the vector
 	Vector p1{ 0.0, 0.0, 0.0 };
@@ -1324,7 +1324,7 @@ void Element::DrawNormalTractionVector(IDirect3DDevice9* pD3ddev, double Tn, dou
 
 	Vertex C = GetFieldPoint(1.0 / 3.0, 1.0 / 3.0);
 
-	if (bPostTreatment && Vertex::m_bIncludeDisplacements)
+	if (bPostProcessing && Vertex::m_bIncludeDisplacements)
 	{
 		double Scale = Vertex::m_DeformationScale;
 		Vector Uc = Vdof(0).U * N1(1.0 / 3.0, 1.0 / 3.0) +

@@ -64,7 +64,7 @@ ElementSubSet::ElementSubSet(const std::vector<int> IdxSubSet, const CString& st
 	m_nSubSetIdx++;
 }
 
-void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPostTreatment)const
+void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPostProcessing)const
 {
 	std::vector<Element*>& rElements = *m_pElements;
 
@@ -76,7 +76,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawNormalDisplacementVector(pD3ddev, m_Un, SpecLength, bPostTreatment);
+			pElm->DrawNormalDisplacementVector(pD3ddev, m_Un, SpecLength, bPostProcessing);
 		}
 
 		return;
@@ -90,7 +90,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawNormalTractionVector(pD3ddev, m_Tn, SpecLength, bPostTreatment);
+			pElm->DrawNormalTractionVector(pD3ddev, m_Tn, SpecLength, bPostProcessing);
 		}
 
 		return;
@@ -106,7 +106,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawTotalEncastrement(pD3ddev, bPostTreatment);
+			pElm->DrawTotalEncastrement(pD3ddev, bPostProcessing);
 		}
 
 		return;
@@ -121,7 +121,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawPartialEncastrement(pD3ddev, bPostTreatment);
+			pElm->DrawPartialEncastrement(pD3ddev, bPostProcessing);
 		}
 	}
 
@@ -133,7 +133,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawDisplacementVector(pD3ddev, U, SpecLength, bPostTreatment);
+			pElm->DrawDisplacementVector(pD3ddev, U, SpecLength, bPostProcessing);
 		}
 	}
 
@@ -146,7 +146,7 @@ void ElementSubSet::DrawBoundaryConditions(IDirect3DDevice9* pD3ddev, bool bPost
 		{
 			Element* pElm = rElements[Idx];
 
-			pElm->DrawTractionVector(pD3ddev, T, SpecLength, bPostTreatment);
+			pElm->DrawTractionVector(pD3ddev, T, SpecLength, bPostProcessing);
 		}
 	}
 

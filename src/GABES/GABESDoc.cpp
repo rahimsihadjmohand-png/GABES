@@ -257,6 +257,9 @@ BOOL CGABESDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
+	// Set the Coordinate ranges for all the frames
+	SetCoordinateRanges();
+
 	// Get the main frame and the view
 	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
 	CGABESView* pView = (CGABESView*)pMainFrame->GetActiveView();
@@ -270,6 +273,7 @@ BOOL CGABESDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// Reset the selections		
 	pView->ResetSelections();
+
 
 
 	// Update the ModelTree  and Info Panels
