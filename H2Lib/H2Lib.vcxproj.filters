@@ -1,0 +1,416 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="visualize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="uniform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="truncation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tri2drt0.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tri2dp1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tri2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tet3drt0.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tet3dp1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tet3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="surface3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsepattern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsematrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="singquad2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="singquad1d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simd_sse2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simd_avx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rkmatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="realavector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="opencl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="oclbem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="matrixnorms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="macrosurface3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="laplaceoclbem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="laplacebem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="laplacebem2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="krylovsolvers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="krylov.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kernelmatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ie1d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hmatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helmholtzoclbem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helmholtzbem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hcoarsen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="harith2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="harith.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h2update.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h2matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h2compression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h2arith.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gaussquad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="factorizations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eigensolvers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="duniform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dh2matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dh2compression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ddcluster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dclusteroperator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dclusterbasis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dcluster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dblock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curve2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clusteroperator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clustergeometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clusterbasis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cluster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clsettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="blas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bem3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bem2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="basic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="avector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="amatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aca.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="visualize.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="uniform.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="truncation.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tri2drt0.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tri2dp1.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tri2d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tet3drt0.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tet3dp1.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tet3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="surface3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sparsepattern.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sparsematrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="singquad2d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="singquad1d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rkmatrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="realavector.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parameters.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="opencl.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="oclbem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="matrixnorms.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="macrosurface3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="laplaceoclbem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="laplacebem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="laplacebem2d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="krylovsolvers.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="krylov.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kernelmatrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ie1d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hmatrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helmholtzoclbem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helmholtzbem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hcoarsen.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="harith2.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="harith.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="h2update.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="h2matrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="h2compression.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="h2arith.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gaussquad.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="factorizations.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eigensolvers.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="duniform.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dh2matrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dh2compression.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ddcluster.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dclusteroperator.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dclusterbasis.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dcluster.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dblock.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="curve2d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clusteroperator.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clustergeometry.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clusterbasis.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cluster.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="block.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bem3d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bem2d.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="basic.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="avector.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="amatrix.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="aca.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="laplacebem3d.cl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="helmholtzbem3d.cl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

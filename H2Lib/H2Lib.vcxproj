@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aca.h" />
+    <ClInclude Include="amatrix.h" />
+    <ClInclude Include="avector.h" />
+    <ClInclude Include="basic.h" />
+    <ClInclude Include="bem2d.h" />
+    <ClInclude Include="bem3d.h" />
+    <ClInclude Include="blas.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="clsettings.h" />
+    <ClInclude Include="cluster.h" />
+    <ClInclude Include="clusterbasis.h" />
+    <ClInclude Include="clustergeometry.h" />
+    <ClInclude Include="clusteroperator.h" />
+    <ClInclude Include="curve2d.h" />
+    <ClInclude Include="dblock.h" />
+    <ClInclude Include="dcluster.h" />
+    <ClInclude Include="dclusterbasis.h" />
+    <ClInclude Include="dclusteroperator.h" />
+    <ClInclude Include="ddcluster.h" />
+    <ClInclude Include="dh2compression.h" />
+    <ClInclude Include="dh2matrix.h" />
+    <ClInclude Include="duniform.h" />
+    <ClInclude Include="eigensolvers.h" />
+    <ClInclude Include="factorizations.h" />
+    <ClInclude Include="gaussquad.h" />
+    <ClInclude Include="h2arith.h" />
+    <ClInclude Include="h2compression.h" />
+    <ClInclude Include="h2matrix.h" />
+    <ClInclude Include="h2update.h" />
+    <ClInclude Include="harith.h" />
+    <ClInclude Include="harith2.h" />
+    <ClInclude Include="hcoarsen.h" />
+    <ClInclude Include="helmholtzbem3d.h" />
+    <ClInclude Include="helmholtzoclbem3d.h" />
+    <ClInclude Include="hmatrix.h" />
+    <ClInclude Include="ie1d.h" />
+    <ClInclude Include="kernelmatrix.h" />
+    <ClInclude Include="krylov.h" />
+    <ClInclude Include="krylovsolvers.h" />
+    <ClInclude Include="laplacebem2d.h" />
+    <ClInclude Include="laplacebem3d.h" />
+    <ClInclude Include="laplaceoclbem3d.h" />
+    <ClInclude Include="macrosurface3d.h" />
+    <ClInclude Include="matrixnorms.h" />
+    <ClInclude Include="oclbem3d.h" />
+    <ClInclude Include="opencl.h" />
+    <ClInclude Include="parameters.h" />
+    <ClInclude Include="realavector.h" />
+    <ClInclude Include="rkmatrix.h" />
+    <ClInclude Include="settings.h" />
+    <ClInclude Include="simd.h" />
+    <ClInclude Include="simd_avx.h" />
+    <ClInclude Include="simd_sse2.h" />
+    <ClInclude Include="singquad1d.h" />
+    <ClInclude Include="singquad2d.h" />
+    <ClInclude Include="sparsematrix.h" />
+    <ClInclude Include="sparsepattern.h" />
+    <ClInclude Include="surface3d.h" />
+    <ClInclude Include="tet3d.h" />
+    <ClInclude Include="tet3dp1.h" />
+    <ClInclude Include="tet3drt0.h" />
+    <ClInclude Include="tri2d.h" />
+    <ClInclude Include="tri2dp1.h" />
+    <ClInclude Include="tri2drt0.h" />
+    <ClInclude Include="truncation.h" />
+    <ClInclude Include="uniform.h" />
+    <ClInclude Include="visualize.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aca.c" />
+    <ClCompile Include="amatrix.c" />
+    <ClCompile Include="avector.c" />
+    <ClCompile Include="basic.c" />
+    <ClCompile Include="bem2d.c" />
+    <ClCompile Include="bem3d.c" />
+    <ClCompile Include="block.c" />
+    <ClCompile Include="cluster.c" />
+    <ClCompile Include="clusterbasis.c" />
+    <ClCompile Include="clustergeometry.c" />
+    <ClCompile Include="clusteroperator.c" />
+    <ClCompile Include="curve2d.c" />
+    <ClCompile Include="dblock.c" />
+    <ClCompile Include="dcluster.c" />
+    <ClCompile Include="dclusterbasis.c" />
+    <ClCompile Include="dclusteroperator.c" />
+    <ClCompile Include="ddcluster.c" />
+    <ClCompile Include="dh2compression.c" />
+    <ClCompile Include="dh2matrix.c" />
+    <ClCompile Include="duniform.c" />
+    <ClCompile Include="eigensolvers.c" />
+    <ClCompile Include="factorizations.c" />
+    <ClCompile Include="gaussquad.c" />
+    <ClCompile Include="h2arith.c" />
+    <ClCompile Include="h2compression.c" />
+    <ClCompile Include="h2matrix.c" />
+    <ClCompile Include="h2update.c" />
+    <ClCompile Include="harith.c" />
+    <ClCompile Include="harith2.c" />
+    <ClCompile Include="hcoarsen.c" />
+    <ClCompile Include="helmholtzbem3d.c" />
+    <ClCompile Include="helmholtzoclbem3d.c" />
+    <ClCompile Include="hmatrix.c" />
+    <ClCompile Include="ie1d.c" />
+    <ClCompile Include="kernelmatrix.c" />
+    <ClCompile Include="krylov.c" />
+    <ClCompile Include="krylovsolvers.c" />
+    <ClCompile Include="laplacebem2d.c" />
+    <ClCompile Include="laplacebem3d.c" />
+    <ClCompile Include="laplaceoclbem3d.c" />
+    <ClCompile Include="macrosurface3d.c" />
+    <ClCompile Include="matrixnorms.c" />
+    <ClCompile Include="oclbem3d.c" />
+    <ClCompile Include="opencl.c" />
+    <ClCompile Include="parameters.c" />
+    <ClCompile Include="realavector.c" />
+    <ClCompile Include="rkmatrix.c" />
+    <ClCompile Include="settings.c" />
+    <ClCompile Include="singquad1d.c" />
+    <ClCompile Include="singquad2d.c" />
+    <ClCompile Include="sparsematrix.c" />
+    <ClCompile Include="sparsepattern.c" />
+    <ClCompile Include="surface3d.c" />
+    <ClCompile Include="tet3d.c" />
+    <ClCompile Include="tet3dp1.c" />
+    <ClCompile Include="tet3drt0.c" />
+    <ClCompile Include="tri2d.c" />
+    <ClCompile Include="tri2dp1.c" />
+    <ClCompile Include="tri2drt0.c" />
+    <ClCompile Include="truncation.c" />
+    <ClCompile Include="uniform.c" />
+    <ClCompile Include="visualize.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="helmholtzbem3d.cl" />
+    <None Include="laplacebem3d.cl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{faaaab5e-0ea2-4735-8fb9-3cfbf44626fa}</ProjectGuid>
+    <RootNamespace>H2Lib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseInteloneMKL>Parallel</UseInteloneMKL>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseInteloneMKL>Parallel</UseInteloneMKL>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\vcpkg\packages\cairo_x64-windows\include\cairo;C:\vcpkg\packages\cairo_x64-windows\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\vcpkg\packages\cairo_x64-windows\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>..\bin\H2Lib\Release</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\vcpkg\packages\cairo_x64-windows\include\cairo;C:\vcpkg\packages\cairo_x64-windows\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\vcpkg\packages\cairo_x64-windows\debug\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\bin\H2Lib\Debug</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;BRIEF_OUTPUT;DEBUG;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;USE_CAIRO;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;BRIEF_OUTPUT;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;USE_CAIRO;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

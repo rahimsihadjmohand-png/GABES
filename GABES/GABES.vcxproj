@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{E2AE54AF-4422-5AE9-E81E-E41B00893B35}</ProjectGuid>
+    <Keyword>MFCProj</Keyword>
+    <RootNamespace>GABES</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseInteloneMKL>Parallel</UseInteloneMKL>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseInteloneMKL>Parallel</UseInteloneMKL>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)\H2Lib;C:\vcpkg\packages\cairo_x64-windows\include;C:\vcpkg\packages\cairo_x64-windows\include\cairo</IncludePath>
+    <LibraryPath>$(SolutionDir)\bin\H2Lib\Debug;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\vcpkg\packages\cairo_x64-windows\debug\lib</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)\bin\GABES\Debug</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)\H2Lib;$(IncludePath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\vcpkg\packages\cairo_x64-windows\include;C:\vcpkg\packages\cairo_x64-windows\include\cairo</IncludePath>
+    <LibraryPath>C:\vcpkg\packages\cairo_x64-windows\lib;$(SolutionDir)\bin\H2Lib\Release;$(LibraryPath);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)\bin\GABES\Release</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;BRIEF_OUTPUT;DEBUG;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;USE_CAIRO;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;H2Lib.lib;cairo.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_LIB;BRIEF_OUTPUT;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;USE_CAIRO;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;H2Lib.lib;cairo.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="DlgGenerateDomainResponseReport.h" />
+    <ClInclude Include="DlgDomainNodeResponse.h" />
+    <ClInclude Include="DlgGeneratePointGrid.h" />
+    <ClInclude Include="DlgHMatrixViewer.h" />
+    <ClInclude Include="DlgReferenceFrame.h" />
+    <ClInclude Include="DlgSubsetBCs.h" />
+    <ClInclude Include="Element_D11.h" />
+    <ClInclude Include="Element_D12.h" />
+    <ClInclude Include="Element_D13.h" />
+    <ClInclude Include="Element_D21.h" />
+    <ClInclude Include="Element_D22.h" />
+    <ClInclude Include="Element_D23.h" />
+    <ClInclude Include="GABESDoc.h" />
+    <ClInclude Include="GABESView.h" />
+    <ClInclude Include="GABES.h" />
+    <ClInclude Include="DlgSolverParameters.h" />
+    <ClInclude Include="GizmoWnd.h" />
+    <ClInclude Include="HMatrixViewer.h" />
+    <ClInclude Include="InfoPanel.h" />
+    <ClInclude Include="Element_C.h" />
+    <ClInclude Include="Element_D.h" />
+    <ClInclude Include="DlgPaletteSettings.h" />
+    <ClInclude Include="DlgNormalTraction.h" />
+    <ClInclude Include="DlgPressure.h" />
+    <ClInclude Include="DlgSetDeformationScale.h" />
+    <ClInclude Include="DlgSetIntegrationParameters.h" />
+    <ClInclude Include="DlgSetMaterialProperties.h" />
+    <ClInclude Include="DlgSetMeshType.h" />
+    <ClInclude Include="DlgTractionVector.h" />
+    <ClInclude Include="DlgDisplacementVector.h" />
+    <ClInclude Include="DlgNormalDisplacement.h" />
+    <ClInclude Include="DlgPartialEncaster.h" />
+    <ClInclude Include="DlgRangeSubSet.h" />
+    <ClInclude Include="DlgWaitSolver.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="BoundarySubSet.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="InfoTab.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="PaletteCtrl.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="ReferenceFrame.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ModelTreePanel.h" />
+    <ClInclude Include="Solver_H2LIB.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tensor.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="1D_IntegRules.cpp" />
+    <ClCompile Include="DlgGenerateDomainResponseReport.cpp" />
+    <ClCompile Include="DlgDomainNodeResponse.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="DlgGeneratePointGrid.cpp" />
+    <ClCompile Include="DlgHMatrixViewer.cpp" />
+    <ClCompile Include="DlgReferenceFrame.cpp" />
+    <ClCompile Include="DlgSubsetBCs.cpp" />
+    <ClCompile Include="Element_D11.cpp" />
+    <ClCompile Include="Element_D12.cpp" />
+    <ClCompile Include="Element_D13.cpp" />
+    <ClCompile Include="Element_D21.cpp" />
+    <ClCompile Include="Element_D22.cpp" />
+    <ClCompile Include="Element_D23.cpp" />
+    <ClCompile Include="GABESDoc.cpp" />
+    <ClCompile Include="GABESView.cpp" />
+    <ClCompile Include="GABES.cpp" />
+    <ClCompile Include="DlgSolverParameters.cpp" />
+    <ClCompile Include="GizmoWnd.cpp" />
+    <ClCompile Include="HMatrixViewer.cpp" />
+    <ClCompile Include="InfoPanel.cpp" />
+    <ClCompile Include="Element_C.cpp" />
+    <ClCompile Include="Element_D.cpp" />
+    <ClCompile Include="DlgPaletteSettings.cpp" />
+    <ClCompile Include="DlgNormalTraction.cpp" />
+    <ClCompile Include="DlgPressure.cpp" />
+    <ClCompile Include="DlgSetDeformationScale.cpp" />
+    <ClCompile Include="DlgSetIntegrationParameters.cpp" />
+    <ClCompile Include="DlgSetMaterialProperties.cpp" />
+    <ClCompile Include="DlgSetMeshType.cpp" />
+    <ClCompile Include="DlgTractionVector.cpp" />
+    <ClCompile Include="DlgDisplacementVector.cpp" />
+    <ClCompile Include="DlgNormalDisplacement.cpp" />
+    <ClCompile Include="DlgPartialEncaster.cpp" />
+    <ClCompile Include="DlgRangeSubSet.cpp" />
+    <ClCompile Include="DlgWaitSolver.cpp" />
+    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="BoundarySubset.cpp" />
+    <ClCompile Include="InfoTab.cpp" />
+    <ClCompile Include="2D_IntegRules.cpp" />
+    <ClCompile Include="ReferenceFrame.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="PaletteCtrl.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ModelTreePanel.cpp" />
+    <ClCompile Include="Kernels.cpp" />
+    <ClCompile Include="Solver_H2LIB.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Tensor.cpp" />
+    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GABES.reg" />
+    <None Include="res\BC 3D Objects\Fixation_X.x" />
+    <None Include="res\BC 3D Objects\Fixation_Y.x" />
+    <None Include="res\BC 3D Objects\Fixation_Z.x" />
+    <None Include="res\BC 3D Objects\Vector.x" />
+    <None Include="res\GABES.rc2" />
+    <None Include="res\Gizmo\X_Axis.x" />
+    <None Include="res\Gizmo\Y_Axis.x" />
+    <None Include="res\Gizmo\Z_Axis.x" />
+    <None Include="res\ribbon.mfcribbon-ms" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GABES.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\BCs.bmp" />
+    <Image Include="res\BEM_3D_02.ico" />
+    <Image Include="res\BEM_3D_02Doc.ico" />
+    <Image Include="res\BEM_Analysis.bmp" />
+    <Image Include="res\bitmap4.bmp" />
+    <Image Include="res\buttons.bmp" />
+    <Image Include="res\file.bmp" />
+    <Image Include="res\filelarge.bmp" />
+    <Image Include="res\filesmall.bmp" />
+    <Image Include="res\GABES.ico" />
+    <Image Include="res\HiddenRefFrame.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon_frame.ico" />
+    <Image Include="res\icon_frames.ico" />
+    <Image Include="res\icon_model.ico" />
+    <Image Include="res\icon_subset.ico" />
+    <Image Include="res\integrul.bmp" />
+    <Image Include="res\main.bmp" />
+    <Image Include="res\model.bmp" />
+    <Image Include="res\modeling.bmp" />
+    <Image Include="res\Reference_frame.ico" />
+    <Image Include="res\subset.bmp" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\toolbar2.bmp" />
+    <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\ViewOptions_toolbar.bmp" />
+    <Image Include="res\writelarge.bmp" />
+    <Image Include="res\writesmall.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
