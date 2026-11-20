@@ -17,6 +17,9 @@ IMPLEMENT_DYNAMIC(CDlgWaitSolver, CDialogEx)
 CDlgWaitSolver::CDlgWaitSolver(BEM_3D::Model* _pModel, CWnd* pParent)
 	: CDialogEx(IDD_DLG_WAIT_SOLVER, pParent)
 	, strTime(_T(""))
+	, str_RHS_time(_T(""))
+	, str_HMAT_time(_T(""))
+	, str_SOLV_time(_T(""))
 {
 	m_STHD.pObj = _pModel;
 	m_STHD.bRhsVec = FALSE;
@@ -64,11 +67,16 @@ void CDlgWaitSolver::DoDataExchange(CDataExchange* pDX)
 		str.Format(_T("%.2f"), m_STHD.CompRatio);
 		SetDlgItemText(IDC_EDIT_COMP_RATIO, str);
 	}
+	DDX_Text(pDX, IDC_STATIC_RHS_TIME, str_RHS_time);
+	DDX_Text(pDX, IDC_STATIC_HMAT_TIME, str_HMAT_time);
+	DDX_Text(pDX, IDC_STATIC_SOLV_TIME, str_SOLV_time);
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgWaitSolver, CDialogEx)
 	ON_WM_TIMER()
+	ON_MESSAGE(WM_USER_RHS_VECTOR_CONSTRUCTED, &CDlgWaitSolver::OnRHSVectorConstructed)
+	ON_MESSAGE(WM_USER_HMATRIX_CONSTRUCTED, &CDlgWaitSolver::OnHMatrixConstructed)
 END_MESSAGE_MAP()
 
 
@@ -78,7 +86,7 @@ void CDlgWaitSolver::FormatTime()
 	LARGE_INTEGER ticksCurr;
 	QueryPerformanceCounter(&ticksCurr);
 
-	// Get time in seconds
+	// Get Global time in seconds
 	double totalSec = (double)(ticksCurr.QuadPart - ticksStart.QuadPart) / (double) ticksFreq.QuadPart;
 	
 	int hrs = (int)(totalSec / 3600.0);
@@ -88,6 +96,45 @@ void CDlgWaitSolver::FormatTime()
 	int frac = (int)((sec - secInt) * 100.0);  // 2 digits after comma
 
 	strTime.Format(_T("%02u : %02u : %02d,%02d"), hrs, min, secInt, frac);
+
+	// Get RHS vector time
+	if (!m_STHD.bRhsVec)
+	{
+		str_RHS_time.Format(_T("%02u : %02u : %02d,%02d"), hrs, min, secInt, frac);
+		str_HMAT_time.Format(_T("%02u : %02u : %02d,%02d"), 0, 0, 0, 0);
+		str_SOLV_time.Format(_T("%02u : %02u : %02d,%02d"), 0, 0, 0, 0);
+	}
+
+	// Get H-Matrix time
+	else if (!m_STHD.bHMatrix)
+	{
+		// Get Global time in seconds
+		totalSec = (double)(ticksCurr.QuadPart - ticksHMatStart.QuadPart) / (double)ticksFreq.QuadPart;
+
+		hrs = (int)(totalSec / 3600.0);
+		min = (int)((totalSec - hrs * 3600.0) / 60.0);
+		sec = totalSec - hrs * 3600.0 - min * 60.0;
+		secInt = (int)sec;
+		frac = (int)((sec - secInt) * 100.0);  // 2 digits after comma
+
+		str_HMAT_time.Format(_T("%02u : %02u : %02d,%02d"), hrs, min, secInt, frac);
+		str_SOLV_time.Format(_T("%02u : %02u : %02d,%02d"), 0, 0, 0, 0);
+	}
+	// Get Solver time
+	else if (!m_STHD.bSolved)
+	{
+		// Get Global time in seconds
+		totalSec = (double)(ticksCurr.QuadPart - ticksSolverStart.QuadPart) / (double)ticksFreq.QuadPart;
+
+		hrs = (int)(totalSec / 3600.0);
+		min = (int)((totalSec - hrs * 3600.0) / 60.0);
+		sec = totalSec - hrs * 3600.0 - min * 60.0;
+		secInt = (int)sec;
+		frac = (int)((sec - secInt) * 100.0);  // 2 digits after comma
+
+		str_SOLV_time.Format(_T("%02u : %02u : %02d,%02d"), hrs, min, secInt, frac);
+	}
+		
 }
 
 // CDlgWaitSolver message handlers
@@ -115,6 +162,9 @@ void CDlgWaitSolver::OnTimer(UINT_PTR nIDEvent)
 	{
 		FormatTime();
 		SetDlgItemText(IDC_STATIC_TIME, strTime);
+		SetDlgItemText(IDC_STATIC_RHS_TIME, str_RHS_time);
+		SetDlgItemText(IDC_STATIC_HMAT_TIME, str_HMAT_time);
+		SetDlgItemText(IDC_STATIC_SOLV_TIME, str_SOLV_time);
 	}
 	else
 	{
@@ -160,6 +210,25 @@ void CDlgWaitSolver::StartSolver()
 }
 
 
+LRESULT CDlgWaitSolver::OnRHSVectorConstructed(WPARAM wParam, LPARAM lParam)
+{
+	QueryPerformanceCounter(&ticksHMatStart);
+
+	UpdateData(FALSE);
+
+	return 0;
+}
+
+LRESULT CDlgWaitSolver::OnHMatrixConstructed(WPARAM wParam, LPARAM lParam)
+{
+	QueryPerformanceCounter(&ticksSolverStart);
+
+	UpdateData(FALSE);
+
+	return 0;
+}
+
+
 
 
 void CDlgWaitSolver::OnCancel()
@@ -169,12 +238,16 @@ void CDlgWaitSolver::OnCancel()
 
 	m_STHD.pObj->ClearBEMVectors();
 
-	CDialogEx::OnCancel();
+	ShowWindow(SW_HIDE);
 }
 
 void CDlgWaitSolver::OnOK()
 {
-	CGABESView* pView = (CGABESView*) m_pParentWnd;
+	// Get the Frame Window
+	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+
+	// Get the View Window
+	CGABESView* pView = (CGABESView*)pMainFrame->GetActiveView();
 
 	// TODO: Add your specialized code here and/or call the base class
 	m_STHD.pObj->m_bLengthyJob = false;
@@ -187,8 +260,7 @@ void CDlgWaitSolver::OnOK()
 	m_STHD.pObj->SetOutputMode(BEM_3D::S_VON_MISES);
 	m_STHD.pObj->UpdateVertexBuffer(pView->m_pD3ddev, pView->m_bPostProcessing);
 	// Update the Output Mode Combo boxes in the View toolbar
-	// Get the Frame Window
-	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+	
 	// Get the OutputMode Combobox
 	CMFCToolBarComboBoxButton* m_pCmbBtnOutputMode =
 		(CMFCToolBarComboBoxButton*)pMainFrame->m_ViewOptionsBar.GetButton(
@@ -212,5 +284,5 @@ void CDlgWaitSolver::OnOK()
 	// Set the Modified Flag to true (default argument)
 	pView->GetDocument()->SetModifiedFlag();
 
-	CDialogEx::OnOK();
+	ShowWindow(SW_HIDE);
 }

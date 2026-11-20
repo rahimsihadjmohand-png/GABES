@@ -353,19 +353,22 @@ void Model::ConstructRHSvector()
 						Element* pElm = m_Elements[vem.ElmIdx];						
 						int l = vem.LocalIdx;
 						const Vector& T = pElm->T(l);
-
-						P_ += pElm->P(pSrcPt, i, j, l);
+						
+						if (U[j] != 0.0)
+							P_ += pElm->P(pSrcPt, i, j, l);
 
 						if(vem_idx != (pColNode->m_ElmsMap.size() - 1))
 							if(T[j] != 0.0)
 								accum += pElm->Q(pSrcPt, i, j, l) * T[j];
 					}
 
-					if (pSrcPt == pColNode)
-						P_ += pSrcPt->C.Get(i, j);
-
 					if (U[j] != 0.0)
+					{
+						if (pSrcPt == pColNode)
+							P_ += pSrcPt->C.Get(i, j);
+
 						accum -= P_ * U[j];
+					}						
 				}
 			}
 		}
@@ -1814,11 +1817,27 @@ void Model::CalculateTensors()
 
 		// Create the new uniformized Tensors 
 		Tensor Sig, Eps;
+
+		// Area based averaging 
+		/*double Area = 0.0;
 		for (Element* pElm : CommonElms)
 		{
 			// Get the local index of node pV
 			int l = pElm->GetGeometricalVertexLocalIndex(pV);
+			double Area_i = 0.5 * pElm->m_J;
+			// Increment the Uniformized tensors
+			Sig += (pElm->Sig(l) * Area_i);
+			Eps += (pElm->Eps(l) * Area_i);
+			Area += Area_i;
+		}
+		Sig = Sig / Area;
+		Eps = Eps / Area; */
 
+		//Arithmetic averaging
+		for (Element* pElm : CommonElms)
+		{
+			// Get the local index of node pV
+			int l = pElm->GetGeometricalVertexLocalIndex(pV);
 			// Increment the Uniformized tensors
 			Sig += pElm->Sig(l);
 			Eps += pElm->Eps(l);
@@ -1827,6 +1846,7 @@ void Model::CalculateTensors()
 		Eps = Eps / CommonElms.size();
 
 		// Affect the uniformised Tensors to common elements
+		
 		for (Element* pElm : CommonElms)
 		{
 			// Get the local index of node pV

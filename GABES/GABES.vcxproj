@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_LIB;BRIEF_OUTPUT;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;USE_CAIRO;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;BRIEF_OUTPUT;USE_BLAS;USE_OPENMP;HARITH_RKMATRIX_QUICK_EXIT;USE_CAIRO;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -116,6 +116,7 @@
     <ClInclude Include="DlgGenerateDomainResponseReport.h" />
     <ClInclude Include="DlgDomainNodeResponse.h" />
     <ClInclude Include="DlgGeneratePointGrid.h" />
+    <ClInclude Include="DlgHMatrixParameters.h" />
     <ClInclude Include="DlgHMatrixViewer.h" />
     <ClInclude Include="DlgReferenceFrame.h" />
     <ClInclude Include="DlgSubsetBCs.h" />
@@ -172,6 +173,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="DlgGeneratePointGrid.cpp" />
+    <ClCompile Include="DlgHMatrixParameters.cpp" />
     <ClCompile Include="DlgHMatrixViewer.cpp" />
     <ClCompile Include="DlgReferenceFrame.cpp" />
     <ClCompile Include="DlgSubsetBCs.cpp" />

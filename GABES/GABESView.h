@@ -251,6 +251,8 @@ public:
 
 	afx_msg void OnBemPreviewHmatrix();
 	afx_msg void OnUpdateBemPreviewHmatrix(CCmdUI* pCmdUI);
+	afx_msg void OnBemSetHmatrixParameters();
+	afx_msg void OnUpdateBemSetHmatrixParameters(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GABESView.cpp

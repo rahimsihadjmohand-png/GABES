@@ -1,10 +1,14 @@
 #pragma once
 
-
 #include <hmatrix.h>
 #include <aca.h>
 #include <krylovsolvers.h>
 #include <harith.h>
+
+
+#define WM_USER_RHS_VECTOR_CONSTRUCTED WM_USER+101
+#define WM_USER_HMATRIX_CONSTRUCTED    WM_USER+102
+
 
 
 // Structure passed as a void pointer to the Solver thread

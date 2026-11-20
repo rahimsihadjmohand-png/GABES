@@ -1,4 +1,4 @@
-// InfoTab.cpp : implementation file
+﻿// InfoTab.cpp : implementation file
 //
 
 #include "pch.h"
@@ -41,8 +41,15 @@ void CInfoTab::InitTabCtrl()
 	// Add the Material Tab
     InsertItem(2, _T("Material"));
 
-	// Add the Analysis Tab
-	InsertItem(3, _T("Analysis")); 
+	// Add the Integration Tab
+	InsertItem(3, _T("Integration"));
+
+	// Add the H-Matrix Tab
+	InsertItem(4, _T("H-Matrix"));
+
+	// Add the Solver Tab
+	InsertItem(5, _T("Solver"));
+
 
 	// Update the information
 	UpdateInfo();
@@ -99,47 +106,45 @@ void CInfoTab::UpdateInfo()
 	m_v = BEM_3D::Element::v;
 	//=======================================================================================
 
-	//4. Analysis information
+	//4. Integration information 
 	if (BEM_3D::Element::m_bUseAdaptiveCriterion)
 	{
-		CString strCriterionPrec; 
+		m_strIntegScheme = _T("Adaptive Criterion");
+
+		CString strCriterionPrec;
 		switch (BEM_3D::Element::m_CriterionPrec)
 		{
 		case BEM_3D::_0_001:
-			m_strIntegScheme = _T("Adaptive Criterion - eps = 1e-3");
+			m_strIntegAccuracy = _T("1e-3 (0.1%)");
 			break;
 
 		case BEM_3D::_0_0001:
-			m_strIntegScheme = _T("Adaptive Criterion - eps = 1e-4");
+			m_strIntegAccuracy = _T("1e-4 (0.01%)");
 			break;
 		}
+
+		m_strNumCubaturePoints = _T("N.A");
 	}
 	else
 	{
+		m_strIntegScheme = _T("Fixed Cubature");
 
-		if(BEM_3D::Element::m_FixedIntegRule == BEM_3D::_001_PT)
-			m_strIntegScheme.Format(_T("Fixed Cubature - %d Point"), 1);
+		m_strIntegAccuracy = _T("N.A");
+
+		if (BEM_3D::Element::m_FixedIntegRule == BEM_3D::_001_PT)
+			m_strNumCubaturePoints.Format(_T("%d Point"), 1);
 		else
-			m_strIntegScheme.Format(_T("Fixed Cubature - %d Points"), BEM_3D::Element::RuleToSize(BEM_3D::Element::m_FixedIntegRule));
+			m_strNumCubaturePoints.Format(_T("%d Points"), BEM_3D::Element::RuleToSize(BEM_3D::Element::m_FixedIntegRule));
 	}
-	
+
 	if (BEM_3D::Element::m_bRISP)
 		m_strRISP = _T("True");
 	else
 		m_strRISP = _T("False");
 
-	switch (BEM_3D::Model::m_solver)
-	{
-	case BEM_3D::H_LU:
-		m_strSolver = _T("H-LU");
-		break;
 
-	case BEM_3D::GMRES:
-		m_strSolver = _T("GMRES");
-		break;
-	}
-
-
+	
+	//5. H-Matrix information
 	switch (BEM_3D::Model::m_clmode)
 	{
 	case H2_ADAPTIVE:
@@ -158,16 +163,48 @@ void CInfoTab::UpdateInfo()
 		m_strClusterMode = _T("PCA");
 	}
 
-	if (BEM_3D::Model::m_bSetMaxIter)
-		m_strMaxIterations.Format(_T("True - %d iterations"), BEM_3D::Model::m_maxiter);
-	else
-		m_strMaxIterations = _T("False");
-
-	m_strErrorThreshold.Format(_T("%.2e"), BEM_3D::Model::m_accur);
+	m_strACA_tol.Format(_T("%.2e"), BEM_3D::Model::m_ACA_tol);
 
 	m_strEta.Format(_T("%.2f"), BEM_3D::Model::m_Eta);
 
 	m_strClf.Format(_T("%d"), BEM_3D::Model::m_clf);
+
+	
+	//6. Solver information
+	switch (BEM_3D::Model::m_solver)
+	{
+	case BEM_3D::H_LU:
+	{
+		m_strSolver = _T("H-LU");
+		m_strHLU_tol.Format(_T("%.2e"), BEM_3D::Model::m_HLU_tol);
+		m_strGMRES_tol = _T("N.A");
+		m_strPrecond_tol = _T("N.A");
+		m_strMaxIterations = _T("N.A");
+	}
+	break;
+
+	case BEM_3D::GMRES:
+	{
+		m_strSolver = _T("GMRES");
+
+		m_strHLU_tol = _T("N.A");
+		m_strGMRES_tol.Format(_T("%.2e"), BEM_3D::Model::m_GMRES_tol);
+		m_strPrecond_tol.Format(_T("%.2e"), BEM_3D::Model::m_Precond_tol);
+
+		if (BEM_3D::Model::m_bSetMaxIter)
+			m_strMaxIterations.Format(_T("True - %d iterations"), BEM_3D::Model::m_maxiter);
+		else
+			m_strMaxIterations = _T("False");
+	}
+	break;
+	}
+
+
+	
+	
+	
+
+	
 	// ===================================================================================
 
 	Invalidate();
@@ -202,7 +239,17 @@ void CInfoTab::OnPaint()
 		break;
 
 	case 3:
-		OutputAnalysisInfo(&dc);
+		OutputIntegrationInfo(&dc);
+		break;
+
+
+	case 4:
+		OutputHMatrixInfo(&dc);
+		break;
+
+
+	case 5:
+		OutputSolverInfo(&dc);
 		break;
 	}
 
@@ -373,33 +420,73 @@ void CInfoTab::OutputMaterialInfo(CDC* pDC)
 
 
 
-void CInfoTab::OutputAnalysisInfo(CDC* pDC)
+void CInfoTab::OutputIntegrationInfo(CDC* pDC)
 {
 
 	CString strProperties[] = {
 		  _T("Integ. Scheme:"),
+		  _T("Integ. Accuracy:"),
+		  _T("Num. Cubat. Pts:"),
 		  _T("RISP Algorithm:"),
-		  _T("Solver:"),
-		  _T("Clustering Mode:"),
-		  _T("Use of Maxiter:"),
-		  _T("Error Threshold:"),
-		  _T("Eta:"),
-		  _T("Max Leaf Size:"),
 	};
 
 
 	CString strValues[] = {
 		m_strIntegScheme,
-		m_strRISP,
-		m_strSolver,
+		m_strIntegAccuracy,
+		m_strNumCubaturePoints,
+		m_strRISP };
+
+
+	OutputInfo(pDC, strProperties, strValues, 4);
+}
+
+
+
+void CInfoTab::OutputHMatrixInfo(CDC* pDC)
+{
+	CString strProperties[] = {
+		  _T("Clustering Mode:"),
+		  _T("ACA Tolerance:"),
+		  _T("Adm. Param. (η):"),
+		  _T("Max Leaf Size:"),
+	};
+
+
+	CString strValues[] = {
 		m_strClusterMode,
-		m_strMaxIterations,
-		m_strErrorThreshold,
+		m_strACA_tol,
 		m_strEta,
 		m_strClf
 	};
 
-	OutputInfo(pDC, strProperties, strValues, 8);
+	OutputInfo(pDC, strProperties, strValues, 4);
+}
+
+
+
+
+void CInfoTab::OutputSolverInfo(CDC* pDC)
+{
+
+	CString strProperties[] = {
+		  _T("Solver:"),
+		  _T("H-LU Trunc Tol.:"),
+		  _T("GMRES Error Tol.:"),
+		  _T("Precond. Trunc. Tol.:"),
+		  _T("Use of Maxiter:"),
+	};
+
+
+	CString strValues[] = {
+		m_strSolver,
+		m_strHLU_tol,
+		m_strGMRES_tol,
+		m_strPrecond_tol,
+		m_strMaxIterations,
+	};
+
+	OutputInfo(pDC, strProperties, strValues, 5);
 }
 
 

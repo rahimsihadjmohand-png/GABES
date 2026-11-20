@@ -1,6 +1,6 @@
 #pragma once
 #include "afxdialogex.h"
-#include "HMatrixViewer.h"
+#include "Model.h"
 
 
 
@@ -11,7 +11,7 @@ class CDlgSolverParameters : public CDialogEx
 	DECLARE_DYNAMIC(CDlgSolverParameters)
 
 public:
-	CDlgSolverParameters(const BEM_3D::Model* pModel, CWnd* pParent = nullptr);   // standard constructor
+	CDlgSolverParameters(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CDlgSolverParameters();
 
 // Dialog Data
@@ -24,18 +24,18 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	const BEM_3D::Model* m_pModel;
-
-
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	afx_msg void OnCbnSelchangeComboSolver();
 
-	CEdit edt_steps;
-	CSpinButtonCtrl spn_steps;
 	CComboBox combo_solvers;
-	CSpinButtonCtrl spn_clf;
+	CEdit edt_HLU_tol;
+	CButton chk_SetMaxIter;
+	CEdit edt_steps;	
+	CSpinButtonCtrl spn_steps;
+	CEdit edt_GMRES_tol;
+	CEdit edt_Precond_tol;
 
 
-	afx_msg void OnBnClickedCheckSetMaxSteps();
+	afx_msg void OnBnClickedCheckSetMaxSteps();	
 };

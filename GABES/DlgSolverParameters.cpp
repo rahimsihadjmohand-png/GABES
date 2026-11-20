@@ -16,9 +16,8 @@ using BEM_3D::Model;
 
 IMPLEMENT_DYNAMIC(CDlgSolverParameters, CDialogEx)
 
-CDlgSolverParameters::CDlgSolverParameters(const Model* pModel, CWnd* pParent)
+CDlgSolverParameters::CDlgSolverParameters(CWnd* pParent)
 	: CDialogEx(IDD_DLG_SOLVER_PARAMETERS, pParent)
-	, m_pModel(pModel)
 {
 
 }
@@ -31,16 +30,18 @@ CDlgSolverParameters::~CDlgSolverParameters()
 void CDlgSolverParameters::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_EPS, Model::m_accur);
+	DDX_Text(pDX, IDC_EDIT_HLU_TOL, Model::m_HLU_tol);
+	DDX_Text(pDX, IDC_EDIT_GMRES_TOL, Model::m_GMRES_tol);
+	DDX_Text(pDX, IDC_EDIT_PRECOND_TOL, Model::m_Precond_tol);
 	DDX_Control(pDX, IDC_EDIT_STEPS, edt_steps);
 	DDX_Control(pDX, IDC_SPIN_STEPS, spn_steps);
 	DDX_Check(pDX, IDC_CHECK_SET_MAX_STEPS, Model::m_bSetMaxIter);
 	DDX_Text(pDX, IDC_EDIT_STEPS, Model::m_maxiter);
 	DDX_Control(pDX, IDC_COMBO_SOLVER, combo_solvers);
-	DDX_Text(pDX, IDC_EDIT_CLF, Model::m_clf);
-	DDX_Control(pDX, IDC_SPIN_CLF, spn_clf);
-	DDX_Text(pDX, IDC_EDIT_ETA, Model::m_Eta);
-	DDX_CBIndex(pDX, IDC_COMBO_CLMODE, Model::m_clmode);
+	DDX_Control(pDX, IDC_EDIT_HLU_TOL, edt_HLU_tol);
+	DDX_Control(pDX, IDC_CHECK_SET_MAX_STEPS, chk_SetMaxIter);
+	DDX_Control(pDX, IDC_EDIT_GMRES_TOL, edt_GMRES_tol);
+	DDX_Control(pDX, IDC_EDIT_PRECOND_TOL, edt_Precond_tol);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -52,8 +53,7 @@ void CDlgSolverParameters::DoDataExchange(CDataExchange* pDX)
 	{
 		int nSolver = (int)Model::m_solver;
 		DDX_CBIndex(pDX, IDC_COMBO_SOLVER, nSolver);
-	}
-
+	}	
 }
 
 
@@ -70,12 +70,16 @@ BOOL CDlgSolverParameters::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+
+	edt_HLU_tol.EnableWindow(Model::m_solver == SOLVER::H_LU);
+	chk_SetMaxIter.EnableWindow(Model::m_solver == SOLVER::GMRES);
 	edt_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
 	spn_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
+	edt_GMRES_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
+	edt_Precond_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
+
 
 	spn_steps.SetRange(1, SHORT_MAX);
-	spn_clf.SetRange(1, SHORT_MAX);
-
 
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -95,8 +99,12 @@ void CDlgSolverParameters::OnCbnSelchangeComboSolver()
 	// TODO: Add your control notification handler code here
 	UpdateData();
 
+	edt_HLU_tol.EnableWindow(Model::m_solver == SOLVER::H_LU);
+	chk_SetMaxIter.EnableWindow(Model::m_solver == SOLVER::GMRES);
 	edt_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
 	spn_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
+	edt_GMRES_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
+	edt_Precond_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
 }
 
 
@@ -105,6 +113,10 @@ void CDlgSolverParameters::OnBnClickedCheckSetMaxSteps()
 	// TODO: Add your control notification handler code here
 	UpdateData();
 
+	edt_HLU_tol.EnableWindow(Model::m_solver == SOLVER::H_LU);
+	chk_SetMaxIter.EnableWindow(Model::m_solver == SOLVER::GMRES);
 	edt_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
 	spn_steps.EnableWindow(Model::m_bSetMaxIter && Model::m_solver == SOLVER::GMRES);
+	edt_GMRES_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
+	edt_Precond_tol.EnableWindow(Model::m_solver == SOLVER::GMRES);
 }

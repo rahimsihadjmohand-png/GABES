@@ -40,15 +40,25 @@ private:
 	double m_G;                     // The Shear modulus
 	double m_v;                     // The poissons ratio
 
-	// Analysis information
+	// Integration information
 	CString m_strIntegScheme;       // The used integration Scheme (Fixed cubature or Adaptive scheme)
+	CString m_strIntegAccuracy;     // The integration error threshold
+	CString m_strNumCubaturePoints; // The integration error threshold
 	CString m_strRISP;              // The state of use of the RISP Algorithm
-	CString m_strSolver;            // The type of linear system solver used
+
+	// H-Matrix information
 	CString m_strClusterMode;       // The type of H-Matrix clusturing mode used
-	CString m_strMaxIterations;     // The use or not of a max number of iteration if yes display it
-	CString m_strErrorThreshold;    // The H-Matrix Error threshhold
+	CString m_strACA_tol;           // The ACA error tolerance
 	CString m_strEta;               // The H-Matrix Admissibility parameter
 	CString m_strClf;               // The H-Matrix Maximum Leaf Size
+
+	// Solver information
+	CString m_strSolver;            // The type of linear system solver used
+	CString m_strHLU_tol;           // The H-LU truncation error
+	CString m_strGMRES_tol;         // The GMRES Error threshhold
+	CString m_strPrecond_tol;       // The H-LU preconditionner truncation error
+	CString m_strMaxIterations;     // The use or not of a max number of iteration if yes display it
+	
 
 private:
 
@@ -60,8 +70,9 @@ private:
 	void OutputMeshInfo(CDC* pDC);
 	void OutputModelInfo(CDC* pDC);
 	void OutputMaterialInfo(CDC* pDC);
-	void OutputAnalysisInfo(CDC* pDC);
-
+	void OutputIntegrationInfo(CDC* pDC);
+	void OutputHMatrixInfo(CDC* pDC);
+	void OutputSolverInfo(CDC* pDC);
 
 protected:
 	DECLARE_MESSAGE_MAP()

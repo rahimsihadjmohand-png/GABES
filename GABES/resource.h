@@ -81,6 +81,7 @@
 #define IDR_MESH_FIXATION_Y             416
 #define IDR_MESH1                       417
 #define IDR_MESH_FIXATION_Z             417
+#define IDD_DLG_HMATRIX_PARAMETERS      418
 #define IDC_CMB_COOR_SYS_RANGE_SUBSET   1000
 #define IDC_CMB_COORD_SYSTEM            1000
 #define IDC_STATIC_DIM1                 1001
@@ -142,10 +143,14 @@
 #define IDC_SPIN3                       1034
 #define IDC_STATIC_CURRENT_JOB          1035
 #define IDC_EDIT_RAM_BAIL               1036
+#define IDC_STATIC_RHS_TIME             1036
 #define IDC_RADIO_DIRECT_EVALUATION     1037
 #define IDC_EDIT_TOTAL_RAM              1037
+#define IDC_STATIC_HMAT_TIME            1037
 #define IDC_RADIO_RIGID_BODY_TRANSLATION 1038
 #define IDC_SLIDER_RAM_BAIL             1038
+#define IDC_STATIC_GMRES_TIME           1038
+#define IDC_STATIC_SOLV_TIME            1038
 #define IDC_CHECK_AUTO_MATRIX_BAILS     1039
 #define IDC_SLIDER_Q_MATRIX_BAIL        1040
 #define IDC_EDIT_Q_MATRIX_BAIL          1041
@@ -162,6 +167,7 @@
 #define IDC_COMBO_SOLVER                1052
 #define IDC_EDIT_EPS                    1053
 #define IDC_EDIT_ACCUR                  1053
+#define IDC_EDIT_ACA_TOL                1053
 #define IDC_EDIT_STEPS                  1054
 #define IDC_SPIN_STEPS                  1055
 #define IDC_EDIT_X                      1056
@@ -176,9 +182,12 @@
 #define IDC_EDIT_DIM3                   1058
 #define IDC_EDIT_MAX_RANK               1058
 #define IDC_EDIT_MAXK                   1058
+#define IDC_EDIT_GMRES_TOL              1058
 #define IDC_CHECK_U1                    1059
 #define IDC_SPIN_MAX_RANK               1059
 #define IDC_SPIN_MAXK                   1059
+#define IDC_EDIT_HLU_TOL                1059
+#define IDC_EDIT_PRECOND_TOL            1060
 #define IDC_EDIT_U2                     1061
 #define IDC_CHECK_U2                    1062
 #define IDC_CHECK_U3                    1063
@@ -395,15 +404,15 @@
 #define ID_FRAMES_RENAME                32855
 #define ID_FRAMES_DELETE                32856
 #define ID_FRAMES_SHOW_HIDE             32858
-#define ID_SLIDER_SPECLENGTH            32859
 #define ID_SLIDER_SPECLENGTH_FACTOR     32859
+#define ID_BEM_SET_HMATRIX_PARAMETERS   32860
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        418
-#define _APS_NEXT_COMMAND_VALUE         32860
+#define _APS_NEXT_RESOURCE_VALUE        421
+#define _APS_NEXT_COMMAND_VALUE         32861
 #define _APS_NEXT_CONTROL_VALUE         1191
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

@@ -36,6 +36,7 @@
 #include "DlgPaletteSettings.h"
 #include "DlgSetMeshType.h"
 #include "DlgSolverParameters.h"
+#include "DlgHMatrixParameters.h"
 #include "DlgHMatrixViewer.h"
 #include "ReferenceFrame.h"
 
@@ -139,6 +140,8 @@ BEGIN_MESSAGE_MAP(CGABESView, CView)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CGABESView::OnUpdateFileSaveAs)
 	ON_COMMAND(ID_BEM_PREVIEW_HMATRIX, &CGABESView::OnBemPreviewHmatrix)
 	ON_UPDATE_COMMAND_UI(ID_BEM_PREVIEW_HMATRIX, &CGABESView::OnUpdateBemPreviewHmatrix)
+	ON_COMMAND(ID_BEM_SET_HMATRIX_PARAMETERS, &CGABESView::OnBemSetHmatrixParameters)
+	ON_UPDATE_COMMAND_UI(ID_BEM_SET_HMATRIX_PARAMETERS, &CGABESView::OnUpdateBemSetHmatrixParameters)
 END_MESSAGE_MAP()
 
 // CGABESView construction/destruction
@@ -317,8 +320,8 @@ void CGABESView::OnInitialUpdate()
 	m_pDlgDomainNodeResponse->Create(IDD_DLG_DOMAIN_NODE_RESPONSE, this);
 
 	// Create the WaitSolver Modless Dialog Box
-	m_pDlgWaitSolver = new CDlgWaitSolver(pModel, this);
-	m_pDlgWaitSolver->Create(IDD_DLG_WAIT_SOLVER, this);
+	m_pDlgWaitSolver = new CDlgWaitSolver(pModel, nullptr);
+	m_pDlgWaitSolver->Create(IDD_DLG_WAIT_SOLVER, nullptr);
 }
 
 
@@ -1694,7 +1697,20 @@ void CGABESView::OnBemSolveBoundaryValueProblem()
 void CGABESView::OnBemSetSolverParameters()
 {
 	// TODO: Add your command handler code here
-	CDlgSolverParameters dlg(pModel, this);
+	CDlgSolverParameters dlg(this);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	// Update the information panel
+	CMainFrame* pMainFrame = (CMainFrame*)::AfxGetMainWnd();
+	pMainFrame->m_infoPanel.UpdateInfo();
+}
+
+
+void CGABESView::OnBemSetHmatrixParameters()
+{
+	// TODO: Add your command handler code here
+	CDlgHMatrixParameters dlg(this);
 	if (dlg.DoModal() != IDOK)
 		return;
 
@@ -2063,6 +2079,15 @@ void CGABESView::OnUpdateBemSetIntegrationParameters(CCmdUI* pCmdUI)
 	pCmdUI->Enable(bEnable);
 }
 
+
+void CGABESView::OnUpdateBemSetHmatrixParameters(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	bool bEnable = !m_bPostProcessing && !pModel->m_bLengthyJob;
+	pCmdUI->Enable(bEnable);
+}
+
+
 void CGABESView::OnUpdateBemSetSolverParameters(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
@@ -2154,6 +2179,9 @@ void CGABESView::OnUpdateBemCheckShowMaxLocation(CCmdUI* pCmdUI)
 	bool bEnable = !pModel->IsModelEmpty() && !pModel->m_bLengthyJob && m_bPostProcessing;
 	pCmdUI->Enable(bEnable);
 }
+
+
+
 
 
 

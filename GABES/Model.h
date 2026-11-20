@@ -215,13 +215,16 @@ namespace BEM_3D
 		CString m_strCurrentJob; // The string indicating the current lengthy JOB
 
 		// H2LIB
-		static double m_Eta;
-		static unsigned int m_clf;
-		static double m_accur;
-		static int m_clmode;
-		static BOOL m_bSetMaxIter;
-		static unsigned int m_maxiter;
-		static SOLVER m_solver;
+		static double m_Eta;           // The admissibility parameter
+		static unsigned int m_clf;     // The maximum leaf size
+		static double m_ACA_tol;       // The ACA error tolerance
+		static int m_clmode;           // The clustering mode
+		static BOOL m_bSetMaxIter;     // The set max-iter flag for GMRES solver
+		static unsigned int m_maxiter; // The max iteration number for GMRES solver
+		static SOLVER m_solver;        // The solver type 
+		static double m_GMRES_tol;     // The GMRES error convergence tolerance
+		static double m_HLU_tol;       // The H-LU direct solver truncation tolerance
+		static double m_Precond_tol;   // The H-LU preconditionner tolerance  
 	};
 };
 

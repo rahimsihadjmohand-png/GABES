@@ -4,19 +4,26 @@
 #include "Solver_H2LIB.h"
 
 
+
+
+
+
 using BEM_3D::Vertex;
 using BEM_3D::VtxElmMap;
 using BEM_3D::Element;
 using BEM_3D::Model;
 using BEM_3D::SOLVER;
 
-double Model::m_Eta = 1.0;
+double Model::m_Eta = 1.5;
 uint Model::m_clf = 36U;
-double Model::m_accur = 1.0E-6;
+double Model::m_ACA_tol = 1.0E-6;
 int Model::m_clmode = (int)H2_PCA;   
 BOOL Model::m_bSetMaxIter = FALSE;
 uint Model::m_maxiter = 500U;
 SOLVER Model::m_solver = GMRES;
+double Model::m_GMRES_tol = 1.0E-5;     
+double Model::m_HLU_tol = 1.0E-5;
+double Model::m_Precond_tol = 5.0E-2;   
 
 
 // The callback function used to compute the block entries: It is used as (entry) callback in H2Lib
@@ -309,12 +316,12 @@ void BuildH_Matrix(void* data,
 				G->rc->size,
 				G->cc->idx,
 				G->cc->size,
-				Model::m_accur,
+				Model::m_ACA_tol,
 				nullptr,
 				nullptr,
 				G->r);
 
-			trunc_rkmatrix(tm, Model::m_accur, G->r);
+			trunc_rkmatrix(tm, Model::m_ACA_tol, G->r);
 		}
 		else if (G->f)
 		{
@@ -393,6 +400,9 @@ UINT Model::ResolveLinearSystemThread_H2LIB(LPVOID pParam)
 	pObj->m_CurrentAdvance = 0.0;
 	pObj->ConstructRHSvector();
 	pObj->m_CurrentAdvance = 1.0;
+	// Send a windows user message to the Wait progress dialog to notify that the RHS vector is constructed
+	pSTHD->pWaitSolverDlg->SendMessage(WM_USER_RHS_VECTOR_CONSTRUCTED, 0, 0);
+
 
 
 	//====== Check for Lengthy job flag ======
@@ -466,6 +476,9 @@ UINT Model::ResolveLinearSystemThread_H2LIB(LPVOID pParam)
 
 	pObj->m_CurrentAdvance = 1.0;
 
+	// Send a windows user message to the Wait progress dialog to notify that the H-Matrix is constructed
+	pSTHD->pWaitSolverDlg->SendMessage(WM_USER_HMATRIX_CONSTRUCTED, 0, 0);
+
 	//====== Check for Lengthy job flag ======
 	if (!pObj->m_bLengthyJob)
 	{
@@ -504,7 +517,7 @@ UINT Model::ResolveLinearSystemThread_H2LIB(LPVOID pParam)
 		init_pointer_avector(&v_x, pObj->b, NDOF);
 
 		ptruncmode tm = new_releucl_truncmode();
-		lrdecomp_hmatrix(pHmatrix, tm, m_accur);
+		lrdecomp_hmatrix(pHmatrix, tm, m_HLU_tol);
 		lrsolve_hmatrix_avector(false, pHmatrix, &v_x);
 		del_truncmode(tm);
 	}
@@ -521,11 +534,11 @@ UINT Model::ResolveLinearSystemThread_H2LIB(LPVOID pParam)
 		// Create a Cheap LU H-Matrix
 		phmatrix pLU = clone_hmatrix(pHmatrix);
 		ptruncmode tm = new_releucl_truncmode();
-		lrdecomp_hmatrix(pLU, tm, 0.05);
+		lrdecomp_hmatrix(pLU, tm, m_Precond_tol);
 		del_truncmode(tm);
 
 		pSTHD->nIters = solve_pgmres_hmatrix_avector(pHmatrix, H_LU_precond, (void*)pLU, 
-			                                    &v_b, &v_x, m_accur, m_bSetMaxIter ? m_maxiter : 0U, 50U);
+			                                    &v_b, &v_x, m_GMRES_tol, m_bSetMaxIter ? m_maxiter : 0U, 50U);
 
 		del_hmatrix(pLU);
 		uninit_avector(&v_b);

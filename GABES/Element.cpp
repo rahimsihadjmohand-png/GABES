@@ -787,25 +787,39 @@ bool Element::IsGeometricalVertexPartOf(const Vertex* pV)const
 }
 
 
+
 bool Element::IsPointInside(const Vertex& DomainPt, double& Xi, double& Eta) const
 {
-	double tol = 1.0E-9 * Element::SpecLength();
+	constexpr double tol = 1.0E-6;
 
-	// 1️⃣ Check if the point coincides with any triangle vertex
-	if (m_pV1->Distance(DomainPt) < tol) return true;
-	if (m_pV2->Distance(DomainPt) < tol) return true;
-	if (m_pV3->Distance(DomainPt) < tol) return true;
+	// 1. Get the longest edge length
+	double L1 = m_pV1->Distance(*m_pV2);
+	double L2 = m_pV2->Distance(*m_pV3);
+	double L3 = m_pV3->Distance(*m_pV1);
+	double Lmax = max(L1, max(L2, L3));
 
-	// 2️⃣ Vectors in local triangle system (origin at V3)
-	Vector V = DomainPt - *m_pV3;  // vector from V3 to point
-	Vector V1 = *m_pV1 - *m_pV3;    // edge V3->V1
-	Vector V2 = *m_pV2 - *m_pV3;    // edge V3->V2
+	if (Lmax <= 0.0)
+		return false;
 
-	// 3️⃣ Plane check using unit normal
-	if (fabs(V * m_n) > tol)
-		return false; // point not on triangle plane
+	// 2. Check vertex coincidence
+	if (m_pV1->Distance(DomainPt) < (tol * Lmax)) return true;
+	if (m_pV2->Distance(DomainPt) < (tol * Lmax)) return true;
+	if (m_pV3->Distance(DomainPt) < (tol * Lmax)) return true;
 
-	// 4️⃣ Compute intrinsic coordinates (barycentric) relative to V3
+	// 3. Vectors in local triangle system (origin at V3)
+	Vector V = DomainPt - *m_pV3;
+	Vector V1 = *m_pV1 - *m_pV3;
+	Vector V2 = *m_pV2 - *m_pV3;
+
+	// 4. Check whether the point lies on the triangle plane
+	// m_n must be a unit normal
+	Vector Vn = V;
+	Vn.Normalize();
+
+	if (fabs(Vn * m_n) > tol)
+		return false;
+
+	// 5. Compute barycentric coordinates
 	double d00 = V1 * V1;
 	double d01 = V1 * V2;
 	double d11 = V2 * V2;
@@ -813,15 +827,22 @@ bool Element::IsPointInside(const Vertex& DomainPt, double& Xi, double& Eta) con
 	double d21 = V * V2;
 
 	double denom = d00 * d11 - d01 * d01;
-	if (fabs(denom) < tol)
-		return false; // degenerate triangle
 
+	// 6. Check for degenerate triangle
+	if (d00 <= 0.0 || d11 <= 0.0)
+		return false;
+
+	if (denom <= (tol * tol * d00 * d11))
+		return false;
+
+	// 7. Calculate intrinsic coordinates
 	Xi = (d11 * d20 - d01 * d21) / denom;
 	Eta = (d00 * d21 - d01 * d20) / denom;
 
-	// 5️⃣ Point is inside triangle if xi, eta >= 0 and xi + eta <= 1
-	return (Xi >= -tol) && (Eta >= -tol) && ((Xi + Eta) <= 1.0 + tol);
+	// 8. Point-in-triangle test
+	return (Xi >= -tol) && (Eta >= -tol) &&	((Xi + Eta) <= (1.0 + tol));
 }
+
 
 
 
