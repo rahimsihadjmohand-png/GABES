@@ -86,11 +86,11 @@ To facilitate immediate testing and practical use, official software releases ar
 
 
 
-To download the latest release, navigate to the GABES main repository page and click on Releases. This opens the releases page, where the available versions are listed. Select the latest release (e.g., GABES v2.0.0 – Setup) to access its dedicated release page.
+To download the latest release, navigate to the GABES main repository page and click on Releases. This opens the releases page, where the available versions are listed. Select the latest release (e.g., GABES v2.0.1 – Setup) to access its dedicated release page.
 
 
 
-Alternatively, the latest release can be accessed directly from the main repository page. Under the Assets section, click on the installer (e.g., GABES v2.0.0 – Setup.exe) to download it.
+Alternatively, the latest release can be accessed directly from the main repository page. Under the Assets section, click on the installer (e.g., GABES v2.0.1 – Setup.exe) to download it.
 
 
 
