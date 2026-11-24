@@ -2,7 +2,7 @@ Copyright (C) 2026, Rahim Si Hadj Mohand
 
 
 
-# GABES – Graphical \& Accelerated Boundary Element Solver
+## GABES – Graphical \& Accelerated Boundary Element Solver
 
 
 
@@ -20,7 +20,7 @@ GABES also provides integrated post-processing tools for visualizing and analyzi
 
 ================================================================================
 
-* RELEASE NOTES – GABES v2.0.0
+# RELEASE NOTES – GABES v2.0.0
 
 ================================================================================
 
