@@ -2,7 +2,7 @@ Copyright (C) 2026, Rahim Si Hadj Mohand
 
 
 
-## GABES – Graphical \& Accelerated Boundary Element Solver
+# GABES – Graphical \& Accelerated Boundary Element Solver
 
 
 
@@ -18,11 +18,10 @@ GABES also provides integrated post-processing tools for visualizing and analyzi
 
 
 
-================================================================================
 
-# RELEASE NOTES – GABES v2.0.0
 
-================================================================================
+## RELEASE NOTES – GABES v2.0.0
+
 
 
 
@@ -56,11 +55,11 @@ This version represents a substantial architectural and performance evolution of
 
 
 
-================================================================================
 
-1\. DOWNLOAD AND INSTALLATION
 
-================================================================================
+## 1\. DOWNLOAD AND INSTALLATION
+
+
 
 
 
@@ -76,11 +75,7 @@ The repository provides the latest source code, together with the latest binary 
 
 
 
-1.1. Downloading the Latest Official Release
-
-\--------------------------------------------
-
-
+### 1.1. Downloading the Latest Official Release
 
 To facilitate immediate testing and practical use, official software releases are published with binary installers, allowing users to download, install, and run GABES without manually compiling the source code.
 
