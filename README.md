@@ -19,21 +19,22 @@ GABES also provides integrated post-processing tools for visualizing and analyzi
 This release introduces a major update to GABES, featuring substantial improvements to the Boundary Element Method (BEM) solver and its underlying H-Matrix framework.
 
 The main changes include:
-1\. Replacement of the previous AHMED-based H-Matrix implementation with H2Lib;
 
-2\. Improved memory efficiency through compressed H-Matrix representations and on-request evaluation of BEM matrix entries, avoiding the assembly and storage of dense system matrices;
+a\. Replacement of the previous AHMED-based H-Matrix implementation with H2Lib;
 
-3\. Improvements to ACA-based H-Matrix compression;
+b\. Improved memory efficiency through compressed H-Matrix representations and on-request evaluation of BEM matrix entries, avoiding the assembly and storage of dense system matrices;
 
-4\. Support for H-Matrix-based direct and iterative solvers, including H-LU and GMRES;
+c\. Improvements to ACA-based H-Matrix compression;
 
-5\. Integration of H-LU-based preconditioning to improve iterative solver performance;
+d\. Support for H-Matrix-based direct and iterative solvers, including H-LU and GMRES;
 
-6\. Improved configuration options for numerical integration, H-Matrix construction, and solver parameters;
+e\. Integration of H-LU-based preconditioning to improve iterative solver performance;
 
-7\. Graphical user interface improvements and refinements;
+f\. Improved configuration options for numerical integration, H-Matrix construction, and solver parameters;
 
-8\. Bug fixes and corrections to numerical and computational issues.
+g\. Graphical user interface improvements and refinements;
+
+h\. Bug fixes and corrections to numerical and computational issues.
 
 This version represents a substantial architectural and performance evolution of GABES while preserving its graphical workflow for three-dimensional elastostatic analysis.
 
