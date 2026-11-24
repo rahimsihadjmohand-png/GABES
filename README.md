@@ -1,4 +1,4 @@
-Copyright © 2026 Rahim Si Hadj Mohand. All rights reserved.
+Copyright © 2026 Rahim Si Hadj Mohand.
 
 **GABES:** is a scientific software application developed as part of Rahim Si Hadj Mohand's PhD research.
 
@@ -96,7 +96,7 @@ please refer to the GABES User Guide provided in the installation directory and 
 ## 3. LICENSE
 GABES is distributed under the GNU General Public License, version 3 (GPL-3.0).
 
-The complete license text is provided in the License directory of the installation.
+The complete license text is provided in the License file of the installation.
 
 ## 4. Acknowledgements
 The support provided by the Directorate-General for Scientific Research and Technological Development (DG-RSDT) of the Algerian government through a research grant is gratefully acknowledged. The Laboratory of Green and Mechanical Development (LGMD) at the National Polytechnic School (ENP) is also gratefully acknowledged for providing the resources and research environment that contributed to the development of GABES.
