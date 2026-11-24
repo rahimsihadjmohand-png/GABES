@@ -1,6 +1,10 @@
-Copyright (C) 2026, Rahim Si Hadj Mohand
+Copyright © 2026 Rahim Si Hadj Mohand. All rights reserved.
 
+**GABES:** is a scientific software application developed as part of Rahim Si Hadj Mohand's PhD research.
 
+**Laboratory:** Laboratory of Green and Mechanical Development (LGMD)
+**Institution:** National Polytechnic School (ENP)
+**Address:** 10, Rue des Frères Oudek, Hassen Badi, El Harrach, 16200, Algiers, Algeria.
 
 # GABES – Graphical \& Accelerated Boundary Element Solver
 GABES (Graphical \& Accelerated Boundary Element Solver) is an open-source software application for the analysis of three-dimensional linear elastostatic problems in homogeneous, isotropic media using the collocation Boundary Element Method (BEM). The software employs hierarchical matrices (H-Matrices) to reduce the computational and memory requirements associated with the dense system matrices arising in conventional BEM formulations. In particular, GABES implements two dedicated on-request evaluation algorithms that avoid the explicit construction and storage of dense system matrices, supporting the H-Matrix approach and its underlying Adaptive Cross Approximation (ACA) low-rank construction. The software also incorporates specialized numerical procedures for the accurate evaluation of regular, nearly singular, and singular boundary integrals, including an adaptive integration scheme specifically developed for GABES.
@@ -92,5 +96,13 @@ GABES is distributed under the GNU General Public License, version 3 (GPL-3.0).
 
 The complete license text is provided in the License directory of the installation.
 
+## 4. Acknowledgements
+The support provided by the Directorate-General for Scientific Research and Technological Development (DG-RSDT) of the Algerian government through a research grant is gratefully acknowledged. The Laboratory of Green and Mechanical Development (LGMD) at the National Polytechnic School (ENP) is also gratefully acknowledged for providing the resources and research environment that contributed to the development of GABES.
 
+The guidance and support provided by Pr. Yacine Belkacemi and Pr. Said Rechak (PhD supervisors) are gratefully acknowledged. Their scientific guidance, technical advice, constructive discussions, and valuable recommendations throughout this research are sincerely appreciated.
+
+## 5. Feedback and Contributions
+Feedback from users and researchers is highly appreciated. Comments, constructive feedback, and critical suggestions regarding the software, its numerical methods, performance, and usability are warmly welcomed. Such contributions are valuable for identifying limitations, improving existing features, and guiding the future development of GABES.
+
+Readers are encouraged to share their observations, report issues, and propose improvements through the project's GitHub repository or by contacting the author directly at the following email address: rahim.si_hadj_mohand@g.enp.edu.dz.
 
