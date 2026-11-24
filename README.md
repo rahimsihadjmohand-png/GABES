@@ -20,7 +20,7 @@ GABES also provides integrated post-processing tools for visualizing and analyzi
 
 ================================================================================
 
-RELEASE NOTES – GABES v2.0.0
+* RELEASE NOTES – GABES v2.0.0
 
 ================================================================================
 
