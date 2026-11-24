@@ -99,12 +99,12 @@ GABES is distributed under the GNU General Public License, version 3 (GPL-3.0).
 
 The complete license text is provided in the License file of the installation.
 
-## 4. Acknowledgements
+## 4. ACKNOWLEDGEMENTS
 The support provided by the Directorate-General for Scientific Research and Technological Development (DG-RSDT) of the Algerian government through a research grant is gratefully acknowledged. The Laboratory of Green and Mechanical Development (LGMD) at the National Polytechnic School (ENP) is also gratefully acknowledged for providing the resources and research environment that contributed to the development of GABES.
 
 The guidance and support provided by Pr. Yacine Belkacemi and Pr. Said Rechak (PhD supervisors) are gratefully acknowledged. Their scientific guidance, technical advice, constructive discussions, and valuable recommendations throughout this research are sincerely appreciated.
 
-## 5. Feedback and Contributions
+## 5. FEEDBACK AND CONTRIBUTIONS 
 Feedback from users and researchers is highly appreciated. Comments, constructive feedback, and critical suggestions regarding the software, its numerical methods, performance, and usability are warmly welcomed. Such contributions are valuable for identifying limitations, improving existing features, and guiding the future development of GABES.
 
 Readers are encouraged to share their observations, report issues, and propose improvements through the project's GitHub repository or by contacting the author directly at the following email address: rahim.si_hadj_mohand@g.enp.edu.dz.
