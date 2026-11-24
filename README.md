@@ -2,7 +2,7 @@ Copyright (C) 2026, Rahim Si Hadj Mohand
 
 
 
-\# GABES – Graphical \& Accelerated Boundary Element Solver
+# GABES – Graphical \& Accelerated Boundary Element Solver
 
 
 
